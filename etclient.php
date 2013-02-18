@@ -2,42 +2,74 @@
 require('soap-wsse.php');
 
 class ETClient extends SoapClient {
-	private $authToken, $authTokenExpiration, $internalAuthToken, $wsdlLoc, $lastHTTPCode, $clientId, $clientSecret;
+	private $authToken, $authTokenExpiration, $internalAuthToken, $wsdlLoc, 
+			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
 		
-	function __construct($istack, $iclientId, $iclientSecret, $getWSDL) {	
-		$this->clientId = $iclientSecret;
-		$this->clientSecret = $iclientSecret;
+	function __construct($getWSDL, $params = null) {	
+		$config = include 'config.php';
+		$this->wsdlLoc = $config['defaultwsdl'];
+		$this->clientId = $config['clientid'];
+		$this->clientSecret = $config['clientsecret'];
+		$this->appsignature = $config['appsignature'];		
 
-		$stacks = array ('S1' => array('wsdl' => 'https://webservice.exacttarget.com/ETFramework.wsdl', 'endpoint'=>'https://webservice.exacttarget.com/Service.asmx'), 
-							'S4' => array('wsdl' =>'https://webservice.s4.exacttarget.com/ETFramework.wsdl', 'endpoint'=>'https://webservice.s4.exacttarget.com/Service.asmx'),
-							'S6' => array('wsdl' =>'https://webservice.s6.exacttarget.com/ETFramework.wsdl', 'endpoint'=>'https://webservice.s6.exacttarget.com/Service.asmx'));
-		
+
 		if ($getWSDL){
-			$this->CreateWSDL($stacks[$istack]["wsdl"]);	
+			$this->CreateWSDL($this->wsdlLoc);	
 		}
 		
-		$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
-		$jsonRequest = new stdClass(); 
-		$jsonRequest->clientId = $iclientId;
-		$jsonRequest->clientSecret = $iclientSecret;
-		$jsonRequest->accessType = "offline";
-		$authResponse = restPost($url, json_encode($jsonRequest));
+		// Add code to parse the JWT
 		
-		$authObject = json_decode($authResponse);
+		$this->refreshToken();
+
+		try {
+			$url = "https://www.exacttargetapis.com//platform/v1/endpoints/soap?access_token=".$this->authToken;
+			$endpointResponse = restGet($url);			
+			$endpointObject = json_decode($endpointResponse);			
+			if ($endpointResponse && property_exists($endpointObject,"url")){		
+				$this->endpoint = $endpointObject->url;			
+			} else {
+				throw new Exception('Unable to determine stack using /platform/v1/tokenContext:'.$endpointResponse );			
+			}
+			} catch (Exception $e) {
+			throw new Exception('Unable to determine stack using /platform/v1/tokenContext: '.$e->getMessage());
+		} 
+
+		parent::__construct('ExactTargetWSDL.xml', array('trace'=>1, 'exceptions'=>0));
+		parent::__setLocation($this->endpoint);
+	}
+	
+	function refreshToken() {
 		
-		if ($authResponse && property_exists($authObject,"accessToken")){		
-			$authObject = json_decode($authResponse);
-			$this->authToken = $authObject->accessToken;
-			$this->internalAuthToken = $authObject->legacyToken;
-			$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
-			$newexpTime = new DateTime();
-			$this->authTokenExpiration = $newexpTime->add($dv);				
-		} else {
-			throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.');			
-		}						
+		try {							
+			$currentTime = new DateTime();
+			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') > 5) ){
+				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
+				$jsonRequest = new stdClass(); 
+				$jsonRequest->clientId = $this->clientId;
+				$jsonRequest->clientSecret = $this->clientSecret;
+				$jsonRequest->accessType = "offline";
+				if (!is_null($this->refreshKey)){
+					$jsonRequest->refreshToken = $this->refreshKey;
+				}
+				
+				$authResponse = restPost($url, json_encode($jsonRequest));
+				
+				$authObject = json_decode($authResponse);
+				
+				if ($authResponse && property_exists($authObject,"accessToken")){		
+					$this->authToken = $authObject->accessToken;
+					$this->internalAuthToken = $authObject->legacyToken;
+					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
+					$newexpTime = new DateTime();
+					$this->authTokenExpiration = $newexpTime->add($dv);				
+				} else {
+					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse );			
+				}
+			}
+		} catch (Exception $e) {
+			throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.: '.$e->getMessage());
+		}
 		
-		parent::__construct('ETFramework.wsdl', array('trace'=>1, 'exceptions'=>0));		
-		parent::__setLocation($stacks[$istack]["endpoint"]);
 	}
 	
 	function __getLastResponseHTTPCode(){
@@ -116,7 +148,7 @@ class ETClient extends SoapClient {
 }
 
 class et_Constructor {
-	public $status, $code, $message, $results;	
+	public $status, $code, $message, $results, $request_id, $moreData;	
 	function __construct($soapresponse, $httpcode) {
 		
 		$this->code = $httpcode;
@@ -129,6 +161,11 @@ class et_Constructor {
 			$this->status = true;
 		}
 	}
+	/*
+	function __construct() {
+		$this->status = false;
+	}
+	*/
 }
 
 class et_Get extends et_Constructor {
@@ -193,6 +230,10 @@ class et_Get extends et_Constructor {
 	}
 }
 
+class et_Continue extends et_Constructor {	
+
+}
+
 class et_Info extends et_Constructor {
 	function __construct($authStub, $objType) {	
 		$drm = array(); 
@@ -250,7 +291,7 @@ class et_Post extends et_Constructor {
 	}
 }
 
-class et_Put extends et_Constructor {	
+class et_Patch extends et_Constructor {	
 	function __construct($authStub, $objType, $props = null) {				
 		$cr = array(); 
 		$objects = array(); 
@@ -322,20 +363,33 @@ class et_BaseObject {
 	protected $obj;	
 }
 
-class et_CRUDObject extends et_BaseObject{
-
+class et_GetObject extends et_BaseObject{
+	
 	public function Get() {		
 		$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
 		return $response;
 	}
 	
+	public function NextBatch() {		
+		$response = new et_Continue($this->authStub, $this->obj, $this->props, $this->filter);
+		return $response;
+	}
+	
+	public function Info() {		
+		$response = new et_Info($this->authStub, $this->obj);
+		return $response;
+	}	
+}
+
+class et_CRUDObject extends et_GetObject{
+
 	public function Post() {		
 		$response = new et_Post($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 
-	public function Put() {		
-		$response = new et_Put($this->authStub, $this->obj, $this->props);
+	public function Patch() {		
+		$response = new et_Patch($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 	
@@ -350,17 +404,111 @@ class et_CRUDObject extends et_BaseObject{
 	}	
 }
 
-class et_List extends et_CRUDObject {		
-	function __construct() {	
-		$this->obj = "List";
-	}	
-}
+
 
 class et_Subscriber extends et_CRUDObject {		
 	function __construct() {	
 		$this->obj = "Subscriber";
 	}	
 }
+/*
+class et_DataExtension extends et_BaseObject {
+	public  $rows, $columns, $keyCreated;
+	function __construct() {	
+		$this->obj = "DataExtension";
+	}
+	
+	function Get($type) {
+		
+		if ($type == "Details"){
+			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
+			return $response;
+		} else if ($type == "Rows"){
+			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
+			return $response;
+		} 
+		 else if ($type == "Columns"){
+			// TODO: Determine if Columns values are hashes, if so then pass the first record from the hash
+			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
+			return $response;
+		} else {			
+			$response = new et_Constructor();
+			$response->message = "Invalid type specified for DataExtension Get";
+			return $response;
+		}
+	}
+	
+	function post(){
+		$createDE = false;
+		if ($this->columns && $this->props["CustomerKey"] != $this->keyCreated){
+			createDE = true;
+		}
+		if (createDE) {
+			//Create the data extension
+			$this->props['Fields'] = array();
+			$this->props['Fields']['Field']	= array();
+			foreach ($this->columns as $key){				
+				if($property->IsRetrievable){				
+					$props[] = $property->Name;
+				}
+			}	
+			
+		}
+		
+		
+	}
+}*/
+// TODO: Add Data Extension Row
+
+class et_List extends et_CRUDObject {		
+	function __construct() {	
+		$this->obj = "List";
+	}	
+}
+
+class et_SentEvent extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "SentEvent";
+	}	
+}
+
+class et_OpenEvent extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "OpenEvent";
+	}	
+}
+
+class et_BounceEvent extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "BounceEvent";
+	}	
+}
+
+class et_UnsubEvent extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "UnsubEvent";
+	}	
+}
+
+class et_ClickEvent extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "ClickEvent";
+	}	
+}
+
+class et_TriggeredSend extends et_CRUDObject {
+	public  $subscribers;
+	function __construct() {	
+		$this->obj = "TriggeredSendDefinition";
+	}
+
+	public function Send() {
+		$tscall = array("TriggeredSendDefinition" => $this->props , "Subscribers" => $this->subscribers);
+		$response = new et_Post($this->authStub, "TriggeredSend", $tscall);
+		return $response;
+	}
+}
+
 
 function restGet($url) {
 	$ch = curl_init();
