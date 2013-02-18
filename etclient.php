@@ -1,5 +1,6 @@
 <?php
 require('soap-wsse.php');
+require('JWT.php');
 
 class ETClient extends SoapClient {
 	private $authToken, $authTokenExpiration, $internalAuthToken, $wsdlLoc, 
@@ -17,7 +18,15 @@ class ETClient extends SoapClient {
 			$this->CreateWSDL($this->wsdlLoc);	
 		}
 		
-		// Add code to parse the JWT
+		if ($params && array_key_exists('jwt', $params)){
+			$decodedJWT = JWT::decode($params['jwt'], $this->appsignature);					
+			$this->authToken = $decodedJWT->request->user->oauthToken;			
+			$this->internalAuthToken = $decodedJWT->request->user->internalOauthToken;
+			$dv = new DateInterval('PT'.$decodedJWT->request->user->expiresIn.'S');
+			$newexpTime = new DateTime();
+			$this->authTokenExpiration = $newexpTime->add($dv);	
+			$this->refreshKey = $decodedJWT->request->user->refreshToken;
+		}		
 		
 		$this->refreshToken();
 
@@ -32,8 +41,7 @@ class ETClient extends SoapClient {
 			}
 			} catch (Exception $e) {
 			throw new Exception('Unable to determine stack using /platform/v1/tokenContext: '.$e->getMessage());
-		} 
-
+		} 		
 		parent::__construct('ExactTargetWSDL.xml', array('trace'=>1, 'exceptions'=>0));
 		parent::__setLocation($this->endpoint);
 	}
@@ -41,8 +49,9 @@ class ETClient extends SoapClient {
 	function refreshToken() {
 		
 		try {							
-			$currentTime = new DateTime();
+			$currentTime = new DateTime();			
 			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') > 5) ){
+				
 				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
@@ -61,10 +70,11 @@ class ETClient extends SoapClient {
 					$this->internalAuthToken = $authObject->legacyToken;
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
-					$this->authTokenExpiration = $newexpTime->add($dv);				
+					$this->authTokenExpiration = $newexpTime->add($dv);	
+					$this->refreshKey = $authObject->refreshToken;
 				} else {
 					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse );			
-				}
+				}				
 			}
 		} catch (Exception $e) {
 			throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.: '.$e->getMessage());
@@ -128,7 +138,9 @@ class ETClient extends SoapClient {
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->internalAuthToken);
 		
+		
 		$content = utf8_encode($objWSSE->saveXML());
+		//print_r($content);
 		$content_length = strlen($content); 
 		
 		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction);
@@ -148,7 +160,7 @@ class ETClient extends SoapClient {
 }
 
 class et_Constructor {
-	public $status, $code, $message, $results, $request_id, $moreData;	
+	public $status, $code, $message, $results, $request_id, $moreResults;	
 	function __construct($soapresponse, $httpcode) {
 		
 		$this->code = $httpcode;
@@ -170,17 +182,17 @@ class et_Constructor {
 
 class et_Get extends et_Constructor {
 	function __construct($authStub, $objType, $props, $filter) {	
-		$rrm = array(); 
-		$request = array(); 
-		$retrieveRequest = array(); 
+		$rrm = array();
+		$request = array();
+		$retrieveRequest = array();
 		
 		// If Props is not sent then Info will be used to find all retrievable properties
 		if (is_null($props)){	
 			$props = array();
 			$info = new et_Info($authStub, $objType);
-			if (is_array($info->results)){			
-				foreach ($info->results as $property){				
-					if($property->IsRetrievable){				
+			if (is_array($info->results)){	
+				foreach ($info->results as $property){	
+					if($property->IsRetrievable){	
 						$props[] = $property->Name;
 					}
 				}	
@@ -189,7 +201,7 @@ class et_Get extends et_Constructor {
 		
 		if ($props !== array_values($props)){
 			$retrieveProps = array();
-			foreach ($props as $key => $value){				
+			foreach ($props as $key => $value){	
 				if (!is_array($value))
 				{
 					$retrieveProps[] = $key;
@@ -206,10 +218,10 @@ class et_Get extends et_Constructor {
 		}
 		$request["RetrieveRequest"] = $retrieveRequest;
 		$rrm["RetrieveRequestMsg"] = $request;
-				
+		
 		$return = $authStub->__soapCall("Retrieve", $rrm, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
-					
+		
 		if ($this->status){
 			if (property_exists($return, "Results")){
 				// We always want the results property when doing a retrieve to be an array
@@ -220,18 +232,67 @@ class et_Get extends et_Constructor {
 				}
 			} else {
 				$this->results = array();
-			} 
-			if ($return->OverallStatus != "OK")
+			}
+			if ($return->OverallStatus != "OK" && $return->OverallStatus != "MoreDataAvailable")
 			{
 				$this->status = false;
 				$this->message = $return->OverallStatus;
 			}
-		}		
+
+			$this->moreResults = false;
+			
+			if ($return->OverallStatus == "MoreDataAvailable") {				
+				$this->moreResults = true;
+			}
+				
+			$this->request_id = $return->RequestID;
+		}	
 	}
 }
 
 class et_Continue extends et_Constructor {	
+	function __construct($authStub, $request_id) {
+		$rrm = array(); 
+		$request = array(); 
+		$retrieveRequest = array(); 		
+		
+		$retrieveRequest["ContinueRequest"] = $request_id;
+		$retrieveRequest["ObjectType"] = null ;
 
+		$request["RetrieveRequest"] = $retrieveRequest;
+		$rrm["RetrieveRequestMsg"] = $request;
+		
+		$return = $authStub->__soapCall("Retrieve", $rrm, null, null , $out_header);
+		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
+		
+		if ($this->status){
+			if (property_exists($return, "Results")){
+				// We always want the results property when doing a retrieve to be an array
+				if (is_array($return->Results)){
+					$this->results = $return->Results;
+				} else {
+					$this->results = array($return->Results);
+				}
+			} else {
+				$this->results = array();
+			}
+			
+			$this->moreResults = false;
+			
+			if ($return->OverallStatus == "MoreDataAvailable") {				
+				$this->moreResults = true;
+			}
+			
+			if ($return->OverallStatus != "OK" && $return->OverallStatus != "MoreDataAvailable")
+			{
+				$this->status = false;
+				$this->message = $return->OverallStatus;
+			}
+			
+			$this->request_id = $return->RequestID;
+		}		
+	
+	}
 }
 
 class et_Info extends et_Constructor {
@@ -292,7 +353,7 @@ class et_Post extends et_Constructor {
 }
 
 class et_Patch extends et_Constructor {	
-	function __construct($authStub, $objType, $props = null) {				
+	function __construct($authStub, $objType, $props) {				
 		$cr = array(); 
 		$objects = array(); 
 		$object = $props; 				
@@ -325,7 +386,7 @@ class et_Patch extends et_Constructor {
 }
 
 class et_Delete extends et_Constructor {	
-	function __construct($authStub, $objType, $props = null) {	
+	function __construct($authStub, $objType, $props) {	
 	
 		$cr = array(); 
 		$objects = array(); 
@@ -360,18 +421,20 @@ class et_Delete extends et_Constructor {
 
 class et_BaseObject {
 	public  $authStub, $props, $filter;
-	protected $obj;	
+	protected $obj, $lastRequestID;	
 }
 
 class et_GetObject extends et_BaseObject{
 	
 	public function Get() {		
 		$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
+		$this->lastRequestID = $response->request_id;		
 		return $response;
 	}
 	
-	public function NextBatch() {		
-		$response = new et_Continue($this->authStub, $this->obj, $this->props, $this->filter);
+	public function GetMoreResults() {		
+		$response = new et_Continue($this->authStub, $this->lastRequestID);
+		$this->lastRequestID = $response->request_id;
 		return $response;
 	}
 	
