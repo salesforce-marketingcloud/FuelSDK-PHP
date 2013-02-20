@@ -426,19 +426,19 @@ class et_BaseObject {
 
 class et_GetObject extends et_BaseObject{
 	
-	public function Get() {		
+	public function get() {		
 		$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
 		$this->lastRequestID = $response->request_id;		
 		return $response;
 	}
 	
-	public function GetMoreResults() {		
+	public function getMoreResults() {		
 		$response = new et_Continue($this->authStub, $this->lastRequestID);
 		$this->lastRequestID = $response->request_id;
 		return $response;
 	}
 	
-	public function Info() {		
+	public function info() {		
 		$response = new et_Info($this->authStub, $this->obj);
 		return $response;
 	}	
@@ -446,120 +446,229 @@ class et_GetObject extends et_BaseObject{
 
 class et_CRUDObject extends et_GetObject{
 
-	public function Post() {		
+	public function post() {		
 		$response = new et_Post($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 
-	public function Patch() {		
+	public function patch() {		
 		$response = new et_Patch($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 	
-	public function Delete() {		
+	public function delete() {		
 		$response = new et_Delete($this->authStub, $this->obj, $this->props);
-		return $response;
-	}
-	
-	public function Info() {		
-		$response = new et_Info($this->authStub, $this->obj);
 		return $response;
 	}	
 }
 
 
 
-class et_Subscriber extends et_CRUDObject {		
+class ET_Subscriber extends et_CRUDObject {		
 	function __construct() {	
 		$this->obj = "Subscriber";
 	}	
 }
-/*
-class et_DataExtension extends et_BaseObject {
-	public  $rows, $columns, $keyCreated;
+
+class ET_DataExtension extends et_CRUDObject {
+	public  $columns;
 	function __construct() {	
 		$this->obj = "DataExtension";
 	}
 	
-	function Get($type) {
-		
-		if ($type == "Details"){
-			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
-			return $response;
-		} else if ($type == "Rows"){
-			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
-			return $response;
-		} 
-		 else if ($type == "Columns"){
-			// TODO: Determine if Columns values are hashes, if so then pass the first record from the hash
-			$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
-			return $response;
-		} else {			
-			$response = new et_Constructor();
-			$response->message = "Invalid type specified for DataExtension Get";
-			return $response;
+	public function post() {				
+		$this->props["Fields"] = array("Field"=>array());		
+		if (!is_null($this->columns) && is_array($this->columns)){
+			foreach ($this->columns as $column){
+				array_push($this->props['Fields']['Field'], $column);
+			}	
 		}
+		$response = parent::post();		
+		unset($this->props["Fields"]);		
+		return $response;
 	}
 	
-	function post(){
-		$createDE = false;
-		if ($this->columns && $this->props["CustomerKey"] != $this->keyCreated){
-			createDE = true;
-		}
-		if (createDE) {
-			//Create the data extension
-			$this->props['Fields'] = array();
-			$this->props['Fields']['Field']	= array();
-			foreach ($this->columns as $key){				
-				if($property->IsRetrievable){				
-					$props[] = $property->Name;
-				}
-			}	
-			
-		}
-		
-		
+	public function patch() {				
+		$this->props["Fields"] = array("Field"=>array());				
+		foreach ($this->columns as $column){
+			array_push($this->props['Fields']['Field'], $column);
+		}	
+		print_r($this->props);
+		$response = parent::patch();		
+		unset($this->props["Fields"]);		
+		return $response;
 	}
-}*/
-// TODO: Add Data Extension Row
+}
 
-class et_List extends et_CRUDObject {		
+class ET_DataExtension_Column extends et_GetObject {
+	function __construct() {	
+		$this->obj = "DataExtensionField";
+	}
+	
+	public function get() {	
+		$fixCustomerKey = false;
+		
+		if ($this->filter && array_key_exists('Property', $this->filter) && $this->filter['Property'] == "CustomerKey" )
+		{	
+			$this->filter['Property'] = "DataExtension.CustomerKey";
+			$fixCustomerKey = true;
+		}				
+		$response =  parent::get();	
+		if ($fixCustomerKey )
+		{
+			$this->filter['Property'] = "CustomerKey";
+		}
+		
+		return $response;
+	}
+}
+
+class ET_DataExtension_Row extends et_CRUDObject {
+	public $Name, $CustomerKey;
+	function __construct() {	
+		$this->obj = "DataExtensionObject";
+	}
+	
+	public function get() {	
+		$this->getName();		
+		$this->obj = "DataExtensionObject[".$this->Name."]";		
+		$response = parent::get();
+		$this->obj = "DataExtensionObject";
+		return $response;
+	}
+	
+	public function post(){
+		$this->getCustomerKey();
+		$originalProps = $this->props;		
+		$overrideProps = array();
+		$fields = array();
+		
+		foreach ($this->props as $key => $value){
+			$fields[]  = array("Name" => $key, "Value" => $value);	
+		}		
+		$overrideProps['CustomerKey'] = $this->CustomerKey;
+		$overrideProps['Properties'] = array("Property"=> $fields);
+		
+		$this->props = $overrideProps;		
+		$response = parent::post();		
+		$this->props = $originalProps;
+		return $response;
+	}
+	
+	public function patch(){
+		$this->getCustomerKey();
+		$originalProps = $this->props;		
+		$overrideProps = array();
+		$fields = array();
+		
+		foreach ($this->props as $key => $value){
+			$fields[]  = array("Name" => $key, "Value" => $value);	
+		}		
+		$overrideProps['CustomerKey'] = $this->CustomerKey;
+		$overrideProps['Properties'] = array("Property"=> $fields);
+		
+		$this->props = $overrideProps;		
+		$response = parent::patch();		
+		$this->props = $originalProps;
+		return $response;
+	}
+	
+	public function delete(){
+		$this->getCustomerKey();
+		$originalProps = $this->props;		
+		$overrideProps = array();
+		$fields = array();
+		
+		foreach ($this->props as $key => $value){
+			$fields[]  = array("Name" => $key, "Value" => $value);	
+		}		
+		$overrideProps['CustomerKey'] = $this->CustomerKey;
+		$overrideProps['Keys'] = array("Key"=> $fields);
+		
+		$this->props = $overrideProps;		
+		$response = parent::delete();		
+		$this->props = $originalProps;
+		return $response;
+	}
+	
+	private function getName() {
+		if (is_null($this->Name)){
+			if (is_null($this->CustomerKey))
+			{
+				throw new Exception('Unable to process request due to CustomerKey and Name not being defined on ET_DataExtension_Row');			
+			} else {
+				$nameLookup = new ET_DataExtension();
+				$nameLookup->authStub = $this->authStub;
+				$nameLookup->props = array("Name","CustomerKey");
+				$nameLookup->filter = array('Property' => 'CustomerKey','SimpleOperator' => 'equals','Value' => $this->CustomerKey);
+				$nameLookupGet = $nameLookup->get();
+				if ($nameLookupGet->status && count($nameLookupGet->results) == 1){
+					$this->Name = $nameLookupGet->results[0]->Name;
+				} else {
+					throw new Exception('Unable to process request due to unable to find DataExtension based on CustomerKey');				
+				}								
+			}					
+		}		
+	}
+	private function getCustomerKey() {
+		if (is_null($this->CustomerKey)){
+			if (is_null($this->Name))
+			{
+				throw new Exception('Unable to process request due to CustomerKey and Name not being defined on ET_DataExtension_Row');			
+			} else {
+				$nameLookup = new ET_DataExtension();
+				$nameLookup->authStub = $this->authStub;
+				$nameLookup->props = array("Name","CustomerKey");
+				$nameLookup->filter = array('Property' => 'Name','SimpleOperator' => 'equals','Value' => $this->Name);
+				$nameLookupGet = $nameLookup->get();
+				if ($nameLookupGet->status && count($nameLookupGet->results) == 1){
+					$this->CustomerKey = $nameLookupGet->results[0]->CustomerKey;
+				} else {
+					throw new Exception('Unable to process request due to unable to find DataExtension based on Name');				
+				}								
+			}					
+		}		
+	}	
+}
+
+
+class ET_List extends et_CRUDObject {		
 	function __construct() {	
 		$this->obj = "List";
 	}	
 }
 
-class et_SentEvent extends et_GetObject {		
+class ET_SentEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "SentEvent";
 	}	
 }
 
-class et_OpenEvent extends et_GetObject {		
+class ET_OpenEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "OpenEvent";
 	}	
 }
 
-class et_BounceEvent extends et_GetObject {		
+class ET_BounceEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "BounceEvent";
 	}	
 }
 
-class et_UnsubEvent extends et_GetObject {		
+class ET_UnsubEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "UnsubEvent";
 	}	
 }
 
-class et_ClickEvent extends et_GetObject {		
+class ET_ClickEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "ClickEvent";
 	}	
 }
 
-class et_TriggeredSend extends et_CRUDObject {
+class ET_TriggeredSend extends et_CRUDObject {
 	public  $subscribers;
 	function __construct() {	
 		$this->obj = "TriggeredSendDefinition";
