@@ -21,6 +21,11 @@ try {
 	//print_r($getResult->results);
 	print "\n---------------\n";
 
+	// Specify a name for the data extension that will be used for testing 
+	// Note: Name and CustomerKey will be the same value
+	// WARNING: Data Extension will be deleted so don't use the name of a
+	// production data extension 
+	
 	$DataExtensionNameForTesting = "PHPSDKTestDE";
 
 	// Create a Data Extension
