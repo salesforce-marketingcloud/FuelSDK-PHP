@@ -3,7 +3,8 @@ require('soap-wsse.php');
 require('JWT.php');
 
 class ETClient extends SoapClient {
-	private $authToken, $authTokenExpiration, $internalAuthToken, $wsdlLoc, 
+	public $authToken;
+	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
 			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
 		
 	function __construct($getWSDL, $params = null) {	
@@ -112,19 +113,18 @@ class ETClient extends SoapClient {
 	}
 	
 	function GetLastModifiedDate($remotepath) {
-			$curl = curl_init($remotepath);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-			curl_setopt($curl, CURLOPT_NOBODY, true);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($curl, CURLOPT_FILETIME, true);
-			
-			$result = curl_exec($curl);
-			
-			if ($result === false) {
-				die (curl_error($curl)); 
-			}
-			
-			return curl_getinfo($curl, CURLINFO_FILETIME);
+		$curl = curl_init($remotepath);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_NOBODY, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_FILETIME, true);
+		$result = curl_exec($curl);
+		
+		if ($result === false) {
+			die (curl_error($curl)); 
+		}
+		
+		return curl_getinfo($curl, CURLINFO_FILETIME);
 		
 	}
 				
@@ -160,23 +160,32 @@ class ETClient extends SoapClient {
 
 class et_Constructor {
 	public $status, $code, $message, $results, $request_id, $moreResults;	
-	function __construct($soapresponse, $httpcode) {
+	function __construct($requestresponse, $httpcode, $restcall = false) {
 		
 		$this->code = $httpcode;
-			
-		if(is_soap_fault($soapresponse)) {
-			$this->status = false;
-			$this->message = "SOAP Fault: (faultcode: {$soapresponse->faultcode}, faultstring: {$soapresponse->faultstring})";
-			$this->message = "{$soapresponse->faultcode} {$soapresponse->faultstring})";
+		
+		if (!$restcall) {
+			if(is_soap_fault($requestresponse)) {
+				$this->status = false;
+				$this->message = "SOAP Fault: (faultcode: {$requestresponse->faultcode}, faultstring: {$requestresponse->faultstring})";
+				$this->message = "{$requestresponse->faultcode} {$requestresponse->faultstring})";
+			} else {
+				$this->status = true;
+			}
 		} else {
-			$this->status = true;
+			if ($this->code != 200) {
+				$this->status = false;
+			} else {
+				$this->status = true;
+			}
+
+			if (json_decode($requestresponse) != null){
+				$this->results = json_decode($requestresponse);
+			} else  {
+				$this->message = $requestresponse;
+			}						
 		}
 	}
-	/*
-	function __construct() {
-		$this->status = false;
-	}
-	*/
 }
 
 class et_Get extends et_Constructor {
@@ -418,9 +427,182 @@ class et_Delete extends et_Constructor {
 	}
 }
 
+class et_GetObjectRest extends et_BaseObjectRest{	
+	public function get() {
+		$completeURL = $this->endpoint;
+		$additionalQS = array();
+		
+		if (!is_null($this->props)) {
+			foreach ($this->props as $key => $value){
+				if (in_array($key,$this->urlProps)){
+					$completeURL = str_replace("{{$key}}",$value,$completeURL);					
+				} else {
+					$additionalQS[$key] = $value;
+				}
+			}				
+		}
+		
+		foreach($this->urlPropsRequired as $value){
+			if (is_null($this->props) || in_array($value,$this->props)){
+				throw new Exception("Unable to process request due to missing required prop: {$value}");							
+			}
+		}
+		
+		// Clean up not required URL parameters
+		foreach ($this->urlProps as $value){
+			$completeURL = str_replace("{{$value}}","",$completeURL);								
+		}
+		
+		$additionalQS["access_token"] = $this->authStub->authToken;
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "{$completeURL}?{$queryString}";
+		$response = new et_GetRest($this->authStub, $completeURL, $queryString);				
+
+		return $response;
+	}
+}
+
+class et_CRUDObjectRest extends et_GetObjectRest{	
+	public function post() {
+		$completeURL = $this->endpoint;
+		$additionalQS = array();
+		
+		if (!is_null($this->props)) {
+			foreach ($this->props as $key => $value){
+				if (in_array($key,$this->urlProps)){
+					$completeURL = str_replace("{{$key}}",$value,$completeURL);					
+				} 
+			}				
+		}
+		
+		foreach($this->urlPropsRequired as $value){
+			if (is_null($this->props) || in_array($value,$this->props)){
+				throw new Exception("Unable to process request due to missing required prop: {$value}");							
+			}
+		}
+		
+		// Clean up not required URL parameters
+		foreach ($this->urlProps as $value){
+			$completeURL = str_replace("{{$value}}","",$completeURL);								
+		}
+		
+		$additionalQS["access_token"] = $this->authStub->authToken;
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "{$completeURL}?{$queryString}";
+		$response = new et_PostRest($this->authStub, $completeURL, $this->props);				
+		
+		return $response;
+	}
+	
+	public function patch() {
+		$completeURL = $this->endpoint;
+		$additionalQS = array();
+		
+		// All URL Props are required when doing Delete	
+		foreach($this->urlProps as $value){
+			if (is_null($this->props) || in_array($value,$this->props)){
+				throw new Exception("Unable to process request due to missing required prop: {$value}");							
+			}
+		}
+		
+		if (!is_null($this->props)) {
+			foreach ($this->props as $key => $value){
+				if (in_array($key,$this->urlProps)){
+					$completeURL = str_replace("{{$key}}",$value,$completeURL);					
+				} 
+			}				
+		}
+		$additionalQS["access_token"] = $this->authStub->authToken;
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "{$completeURL}?{$queryString}";
+		$response = new et_PatchRest($this->authStub, $completeURL, $this->props);				
+		
+		return $response;
+	}
+	
+	public function delete() {
+		$completeURL = $this->endpoint;
+		$additionalQS = array();
+		
+		// All URL Props are required when doing Delete	
+		foreach($this->urlProps as $value){
+			if (is_null($this->props) || in_array($value,$this->props)){
+				throw new Exception("Unable to process request due to missing required prop: {$value}");							
+			}
+		}
+		
+		if (!is_null($this->props)) {
+			foreach ($this->props as $key => $value){
+				if (in_array($key,$this->urlProps)){
+					$completeURL = str_replace("{{$key}}",$value,$completeURL);					
+				} 
+			}				
+		}
+		$additionalQS["access_token"] = $this->authStub->authToken;
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "{$completeURL}?{$queryString}";
+		$response = new et_DeleteRest($this->authStub, $completeURL);				
+		
+		return $response;
+	}
+}
+
+class et_GetRest extends et_Constructor {
+	function __construct($authStub, $url, $qs = null) {
+		$restResponse = restGet($url);			
+		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
+	}
+}
+
+class et_PostRest extends et_Constructor {
+	function __construct($authStub, $url, $props) {			
+		$restResponse = restPost($url, json_encode($props));			
+		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
+	}
+}
+
+class et_DeleteRest extends et_Constructor {
+	function __construct($authStub, $url) {	
+		$restResponse = restDelete($url);			
+		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
+	}
+}
+
+class et_PatchRest extends et_Constructor {
+	function __construct($authStub, $url, $props) {	
+		print_r($url);
+		print_r($props);
+		$restResponse = restPatch($url, json_encode($props));			
+		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
+	}
+}
+
+class ET_Campaign extends et_CRUDObjectRest {
+	function __construct() {	
+		$this->endpoint = "https://www.exacttargetapis.com/hub/v1/campaigns/{id}";		
+		$this->urlProps = array("id");
+		$this->urlPropsRequired = array();
+	}
+}
+
+class ET_Campaign_Asset extends et_CRUDObjectRest {
+	function __construct() {	
+		$this->endpoint = "https://www.exacttargetapis.com/hub/v1/campaigns/{id}/assets/{assetId}";		
+		$this->urlProps = array("id", "assetId");
+		$this->urlPropsRequired = array("id");
+	}
+}
+
+
+
 class et_BaseObject {
 	public  $authStub, $props, $filter;
-	protected $obj, $lastRequestID;	
+	protected $obj, $lastRequestID;
+}
+
+class et_BaseObjectRest {
+	public  $authStub, $props;
+	protected  $endpoint, $urlProps, $urlPropsRequired;
 }
 
 class et_GetObject extends et_BaseObject{
@@ -636,6 +818,12 @@ class ET_ContentArea extends et_CRUDObject {
 	}	
 }
 
+class ET_Email extends et_CRUDObject {		
+	function __construct() {	
+		$this->obj = "Email";
+	}	
+}
+
 class ET_List extends et_CRUDObject {		
 	function __construct() {	
 		$this->obj = "List";
@@ -796,11 +984,10 @@ function restDelete($url) {
 	// Set CustomRequest up for Delete	
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
 	
-	$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);	
+	$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);	
 	
 	$outputJSON = curl_exec($ch);
-	
-	$outputJSON = curl_exec($ch);
+
 	$responseObject = new stdClass(); 
 	$responseObject->body = $outputJSON;
 	$responseObject->httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
