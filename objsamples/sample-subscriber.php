@@ -15,13 +15,13 @@ try {
 	$subCreate = new ET_Subscriber();
 	$subCreate->authStub = $myclient;
 	$subCreate->props = array("EmailAddress" => $SubscriberTestEmail);
-	$createResult = $subCreate->post();
-	print_r('Post Status: '.($createResult->status ? 'true' : 'false')."\n");
-	print 'Code: '.$createResult->code."\n";
-	print 'Message: '.$createResult->message."\n";	
-	print 'Results Length: '. count($createResult->results)."\n";
+	$postResult = $subCreate->post();
+	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
+	print 'Code: '.$postResult->code."\n";
+	print 'Message: '.$postResult->message."\n";	
+	print 'Results Length: '. count($postResult->results)."\n";
 	print 'Results: '."\n";
-	print_r($createResult->results);
+	print_r($postResult->results);
 	print "\n---------------\n";
 
 	// Retrieve newly created Subscriber

@@ -830,6 +830,12 @@ class ET_List extends et_CRUDObject {
 	}	
 }
 
+class ET_List_Subscriber extends et_GetObject {		
+	function __construct() {	
+		$this->obj = "ListSubscriber";
+	}	
+}
+
 class ET_SentEvent extends et_GetObject {		
 	function __construct() {	
 		$this->obj = "SentEvent";
