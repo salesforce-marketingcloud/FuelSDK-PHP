@@ -136,10 +136,8 @@ class ETClient extends SoapClient {
 		
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->internalAuthToken);
-		
-		
+				
 		$content = utf8_encode($objWSSE->saveXML());
-		//print_r($content);
 		$content_length = strlen($content); 
 		
 		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction);
@@ -189,7 +187,8 @@ class et_Constructor {
 }
 
 class et_Get extends et_Constructor {
-	function __construct($authStub, $objType, $props, $filter) {	
+	function __construct($authStub, $objType, $props, $filter) {
+		$authStub->refreshToken();
 		$rrm = array();
 		$request = array();
 		$retrieveRequest = array();
@@ -207,7 +206,7 @@ class et_Get extends et_Constructor {
 			}
 		}
 		
-		if ($props !== array_values($props)){
+		if (isAssoc($props)){
 			$retrieveProps = array();
 			foreach ($props as $key => $value){	
 				if (!is_array($value))
@@ -260,6 +259,7 @@ class et_Get extends et_Constructor {
 
 class et_Continue extends et_Constructor {	
 	function __construct($authStub, $request_id) {
+		$authStub->refreshToken();
 		$rrm = array(); 
 		$request = array(); 
 		$retrieveRequest = array(); 		
@@ -304,7 +304,8 @@ class et_Continue extends et_Constructor {
 }
 
 class et_Info extends et_Constructor {
-	function __construct($authStub, $objType) {	
+	function __construct($authStub, $objType) {
+		$authStub->refreshToken();
 		$drm = array(); 
 		$request = array(); 
 		$describeRequest = array(); 
@@ -328,7 +329,8 @@ class et_Info extends et_Constructor {
 }
 
 class et_Post extends et_Constructor {	
-	function __construct($authStub, $objType, $props = null) {					
+	function __construct($authStub, $objType, $props = null) {
+		$authStub->refreshToken();
 		$cr = array(); 
 		$objects = array(); 
 		$object = $props; 				
@@ -361,7 +363,8 @@ class et_Post extends et_Constructor {
 }
 
 class et_Patch extends et_Constructor {	
-	function __construct($authStub, $objType, $props) {				
+	function __construct($authStub, $objType, $props) {	
+		$authStub->refreshToken();	
 		$cr = array(); 
 		$objects = array(); 
 		$object = $props; 				
@@ -395,7 +398,7 @@ class et_Patch extends et_Constructor {
 
 class et_Delete extends et_Constructor {	
 	function __construct($authStub, $objType, $props) {	
-	
+		$authStub->refreshToken();
 		$cr = array(); 
 		$objects = array(); 
 		$object = $props; 				
@@ -549,13 +552,15 @@ class et_CRUDObjectRest extends et_GetObjectRest{
 
 class et_GetRest extends et_Constructor {
 	function __construct($authStub, $url, $qs = null) {
+		$authStub->refreshToken();
 		$restResponse = restGet($url);			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
 class et_PostRest extends et_Constructor {
-	function __construct($authStub, $url, $props) {			
+	function __construct($authStub, $url, $props) {
+		$authStub->refreshToken();
 		$restResponse = restPost($url, json_encode($props));			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
@@ -563,15 +568,15 @@ class et_PostRest extends et_Constructor {
 
 class et_DeleteRest extends et_Constructor {
 	function __construct($authStub, $url) {	
+		$authStub->refreshToken();
 		$restResponse = restDelete($url);			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
 class et_PatchRest extends et_Constructor {
-	function __construct($authStub, $url, $props) {	
-		print_r($url);
-		print_r($props);
+	function __construct($authStub, $url, $props) {
+		$authStub->refreshToken();
 		$restResponse = restPatch($url, json_encode($props));			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
@@ -674,7 +679,6 @@ class ET_DataExtension extends et_CRUDObject {
 		foreach ($this->columns as $column){
 			array_push($this->props['Fields']['Field'], $column);
 		}	
-		print_r($this->props);
 		$response = parent::patch();		
 		unset($this->props["Fields"]);		
 		return $response;
@@ -999,6 +1003,11 @@ function restDelete($url) {
 	$responseObject->httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	
 	return $responseObject;
+}
+
+function isAssoc($array)
+{
+    return ($array !== array_values($array));
 }
 
 ?>
