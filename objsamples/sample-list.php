@@ -1,11 +1,11 @@
 <?php
 
-require('../ETClient.php');
+require('../ET_Client.php');
 try {
 	
 	$NewListName = "RubySDKList";
 	$params = array();		
-	$myclient = new ETClient(true, $params);
+	$myclient = new ET_Client(true, $params);
 
 	// Retrieve All List with GetMoreResults
 	print "Retrieve All List with GetMoreResults \n";

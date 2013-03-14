@@ -1,6 +1,6 @@
 <?php
 
-require('../ETClient.php');
+require('../ET_Client.php');
 try {
 	
 	// NOTE: These examples only work in accounts where the SubscriberKey functionality is not enabled
@@ -9,7 +9,7 @@ try {
 	$NewListName = "PHPSDKListSubscriber";
 	$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
 	$params = array();		
-	$myclient = new ETClient(true, $params);
+	$myclient = new ET_Client(true, $params);
 
 	
 	// Create List

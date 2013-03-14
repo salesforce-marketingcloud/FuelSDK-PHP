@@ -1,9 +1,9 @@
 <?php
 
-require('../ETClient.php');
+require('../ET_Client.php');
 try {	
 	$params = array();		
-	$myclient = new ETClient(true, $params);
+	$myclient = new ET_Client(true, $params);
 
 	// Retrieve All Email with GetMoreResults
 	print "Retrieve All Email with GetMoreResults \n";

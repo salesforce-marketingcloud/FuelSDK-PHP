@@ -1,9 +1,9 @@
 <?php
 
-require('../ETClient.php');
+require('../ET_Client.php');
 try {	
 	$params = array();		
-	$myclient = new ETClient(true, $params);
+	$myclient = new ET_Client(true, $params);
 
 	// NOTE: These examples only work in accounts where the SubscriberKey functionality is not enabled
 	//       SubscriberKey will need to be included in the props if that feature is enabled

@@ -1,6 +1,6 @@
 <?php
 
-require('../ETClient.php');
+require('../ET_Client.php');
 try {	
 
 	# In order for this sample to run, it needs to have an asset that it can associate the campaign to
@@ -8,13 +8,39 @@ try {
 	$ExampleAssetItemID = "1953114";
 	
 	$params = array();		
-	$myclient = new ETClient(true, $params);
+	$myclient = new ET_Client(true, $params);
+	
+	// Retrieve All Campaigns with GetMoreResults
+	print "Retrieve All Campaigns with GetMoreResults \n";
+	$getCamp = new ET_Campaign();
+	$getCamp->authStub = $myclient;
+	$getResult = $getCamp->get();
+	print_r('Get Status: '.($getResult->status ? 'true' : 'false')."\n");
+	print 'Code: '.$getResult->code."\n";
+	print 'Message: '.$getResult->message."\n";
+	print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
+	print 'Results Length(Items): '. count($getResult->results->items)."\n";
+	//print 'Results: "\n"';
+	//print_r($getResult->results);
+	print "\n---------------\n";
+	
+	
+	while ($getResult->moreResults) {
+		print "Continue Retrieve All Campaigns with GetMoreResults \n";
+		$getResult = $getCamp->GetMoreResults();
+		print_r('Get Status: '.($getResult->status ? 'true' : 'false')."\n");
+		print 'Code: '.$getResult->code."\n";
+		print 'Message: '.$getResult->message."\n";
+		print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
+		print 'Results Length(Items): '. count($getResult->results->items)."\n";
+		print "\n---------------\n";
+	}	 
 
 	// Create a new Campaign
 	print "Create a new Campaign \n";
 	$postCamp = new ET_Campaign();
 	$postCamp->authStub = $myclient;
-	$postCamp->props = array("name" => "MAC9093", "description"=> "PHPSDKCreatedForTest", "color"=>"FF9933", "favorite"=>"false");	
+	$postCamp->props = array("name" => "SampleCampaignForPHPSDK4", "description"=> "SampleCampaignForPHPSDK", "color"=>"FF9933", "favorite"=>"false");	
 	$postResponse = $postCamp->Post();
 	print_r('Post Status: '.($postResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResponse->code."\n";
@@ -24,6 +50,7 @@ try {
 	print_r($postResponse->results);
 	print "\n---------------\n";
 
+	
 
 	if ($postResponse->status) {
 		
@@ -43,6 +70,7 @@ try {
 		print_r($getResult->results);
 		print "\n---------------\n";	
 		
+		
 		// Update a Campaign
 		print "Update a Campaign \n";
 		$patchCamp = new ET_Campaign();
@@ -56,6 +84,7 @@ try {
 		print 'Results: '."\n";
 		print_r($patchResponse->results);
 		print "\n---------------\n";
+		
 		
 		// Retrieve the updated Campaign
 		print "Retrieve the updated Campaign \n";
@@ -85,49 +114,52 @@ try {
 		print_r($postResponse->results);
 		print "\n---------------\n";
 		
-		$IDOfpostCampaignAsset = $postResponse->results[0]->id;
 		
-		// Retrieve all Campaign Asset for a campaign
-		print "Retrieve all Campaign Asset for a campaign \n";
-		$getCampAsset = new ET_Campaign_Asset();
-		$getCampAsset->authStub = $myclient;
-		$getCampAsset->props = array("id" => $IDOfpostCampaign);	
-		$getResult = $getCampAsset->Get();
-		print_r('Retrieve Status: '.($getResult->status ? 'true' : 'false')."\n");
-		print 'Code: '.$getResult->code."\n";
-		print 'Message: '.$getResult->message."\n";
-		print 'Results Length: '. count($getResult->results)."\n";
-		print 'Results: '."\n";
-		print_r($getResult->results);
-		print "\n---------------\n";	
-		
-		// Retrieve a single new Campaign Asset
-		print "Retrieve a single new Campaign Asset \n";
-		$getCampAsset = new ET_Campaign_Asset();
-		$getCampAsset->authStub = $myclient;
-		$getCampAsset->props = array("id" => $IDOfpostCampaign, "assetId" => $IDOfpostCampaignAsset);	
-		$getResult = $getCampAsset->Get();
-		print_r('Retrieve Status: '.($getResult->status ? 'true' : 'false')."\n");
-		print 'Code: '.$getResult->code."\n";
-		print 'Message: '.$getResult->message."\n";
-		print 'Results Length: '. count($getResult->results)."\n";
-		print 'Results: '."\n";
-		print_r($getResult->results);
-		print "\n---------------\n";
-		
-		//Delete the new Campaign Asset
-		print "Delete the new Campaign Asset\n";
-		$deleteCampAsset = new ET_Campaign_Asset();
-		$deleteCampAsset->authStub = $myclient;
-		$deleteCampAsset->props = array("id" => $IDOfpostCampaign, "assetId" => $IDOfpostCampaignAsset);	
-		$deleteResult = $deleteCampAsset->Delete();
-		print_r('Delete Status: '.($deleteResult->status ? 'true' : 'false')."\n");
-		print 'Code: '.$deleteResult->code."\n";
-		print 'Message: '.$deleteResult->message."\n";
-		print 'Results Length: '. count($deleteResult->results)."\n";
-		print 'Results: '."\n";
-		print_r($deleteResult->results);
-		print "\n---------------\n";	
+		if  ($postResponse->status){
+			$IDOfpostCampaignAsset = $postResponse->results[0]->id;
+			
+			// Retrieve all Campaign Asset for a campaign
+			print "Retrieve all Campaign Asset for a campaign \n";
+			$getCampAsset = new ET_Campaign_Asset();
+			$getCampAsset->authStub = $myclient;
+			$getCampAsset->props = array("id" => $IDOfpostCampaign);	
+			$getResult = $getCampAsset->Get();
+			print_r('Retrieve Status: '.($getResult->status ? 'true' : 'false')."\n");
+			print 'Code: '.$getResult->code."\n";
+			print 'Message: '.$getResult->message."\n";
+			print 'Results Length: '. count($getResult->results)."\n";
+			print 'Results: '."\n";
+			print_r($getResult->results);
+			print "\n---------------\n";	
+			
+			// Retrieve a single new Campaign Asset
+			print "Retrieve a single new Campaign Asset \n";
+			$getCampAsset = new ET_Campaign_Asset();
+			$getCampAsset->authStub = $myclient;
+			$getCampAsset->props = array("id" => $IDOfpostCampaign, "assetId" => $IDOfpostCampaignAsset);	
+			$getResult = $getCampAsset->Get();
+			print_r('Retrieve Status: '.($getResult->status ? 'true' : 'false')."\n");
+			print 'Code: '.$getResult->code."\n";
+			print 'Message: '.$getResult->message."\n";
+			print 'Results Length: '. count($getResult->results)."\n";
+			print 'Results: '."\n";
+			print_r($getResult->results);
+			print "\n---------------\n";
+			
+			//Delete the new Campaign Asset
+			print "Delete the new Campaign Asset\n";
+			$deleteCampAsset = new ET_Campaign_Asset();
+			$deleteCampAsset->authStub = $myclient;
+			$deleteCampAsset->props = array("id" => $IDOfpostCampaign, "assetId" => $IDOfpostCampaignAsset);	
+			$deleteResult = $deleteCampAsset->Delete();
+			print_r('Delete Status: '.($deleteResult->status ? 'true' : 'false')."\n");
+			print 'Code: '.$deleteResult->code."\n";
+			print 'Message: '.$deleteResult->message."\n";
+			print 'Results Length: '. count($deleteResult->results)."\n";
+			print 'Results: '."\n";
+			print_r($deleteResult->results);
+			print "\n---------------\n";	
+			}
 		
 		// Delete a Campaign
 		print "Delete a Campaign \n";

@@ -2,7 +2,7 @@
 require('soap-wsse.php');
 require('JWT.php');
 
-class ETClient extends SoapClient {
+class ET_Client extends SoapClient {
 	public $authToken;
 	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
 			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
@@ -47,22 +47,20 @@ class ETClient extends SoapClient {
 	}
 	
 	function refreshToken() {
-		
 		try {							
-			$currentTime = new DateTime();			
-			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') > 5) ){
-				
+			$currentTime = new DateTime();
+			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') < 5) ){
 				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
-				$jsonRequest->clientSecret = $this->clientSecret;
-				$jsonRequest->accessType = "offline";
+				$jsonRequest->clientSecret = $this->clientSecret;	
+				$jsonRequest->accessType = "offline";				
 				if (!is_null($this->refreshKey)){
 					$jsonRequest->refreshToken = $this->refreshKey;
-				}
+				}			
 				
 				$authResponse = restPost($url, json_encode($jsonRequest));
-				$authObject = json_decode($authResponse->body);				
+				$authObject = json_decode($authResponse->body);
 				
 				if ($authResponse && property_exists($authObject,"accessToken")){		
 					
@@ -79,7 +77,6 @@ class ETClient extends SoapClient {
 		} catch (Exception $e) {
 			throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.: '.$e->getMessage());
 		}
-		
 	}
 	
 	function __getLastResponseHTTPCode(){
@@ -103,7 +100,7 @@ class ETClient extends SoapClient {
 			}
 			
 			if ($getNewWSDL){
-				$newWSDL = file_get_contents($wsdlLoc);
+				$newWSDL = file_gET_contents($wsdlLoc);
 				file_put_contents("ExactTargetWSDL.xml", $newWSDL);
 			}	
 		}
@@ -156,7 +153,7 @@ class ETClient extends SoapClient {
 	}
 }
 
-class et_Constructor {
+class ET_Constructor {
 	public $status, $code, $message, $results, $request_id, $moreResults;	
 	function __construct($requestresponse, $httpcode, $restcall = false) {
 		
@@ -186,7 +183,7 @@ class et_Constructor {
 	}
 }
 
-class et_Get extends et_Constructor {
+class ET_Get extends ET_Constructor {
 	function __construct($authStub, $objType, $props, $filter) {
 		$authStub->refreshToken();
 		$rrm = array();
@@ -196,7 +193,7 @@ class et_Get extends et_Constructor {
 		// If Props is not sent then Info will be used to find all retrievable properties
 		if (is_null($props)){	
 			$props = array();
-			$info = new et_Info($authStub, $objType);
+			$info = new ET_Info($authStub, $objType);
 			if (is_array($info->results)){	
 				foreach ($info->results as $property){	
 					if($property->IsRetrievable){	
@@ -257,7 +254,7 @@ class et_Get extends et_Constructor {
 	}
 }
 
-class et_Continue extends et_Constructor {	
+class ET_Continue extends ET_Constructor {	
 	function __construct($authStub, $request_id) {
 		$authStub->refreshToken();
 		$rrm = array(); 
@@ -303,7 +300,7 @@ class et_Continue extends et_Constructor {
 	}
 }
 
-class et_Info extends et_Constructor {
+class ET_Info extends ET_Constructor {
 	function __construct($authStub, $objType) {
 		$authStub->refreshToken();
 		$drm = array(); 
@@ -328,7 +325,7 @@ class et_Info extends et_Constructor {
 	}
 }
 
-class et_Post extends et_Constructor {	
+class ET_Post extends ET_Constructor {	
 	function __construct($authStub, $objType, $props = null) {
 		$authStub->refreshToken();
 		$cr = array(); 
@@ -362,7 +359,7 @@ class et_Post extends et_Constructor {
 	}
 }
 
-class et_Patch extends et_Constructor {	
+class ET_Patch extends ET_Constructor {	
 	function __construct($authStub, $objType, $props) {	
 		$authStub->refreshToken();	
 		$cr = array(); 
@@ -396,7 +393,7 @@ class et_Patch extends et_Constructor {
 	}
 }
 
-class et_Delete extends et_Constructor {	
+class ET_Delete extends ET_Constructor {	
 	function __construct($authStub, $objType, $props) {	
 		$authStub->refreshToken();
 		$cr = array(); 
@@ -430,8 +427,10 @@ class et_Delete extends et_Constructor {
 	}
 }
 
-class et_GetObjectRest extends et_BaseObjectRest{	
+class ET_GetSupportRest extends ET_BaseObjectRest{
+	protected $lastPageNumber;
 	public function get() {
+		$this->authStub->refreshToken();
 		$completeURL = $this->endpoint;
 		$additionalQS = array();
 		
@@ -454,19 +453,64 @@ class et_GetObjectRest extends et_BaseObjectRest{
 		// Clean up not required URL parameters
 		foreach ($this->urlProps as $value){
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
-		}
-		
+		}		
 		$additionalQS["access_token"] = $this->authStub->authToken;
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new et_GetRest($this->authStub, $completeURL, $queryString);				
+		$response = new ET_GetRest($this->authStub, $completeURL, $queryString);						
+		
+		if (property_exists($response->results, 'page')){
+			$this->lastPageNumber = $response->results->page;
+			$pageSize = $response->results->pageSize;
+			
+			$count = null;
+			if (property_exists($response->results, 'count')){
+				$count = $response->results->count;
+			} else if (property_exists($response->results, 'totalCount')){
+				$count = $response->results->totalCount;
+			}
 
+			if ($count && ($count > ($this->lastPageNumber * $pageSize))){
+				$response->moreResults = true;
+				print_r("Setting to true \n");
+			}
+		}
+
+		return $response;
+	}
+	
+	public function getMoreResults() {		
+	
+		$originalPageValue = 1;
+		$removePageFromProps = false;		
+		
+		if ($this->props && array_key_exists($this->props, '$page')) { 
+			$originalPageValue = $this->props['page'];
+		} else {
+			$removePageFromProps = true		;	
+		}
+		
+		if (!$this->props) { 
+			$this->props = array();
+		}
+		
+		$this->props['$page'] = $this->lastPageNumber + 1;
+	
+		$response = $this->get();
+		
+		if ($removePageFromProps) {
+			unset($this->props['$page']);
+		} else {
+			$this->props['$page'] = $originalPageValue;
+		}			
+		
 		return $response;
 	}
 }
 
-class et_CRUDObjectRest extends et_GetObjectRest{	
+class ET_CUDSupportRest extends ET_GetSupportRest{	
 	public function post() {
+		$this->authStub->refreshToken();
 		$completeURL = $this->endpoint;
 		$additionalQS = array();
 		
@@ -492,12 +536,13 @@ class et_CRUDObjectRest extends et_GetObjectRest{
 		$additionalQS["access_token"] = $this->authStub->authToken;
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new et_PostRest($this->authStub, $completeURL, $this->props);				
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);				
 		
 		return $response;
 	}
 	
 	public function patch() {
+		$this->authStub->refreshToken();
 		$completeURL = $this->endpoint;
 		$additionalQS = array();
 		
@@ -518,12 +563,13 @@ class et_CRUDObjectRest extends et_GetObjectRest{
 		$additionalQS["access_token"] = $this->authStub->authToken;
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new et_PatchRest($this->authStub, $completeURL, $this->props);				
+		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props);				
 		
 		return $response;
 	}
 	
 	public function delete() {
+		$this->authStub->refreshToken();
 		$completeURL = $this->endpoint;
 		$additionalQS = array();
 		
@@ -544,45 +590,42 @@ class et_CRUDObjectRest extends et_GetObjectRest{
 		$additionalQS["access_token"] = $this->authStub->authToken;
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new et_DeleteRest($this->authStub, $completeURL);				
+		$response = new ET_DeleteRest($this->authStub, $completeURL);				
 		
 		return $response;
 	}
 }
 
-class et_GetRest extends et_Constructor {
+class ET_GetRest extends ET_Constructor {
 	function __construct($authStub, $url, $qs = null) {
-		$authStub->refreshToken();
-		$restResponse = restGet($url);			
+		$restResponse = restGet($url);
+		$this->moreResults = false;
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
-class et_PostRest extends et_Constructor {
+class ET_PostRest extends ET_Constructor {
 	function __construct($authStub, $url, $props) {
-		$authStub->refreshToken();
 		$restResponse = restPost($url, json_encode($props));			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
-class et_DeleteRest extends et_Constructor {
+class ET_DeleteRest extends ET_Constructor {
 	function __construct($authStub, $url) {	
-		$authStub->refreshToken();
 		$restResponse = restDelete($url);			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
-class et_PatchRest extends et_Constructor {
+class ET_PatchRest extends ET_Constructor {
 	function __construct($authStub, $url, $props) {
-		$authStub->refreshToken();
 		$restResponse = restPatch($url, json_encode($props));			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
 
-class ET_Campaign extends et_CRUDObjectRest {
+class ET_Campaign extends ET_CUDSupportRest {
 	function __construct() {	
 		$this->endpoint = "https://www.exacttargetapis.com/hub/v1/campaigns/{id}";		
 		$this->urlProps = array("id");
@@ -590,7 +633,7 @@ class ET_Campaign extends et_CRUDObjectRest {
 	}
 }
 
-class ET_Campaign_Asset extends et_CRUDObjectRest {
+class ET_Campaign_Asset extends ET_CUDSupportRest {
 	function __construct() {	
 		$this->endpoint = "https://www.exacttargetapis.com/hub/v1/campaigns/{id}/assets/{assetId}";		
 		$this->urlProps = array("id", "assetId");
@@ -600,63 +643,63 @@ class ET_Campaign_Asset extends et_CRUDObjectRest {
 
 
 
-class et_BaseObject {
+class ET_BaseObject {
 	public  $authStub, $props, $filter;
 	protected $obj, $lastRequestID;
 }
 
-class et_BaseObjectRest {
+class ET_BaseObjectRest {
 	public  $authStub, $props;
 	protected  $endpoint, $urlProps, $urlPropsRequired;
 }
 
-class et_GetObject extends et_BaseObject{
+class ET_GetSupport extends ET_BaseObject{
 	
-	public function get() {		
-		$response = new et_Get($this->authStub, $this->obj, $this->props, $this->filter);
+	public function get() {
+		$response = new ET_Get($this->authStub, $this->obj, $this->props, $this->filter);
 		$this->lastRequestID = $response->request_id;		
 		return $response;
 	}
 	
-	public function getMoreResults() {		
-		$response = new et_Continue($this->authStub, $this->lastRequestID);
+	public function getMoreResults() {
+		$response = new ET_Continue($this->authStub, $this->lastRequestID);
 		$this->lastRequestID = $response->request_id;
 		return $response;
 	}
 	
-	public function info() {		
-		$response = new et_Info($this->authStub, $this->obj);
+	public function info() {
+		$response = new ET_Info($this->authStub, $this->obj);
 		return $response;
 	}	
 }
 
-class et_CRUDObject extends et_GetObject{
+class ET_CUDSupport extends ET_GetSupport{
 
-	public function post() {		
-		$response = new et_Post($this->authStub, $this->obj, $this->props);
+	public function post() {
+		$response = new ET_Post($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 
-	public function patch() {		
-		$response = new et_Patch($this->authStub, $this->obj, $this->props);
+	public function patch() {
+		$response = new ET_Patch($this->authStub, $this->obj, $this->props);
 		return $response;
 	}
 	
-	public function delete() {		
-		$response = new et_Delete($this->authStub, $this->obj, $this->props);
+	public function delete() {	
+		$response = new ET_Delete($this->authStub, $this->obj, $this->props);
 		return $response;
 	}	
 }
 
 
 
-class ET_Subscriber extends et_CRUDObject {		
+class ET_Subscriber extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "Subscriber";
 	}	
 }
 
-class ET_DataExtension extends et_CRUDObject {
+class ET_DataExtension extends ET_CUDSupport {
 	public  $columns;
 	function __construct() {	
 		$this->obj = "DataExtension";
@@ -685,7 +728,7 @@ class ET_DataExtension extends et_CRUDObject {
 	}
 }
 
-class ET_DataExtension_Column extends et_GetObject {
+class ET_DataExtension_Column extends ET_GetSupport {
 	function __construct() {	
 		$this->obj = "DataExtensionField";
 	}
@@ -708,7 +751,7 @@ class ET_DataExtension_Column extends et_GetObject {
 	}
 }
 
-class ET_DataExtension_Row extends et_CRUDObject {
+class ET_DataExtension_Row extends ET_CUDSupport {
 	public $Name, $CustomerKey;
 	function __construct() {	
 		$this->obj = "DataExtensionObject";
@@ -816,61 +859,61 @@ class ET_DataExtension_Row extends et_CRUDObject {
 	}	
 }
 
-class ET_ContentArea extends et_CRUDObject {		
+class ET_ContentArea extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "ContentArea";
 	}	
 }
 
-class ET_Email extends et_CRUDObject {		
+class ET_Email extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "Email";
 	}	
 }
 
-class ET_List extends et_CRUDObject {		
+class ET_List extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "List";
 	}	
 }
 
-class ET_List_Subscriber extends et_GetObject {		
+class ET_List_Subscriber extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "ListSubscriber";
 	}	
 }
 
-class ET_SentEvent extends et_GetObject {		
+class ET_SentEvent extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "SentEvent";
 	}	
 }
 
-class ET_OpenEvent extends et_GetObject {		
+class ET_OpenEvent extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "OpenEvent";
 	}	
 }
 
-class ET_BounceEvent extends et_GetObject {		
+class ET_BounceEvent extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "BounceEvent";
 	}	
 }
 
-class ET_UnsubEvent extends et_GetObject {		
+class ET_UnsubEvent extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "UnsubEvent";
 	}	
 }
 
-class ET_ClickEvent extends et_GetObject {		
+class ET_ClickEvent extends ET_GetSupport {		
 	function __construct() {	
 		$this->obj = "ClickEvent";
 	}	
 }
 
-class ET_TriggeredSend extends et_CRUDObject {
+class ET_TriggeredSend extends ET_CUDSupport {
 	public  $subscribers;
 	function __construct() {	
 		$this->obj = "TriggeredSendDefinition";
@@ -878,7 +921,7 @@ class ET_TriggeredSend extends et_CRUDObject {
 
 	public function Send() {
 		$tscall = array("TriggeredSendDefinition" => $this->props , "Subscribers" => $this->subscribers);
-		$response = new et_Post($this->authStub, "TriggeredSend", $tscall);
+		$response = new ET_Post($this->authStub, "TriggeredSend", $tscall);
 		return $response;
 	}
 }
