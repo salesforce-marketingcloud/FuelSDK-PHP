@@ -11,7 +11,7 @@ PHP Version 5.2.3
 
 Extensions:
 
-- mcyrpt
+- mcrypt
 - openssl
 - SOAP
 

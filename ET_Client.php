@@ -151,6 +151,44 @@ class ET_Client extends SoapClient {
 						
 		return $output;
 	}
+		
+	function AddSubscriberToList($emailAddress, $listIDs, $subscriberKey = null){		
+		$newSub = new ET_Subscriber;
+		$newSub->authStub = $this;
+		$lists = array();
+		
+		foreach ($listIDs as $key => $value){
+			$list[] = array("ID" => $value);
+		}
+		
+		$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
+		if ($subscriberKey != null ){
+			$newSub->props['SubscriberKey']  = $subscriberKey;
+		}
+		
+		// Try to add the subscriber
+		$postResponse = $newSub->post();
+		
+		if ($postResponse->status == false) { 
+			// If the subscriber already exists in the account then we need to do an update.
+			// Update Subscriber On List 
+			if ($postResponse->results[0]->ErrorCode == "12014") {
+				$patchResponse = $newSub->patch();
+				return $patchResponse;
+			}
+		} 
+		return $postResponse;
+	}
+	
+	function CreateDataExtensions($dataExtensionDefinitions){		
+		$newDEs = new ET_DataExtension();
+		$newDEs->authStub = $this;
+		
+		$newDEs->props = $dataExtensionDefinitions;
+		$postResponse = $newDEs->post();		
+		
+		return $postResponse;	
+	}
 }
 
 class ET_Constructor {
@@ -326,13 +364,22 @@ class ET_Info extends ET_Constructor {
 }
 
 class ET_Post extends ET_Constructor {	
-	function __construct($authStub, $objType, $props = null) {
+	function __construct($authStub, $objType, $props) {
 		$authStub->refreshToken();
 		$cr = array(); 
 		$objects = array(); 
-		$object = $props; 				
 		
-		$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+
+		
+		if (isAssoc($props)){
+			$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+		} else {
+			$objects["Objects"] = array();
+			foreach($props as $object){				
+				$objects["Objects"][] = new SoapVar($object, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+			}
+		}		
+		
 		$objects["Options"] = "";
 		$cr["CreateReqest"] = $objects;
 		
@@ -472,7 +519,6 @@ class ET_GetSupportRest extends ET_BaseObjectRest{
 
 			if ($count && ($count > ($this->lastPageNumber * $pageSize))){
 				$response->moreResults = true;
-				print_r("Setting to true \n");
 			}
 		}
 
@@ -705,15 +751,34 @@ class ET_DataExtension extends ET_CUDSupport {
 		$this->obj = "DataExtension";
 	}
 	
-	public function post() {				
-		$this->props["Fields"] = array("Field"=>array());		
-		if (!is_null($this->columns) && is_array($this->columns)){
-			foreach ($this->columns as $column){
-				array_push($this->props['Fields']['Field'], $column);
-			}	
+	public function post() {
+		
+		$originalProps = $this->props;
+		if (isAssoc($this->props)){			
+			$this->props["Fields"] = array("Field"=>array());		
+			if (!is_null($this->columns) && is_array($this->columns)){
+				foreach ($this->columns as $column){
+					array_push($this->props['Fields']['Field'], $column);
+				}	
+			}							
+		} else {
+			$newProps = array();
+			foreach ($this->props as $DE) {
+				$newDE = $DE;
+				$newDE["Fields"] = array("Field"=>array());
+				if (!is_null($DE['columns']) && is_array($DE['columns'])){
+					foreach ($DE['columns'] as $column){
+						array_push($newDE['Fields']['Field'], $column);
+					}						
+				}
+				array_push($newProps, $newDE);
+			}
+			$this->props = $newProps;					
 		}
-		$response = parent::post();		
-		unset($this->props["Fields"]);		
+		
+		$response = parent::post();
+		
+		$this->props = $originalProps;
 		return $response;
 	}
 	

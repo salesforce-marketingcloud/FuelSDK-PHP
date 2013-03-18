@@ -3,7 +3,7 @@
 require('../ET_Client.php');
 try {
 	
-	$NewListName = "RubySDKList";
+	$NewListName = "PHPSDKList";
 	$params = array();		
 	$myclient = new ET_Client(true, $params);
 
@@ -37,7 +37,7 @@ try {
 	print "Create List \n";
 	$postContent = new ET_List();
 	$postContent->authStub = $myclient;
-	$postContent->props = array("ListName" => $NewListName, "Description" => "This list was created with the RubySDK", "Type" => "Private");
+	$postContent->props = array("ListName" => $NewListName, "Description" => "This list was created with the PHPSDK", "Type" => "Private");
 	$postResponse = $postContent->post();
 	print_r('Post Status: '.($postResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResponse->code."\n";
@@ -71,7 +71,7 @@ try {
 		print "Update the List \n";
 		$patchList = new ET_List();
 		$patchList->authStub = $myclient;
-		$patchList->props = array("ID" => $newListID,  "Description"=>"This list was created with the RubySDK!!!");
+		$patchList->props = array("ID" => $newListID,  "Description"=>"This list was created with the PHPSDK!!!");
 		$patchResult = $patchList->patch();
 		print_r('Patch Status: '.($patchResult->status ? 'true' : 'false')."\n");
 		print 'Code: '.$patchResult->code."\n";
