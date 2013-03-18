@@ -7,7 +7,7 @@ class ET_Client extends SoapClient {
 	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
 			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
 		
-	function __construct($getWSDL, $params = null) {	
+	function __construct($getWSDL = false, $params = null) {	
 		$config = include 'config.php';
 		$this->wsdlLoc = $config['defaultwsdl'];
 		$this->clientId = $config['clientid'];
