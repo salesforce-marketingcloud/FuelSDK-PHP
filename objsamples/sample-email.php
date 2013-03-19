@@ -35,7 +35,7 @@ try {
 	print "Create Email \n";
 	$postEmail = new ET_Email();
 	$postEmail->authStub = $myclient;
-	$postEmail->props = array("CustomerKey" => $NameOfTestEmail, "Name"=>$NameOfTestEmail, "Subject"=>"Created with the SDK",  "HTMLBody"=> "<b>Some HTML Goes here</b>");
+	$postEmail->props = array("CustomerKey" => $NameOfTestEmail, "Name"=>$NameOfTestEmail, "Subject"=>"Created with the SDK",  "HTMLBody"=> "<b>Some HTML Goes here</b>",  "EmailType" => "HTML", "IsHTMLPaste" => "true");
 	$postResult = $postEmail->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";
