@@ -256,7 +256,16 @@ class ET_Get extends ET_Constructor {
 		
 		$retrieveRequest["ObjectType"] = $objType;
 		if ($filter){
-			$retrieveRequest["Filter"] = new SoapVar($filter, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+			if (array_key_exists("LogicalOperator",$filter )){				
+				$cfp = new stdClass();
+				$cfp->LeftOperand = new SoapVar($filter["LeftOperand"], SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+				$cfp->RightOperand = new SoapVar($filter["RightOperand"], SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");				
+				$cfp->LogicalOperator = $filter["LogicalOperator"];
+				$retrieveRequest["Filter"] = new SoapVar($cfp, SOAP_ENC_OBJECT, 'ComplexFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+				
+			} else {
+				$retrieveRequest["Filter"] = new SoapVar($filter, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
+			}
 		}
 		$request["RetrieveRequest"] = $retrieveRequest;
 		$rrm["RetrieveRequestMsg"] = $request;
@@ -927,6 +936,12 @@ class ET_DataExtension_Row extends ET_CUDSupport {
 class ET_ContentArea extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "ContentArea";
+	}	
+}
+
+class ET_Folder extends ET_CUDSupport {		
+	function __construct() {	
+		$this->obj = "DataFolder";
 	}	
 }
 
