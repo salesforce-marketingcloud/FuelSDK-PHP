@@ -7,15 +7,15 @@ try {
 	
 	## Example using CreateDataExtensions() method
 	
-	# Declare an associative array which contain all of the details for a DataExtension
+	// Declare an associative array which contain all of the details for a DataExtension
 	$deOne = array("Name" => "HelperDEOne","CustomerKey" => "HelperDEOne");
 	$deOne['columns'] = array(array("Name" => "Name", "FieldType" => "Text", "IsPrimaryKey" => "true", "MaxLength" => "100", "IsRequired" => "true"),array("Name" => "OtherField", "FieldType" => "Text"));
 	
-	# Declare a 2nd array which contain all of the details for a DataExtension
+	// Declare a 2nd array which contain all of the details for a DataExtension
 	$deTwo = array("Name" => "HelperDETwo","CustomerKey" => "HelperDETwo");
 	$deTwo['columns'] = array( array("Name" => "Name", "FieldType" => "Text", "IsPrimaryKey" => "true", "MaxLength" => "100", "IsRequired" => "true"),array("Name" => "OtherField", "FieldType" => "Text"));
 	
-	# Call CreateDataExtensions passing in both DataExtension arrays
+	// Call CreateDataExtensions passing in both DataExtension arrays
 	$response = $myclient->CreateDataExtensions(array($deOne, $deTwo));
 	print_r('Response Status: '.($response->status ? 'true' : 'false')."\n");
 	print 'Code: '.$response->code."\n";
