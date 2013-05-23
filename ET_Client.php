@@ -37,7 +37,7 @@ class ET_Client extends SoapClient {
 			if ($endpointResponse && property_exists($endpointObject,"url")){		
 				$this->endpoint = $endpointObject->url;			
 			} else {
-				throw new Exception('Unable to determine stack using /platform/v1/tokenContext:'.$endpointResponse );			
+				throw new Exception('Unable to determine stack using /platform/v1/tokenContext:'.$endpointResponse->body);			
 			}
 			} catch (Exception $e) {
 			throw new Exception('Unable to determine stack using /platform/v1/tokenContext: '.$e->getMessage());
