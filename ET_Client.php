@@ -3,7 +3,7 @@ require('soap-wsse.php');
 require('JWT.php');
 
 class ET_Client extends SoapClient {
-	public $authToken;
+	public $authToken, $packageName, $packageFolders, $parentFolders;
 	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
 			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
 		
@@ -26,8 +26,8 @@ class ET_Client extends SoapClient {
 			$newexpTime = new DateTime();
 			$this->authTokenExpiration = $newexpTime->add($dv);	
 			$this->refreshKey = $decodedJWT->request->user->refreshToken;
+			$this->packageName = $decodedJWT->request->application->package;
 		}		
-		
 		$this->refreshToken();
 
 		try {
@@ -47,18 +47,24 @@ class ET_Client extends SoapClient {
 	}
 	
 	function refreshToken() {
-		try {							
+		try {
 			$currentTime = new DateTime();
-			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') < 5) ){
+			if (is_null($this->authTokenExpiration)){
+				$timeDiff = 0;
+			} else {
+				$timeDiff = $currentTime->diff($this->authTokenExpiration)->format('%i');
+				$timeDiff = $timeDiff  + (60 * $currentTime->diff($this->authTokenExpiration)->format('%H'));
+			}
+
+			if (is_null($this->authToken) || ($timeDiff < 5) ){
 				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
 				$jsonRequest->clientSecret = $this->clientSecret;	
-				$jsonRequest->accessType = "offline";				
+				$jsonRequest->accessType = "offline";
 				if (!is_null($this->refreshKey)){
 					$jsonRequest->refreshToken = $this->refreshKey;
-				}			
-				
+				}
 				$authResponse = restPost($url, json_encode($jsonRequest));
 				$authObject = json_decode($authResponse->body);
 				
@@ -71,7 +77,7 @@ class ET_Client extends SoapClient {
 					$this->authTokenExpiration = $newexpTime->add($dv);	
 					$this->refreshKey = $authObject->refreshToken;
 				} else {
-					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse );			
+					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse->body );			
 				}				
 			}
 		} catch (Exception $e) {
@@ -96,7 +102,7 @@ class ET_Client extends SoapClient {
 				if ($remoteTS <= $localTS) 
 				{
 					$getNewWSDL = false;
-				}		
+				}
 			}
 			
 			if ($getNewWSDL){
@@ -122,7 +128,6 @@ class ET_Client extends SoapClient {
 		}
 		
 		return curl_getinfo($curl, CURLINFO_FILETIME);
-		
 	}
 				
 	function __doRequest($request, $location, $saction, $version) {
@@ -130,7 +135,6 @@ class ET_Client extends SoapClient {
 		$doc->loadXML($request);
 		
 		$objWSSE = new WSSESoap($doc);
-		
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->internalAuthToken);
 				
@@ -145,6 +149,7 @@ class ET_Client extends SoapClient {
 		curl_setopt ($ch, CURLOPT_POSTFIELDS, $content);
 		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_USERAGENT, "FuelSDK-PHP-v0.9");
 		$output = curl_exec($ch);
 		$this->lastHTTPCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch); 
@@ -158,7 +163,7 @@ class ET_Client extends SoapClient {
 		$lists = array();
 		
 		foreach ($listIDs as $key => $value){
-			$list[] = array("ID" => $value);
+			$lists[] = array("ID" => $value);
 		}
 		
 		$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
@@ -222,7 +227,7 @@ class ET_Constructor {
 }
 
 class ET_Get extends ET_Constructor {
-	function __construct($authStub, $objType, $props, $filter) {
+	function __construct($authStub, $objType, $props, $filter, $getSinceLastBatch = false) {
 		$authStub->refreshToken();
 		$rrm = array();
 		$request = array();
@@ -267,6 +272,11 @@ class ET_Get extends ET_Constructor {
 				$retrieveRequest["Filter"] = new SoapVar($filter, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
 			}
 		}
+		if ($getSinceLastBatch) {
+			$retrieveRequest["RetrieveAllSinceLastBatch"] = true;
+		}
+		
+		
 		$request["RetrieveRequest"] = $retrieveRequest;
 		$rrm["RetrieveRequestMsg"] = $request;
 		
@@ -348,7 +358,7 @@ class ET_Continue extends ET_Constructor {
 }
 
 class ET_Info extends ET_Constructor {
-	function __construct($authStub, $objType) {
+	function __construct($authStub, $objType, $extended = false) {
 		$authStub->refreshToken();
 		$drm = array(); 
 		$request = array(); 
@@ -364,7 +374,14 @@ class ET_Info extends ET_Constructor {
 		
 		if ($this->status){
 			if (property_exists($return->ObjectDefinition, "Properties")){
-				$this->results = $return->ObjectDefinition->Properties;				
+
+				if (extended) {
+//					@results = @@body[:definition_response_msg][:object_definition][:extended_properties][:extended_property]
+					$this->results = $return->ObjectDefinition->ExtendedProperties->ExtendedProperty;
+				}
+				else {
+					$this->results = $return->ObjectDefinition->Properties;
+				}
 			} else {
 				$this->status = false;				
 			}
@@ -373,12 +390,10 @@ class ET_Info extends ET_Constructor {
 }
 
 class ET_Post extends ET_Constructor {	
-	function __construct($authStub, $objType, $props) {
+	function __construct($authStub, $objType, $props, $upsert = false) {
 		$authStub->refreshToken();
 		$cr = array(); 
 		$objects = array(); 
-		
-
 		
 		if (isAssoc($props)){
 			$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
@@ -389,7 +404,12 @@ class ET_Post extends ET_Constructor {
 			}
 		}		
 		
-		$objects["Options"] = "";
+		
+		if ($upsert) {
+			$objects["Options"] = array('SaveOptions' => array('SaveOption' => array('PropertyName' => '*', 'SaveAction' => 'UpdateAdd' )));
+		} else {
+			$objects["Options"] = "";
+		}
 		$cr["CreateReqest"] = $objects;
 		
 		$return = $authStub->__soapCall("Create", $cr, null, null , $out_header);
@@ -416,14 +436,18 @@ class ET_Post extends ET_Constructor {
 }
 
 class ET_Patch extends ET_Constructor {	
-	function __construct($authStub, $objType, $props) {	
+	function __construct($authStub, $objType, $props,$upsert = false) {	
 		$authStub->refreshToken();	
 		$cr = array(); 
 		$objects = array(); 
 		$object = $props; 				
 		
 		$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
-		$objects["Options"] = "";
+		if ($upsert) {
+			$objects["Options"] = array('SaveOptions' => array('SaveOption' => array('PropertyName' => '*', 'SaveAction' => 'UpdateAdd' )));
+		} else {
+			$objects["Options"] = "";
+		}
 		$cr["UpdateRequest"] = $objects;
 		
 		$return = $authStub->__soapCall("Update", $cr, null, null , $out_header);
@@ -473,13 +497,71 @@ class ET_Delete extends ET_Constructor {
 				}
 			} else {
 				$this->status = false;
-				
 			}
 			if ($return->OverallStatus != "OK")
 			{
 				$this->status = false;
 			}
 		}	
+	}
+}
+
+class ET_Configure extends ET_Constructor {	
+	function __construct($authStub, $objType, $action, $props) {
+		$authStub->refreshToken();
+		$configure = array();
+		$configureRequest = array();
+		$configureRequest['Action'] = $action;
+		$configureRequest['Configurations'] = array();
+		$configureRequest['Configurations'][] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+
+		$configure['ConfigureRequestMsg'] = $configureRequest;
+		$return = $authStub->__soapCall("Configure", $configure, null, null , $out_header);
+		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
+		
+		if ($this->status){
+			if (property_exists($return->Results, "Result")){
+				if (is_array($return->Results->Result)){
+					$this->results = $return->Results->Result;
+				} else {
+					$this->results = array($return->Results->Result);
+				}
+				if ($return->OverallStatus != "OK"){
+					$this->status = false;
+				}
+			} else {
+				$this->status = false;
+			}
+		}
+	}
+}
+
+class ET_Perform extends ET_Constructor {	
+	function __construct($authStub, $objType, $action, $props) {
+		$authStub->refreshToken();
+		$perform = array();
+		$performRequest = array();
+		$performRequest['Action'] = $action;
+		$performRequest['Definitions'] = array();
+		$performRequest['Definitions'][] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+		
+		$perform['PerformRequestMsg'] = $performRequest;
+		$return = $authStub->__soapCall("Perform", $perform, null, null , $out_header);
+		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
+		if ($this->status){
+			if (property_exists($return->Results, "Result")){
+				if (is_array($return->Results->Result)){
+					$this->results = $return->Results->Result;
+				} else {
+					$this->results = array($return->Results->Result);
+				}
+				if ($return->OverallStatus != "OK"){
+					$this->status = false;
+				}
+			} else {
+				$this->status = false;
+			}
+		}
 	}
 }
 
@@ -563,7 +645,8 @@ class ET_GetSupportRest extends ET_BaseObjectRest{
 	}
 }
 
-class ET_CUDSupportRest extends ET_GetSupportRest{	
+class ET_CUDSupportRest extends ET_GetSupportRest{
+	protected $folderProperty, $folderMediaType;
 	public function post() {
 		$this->authStub->refreshToken();
 		$completeURL = $this->endpoint;
@@ -696,8 +779,6 @@ class ET_Campaign_Asset extends ET_CUDSupportRest {
 	}
 }
 
-
-
 class ET_BaseObject {
 	public  $authStub, $props, $filter;
 	protected $obj, $lastRequestID;
@@ -731,12 +812,67 @@ class ET_GetSupport extends ET_BaseObject{
 class ET_CUDSupport extends ET_GetSupport{
 
 	public function post() {
+		$originalProps = $this->props;
+		if (property_exists($this, 'folderProperty') && !is_null($this->folderProperty) && !is_null($this->folderId)){
+			$this->props[$this->folderProperty] = $this->folderId;
+		} else if (property_exists($this, 'folderProperty') && !is_null($this->authStub->packageName)){
+			if (is_null($this->authStub->packageFolders)) {
+				$getPackageFolder = new ET_Folder();
+				$getPackageFolder->authStub = $this->authStub;
+				$getPackageFolder->props = array("ID", "ContentType");
+				$getPackageFolder->filter = array("Property" => "Name", "SimpleOperator" => "equals", "Value" => $this->authStub->packageName);
+				$resultPackageFolder = $getPackageFolder->get();
+				if ($resultPackageFolder->status){
+					$this->authStub->packageFolders = array();
+					foreach ($resultPackageFolder->results as $result){
+						$this->authStub->packageFolders[$result->ContentType] = $result->ID;
+					}	
+				} else {
+					throw new Exception('Unable to retrieve folders from account due to: '.$resultPackageFolder->message);
+				}
+			}
+			
+			if (!array_key_exists($this->folderMediaType,$this->authStub->packageFolders )){
+				if (is_null($this->authStub->parentFolders)) {
+					$parentFolders = new ET_Folder();
+					$parentFolders->authStub = $this->authStub;
+					$parentFolders->props = array("ID", "ContentType");
+					$parentFolders->filter = array("Property" => "ParentFolder.ID", "SimpleOperator" => "equals", "Value" => "0");
+					$resultParentFolders = $parentFolders->get();
+					if ($resultParentFolders->status) { 
+						$this->authStub->parentFolders = array();
+						foreach ($resultParentFolders->results as $result){
+							$this->authStub->parentFolders[$result->ContentType] = $result->ID;
+						}	
+					} else {
+						throw new Exception('Unable to retrieve folders from account due to: '.$resultParentFolders->message);
+					}
+				}
+				$newFolder = new ET_Folder();
+				$newFolder->authStub = $this->authStub;
+				$newFolder->props = array("Name" => $this->authStub->packageName, "Description" => $this->authStub->packageName, "ContentType"=> $this->folderMediaType, "IsEditable"=>"true", "ParentFolder" => array("ID" => $this->authStub->parentFolders[$this->folderMediaType]));
+				$folderResult = $newFolder->post();
+				if ($folderResult->status) {
+					$this->authStub->packageFolders[$this->folderMediaType] = $folderResult->results[0]->NewID;
+				} else {
+					throw new Exception('Unable to create folder for Post due to: '.$folderResult->message);
+				}
+			}
+			$this->props[$this->folderProperty] = $this->authStub->packageFolders[$this->folderMediaType];
+		} 
+		
 		$response = new ET_Post($this->authStub, $this->obj, $this->props);
+		$this->props = $originalProps;
 		return $response;
 	}
 
 	public function patch() {
+		$originalProps = $this->props;
+		if (property_exists($this, 'folderProperty') && !is_null($this->folderProperty) && !is_null($this->folderId)){
+			$this->props[$this->folderProperty] = $this->folderId;
+		} 
 		$response = new ET_Patch($this->authStub, $this->obj, $this->props);
+		$this->props = $originalProps;
 		return $response;
 	}
 	
@@ -746,10 +882,21 @@ class ET_CUDSupport extends ET_GetSupport{
 	}	
 }
 
+class ET_CUDWithUpsertSupport extends ET_CUDSupport{
+	public function put(){
+		$originalProps = $this->props;
+		if (property_exists($this, 'folderProperty') && !is_null($this->folderProperty) && !is_null($this->folderId)){
+			$this->props[$this->folderProperty] = $this->folderId;
+		} 
+		$response = new ET_Patch($this->authStub, $this->obj, $this->props, true);
+		$this->props = $originalProps;
+		return $response;
+	}
+}
 
 
-class ET_Subscriber extends ET_CUDSupport {		
-	function __construct() {	
+class ET_Subscriber extends ET_CUDWithUpsertSupport {
+	function __construct() {
 		$this->obj = "Subscriber";
 	}	
 }
@@ -805,6 +952,8 @@ class ET_DataExtension extends ET_CUDSupport {
 class ET_DataExtension_Column extends ET_GetSupport {
 	function __construct() {	
 		$this->obj = "DataExtensionField";
+		$this->folderProperty = "CategoryID";
+		$this->folderMediaType = "dataextension";
 	}
 	
 	public function get() {	
@@ -825,7 +974,7 @@ class ET_DataExtension_Column extends ET_GetSupport {
 	}
 }
 
-class ET_DataExtension_Row extends ET_CUDSupport {
+class ET_DataExtension_Row extends ET_CUDWithUpsertSupport {
 	public $Name, $CustomerKey;
 	function __construct() {	
 		$this->obj = "DataExtensionObject";
@@ -933,76 +1082,192 @@ class ET_DataExtension_Row extends ET_CUDSupport {
 	}	
 }
 
-class ET_ContentArea extends ET_CUDSupport {		
-	function __construct() {	
+class ET_ContentArea extends ET_CUDSupport {
+	public  $folderId;
+	function __construct() {
 		$this->obj = "ContentArea";
-	}	
+		$this->folderProperty = "CategoryID";
+		$this->folderMediaType = "content";
+	}
 }
+
+class ET_Email extends ET_CUDSupport {
+	public  $folderId;
+	function __construct() 
+	{
+		$this->obj = "Email";
+		$this->folderProperty = "CategoryID";
+		$this->folderMediaType = "email";
+	}
+}
+
+class ET_Email_SendDefinition extends ET_CUDSupport {
+	public  $folderId,  $lastTaskID;
+	function __construct() 
+	{
+		$this->obj = "EmailSendDefinition";
+		$this->folderProperty = "CategoryID";
+		$this->folderMediaType = "userinitiatedsends";
+	}
+	
+	function send(){
+		$originalProps = $this->props;		
+		$response = new ET_Perform($this->authStub, $this->obj, 'start', $this->props);
+		if ($response->status) {
+			$this->lastTaskID = $response->results[0]->Task->ID;
+		}
+		$this->props = $originalProps;
+		return $response;
+	}
+	
+	function status(){
+		$this->filter = array('Property' => 'ID','SimpleOperator' => 'equals','Value' => $this->lastTaskID);
+		$response = new ET_Get($this->authStub, 'Send', array('ID','CreatedDate', 'ModifiedDate', 'Client.ID', 'Email.ID', 'SendDate','FromAddress','FromName','Duplicates','InvalidAddresses','ExistingUndeliverables','ExistingUnsubscribes','HardBounces','SoftBounces','OtherBounces','ForwardedEmails','UniqueClicks','UniqueOpens','NumberSent','NumberDelivered','NumberTargeted','NumberErrored','NumberExcluded','Unsubscribes','MissingAddresses','Subject','PreviewURL','SentDate','EmailName','Status','IsMultipart','SendLimit','SendWindowOpen','SendWindowClose','BCCEmail','EmailSendDefinition.ObjectID','EmailSendDefinition.CustomerKey'), $this->filter);
+		$this->lastRequestID = $response->request_id;
+		return $response;
+	}
+}
+
+
+class ET_Import extends ET_CUDSupport {
+	public  $lastTaskID;
+	function __construct() 
+	{
+		$this->obj = "ImportDefinition";
+	}
+	
+	function post() {
+		$originalProp = $this->props;
+		
+		# If the ID property is specified for the destination then it must be a list import
+		if (array_key_exists('DestinationObject', $this->props)) {
+			if (array_key_exists('ID', $this->props['DestinationObject'])){
+				$this->props['DestinationObject'] = new SoapVar($this->props['DestinationObject'], SOAP_ENC_OBJECT, 'List', "http://exacttarget.com/wsdl/partnerAPI");
+			}
+		}
+		
+		$obj = parent::post();
+		$this->props = $originalProp;
+		return $obj;
+	}
+	
+	function start(){
+		$originalProps = $this->props;		
+		$response = new ET_Perform($this->authStub, $this->obj, 'start', $this->props);
+		if ($response->status) {
+			$this->lastTaskID = $response->results[0]->Task->ID;
+		}
+		$this->props = $originalProps;
+		return $response;
+	}
+	
+	function status(){
+		$this->filter = array('Property' => 'TaskResultID','SimpleOperator' => 'equals','Value' => $this->lastTaskID);
+		$response = new ET_Get($this->authStub, 'ImportResultsSummary', array('ImportDefinitionCustomerKey','TaskResultID','ImportStatus','StartDate','EndDate','DestinationID','NumberSuccessful','NumberDuplicated','NumberErrors','TotalRows','ImportType'), $this->filter);
+		$this->lastRequestID = $response->request_id;
+		return $response;
+	}
+}
+
+class ET_ProfileAttribute extends ET_BaseObject {
+	function __construct() 
+	{
+		$this->obj = "PropertyDefinition";
+	}
+	
+	function post(){
+		return new ET_Configure($this->authStub, $this->obj, "create", $this->props);
+	}
+	
+	function get(){
+		return new ET_Info($this->authStub, 'Subscriber', true);
+	}
+	
+	function patch() {
+		return new ET_Configure($this->authStub, $this->obj, "update", $this->props);
+	}
+	
+	function delete() {
+		return new ET_Configure($this->authStub, $this->obj, "delete", $this->props);
+	}
+	
+}
+
 
 class ET_Folder extends ET_CUDSupport {		
 	function __construct() {	
 		$this->obj = "DataFolder";
-	}	
+	}
 }
 
-class ET_Email extends ET_CUDSupport {		
-	function __construct() {	
-		$this->obj = "Email";
-	}	
-}
-
-class ET_List extends ET_CUDSupport {		
-	function __construct() {	
+class ET_List extends ET_CUDWithUpsertSupport {
+	public  $folderId;
+	function __construct() {
 		$this->obj = "List";
-	}	
+		$this->folderProperty = "Category";
+		$this->folderMediaType = "list";
+	}
 }
 
-class ET_List_Subscriber extends ET_GetSupport {		
-	function __construct() {	
+class ET_List_Subscriber extends ET_GetSupport {
+	function __construct() {
 		$this->obj = "ListSubscriber";
-	}	
-}
-
-class ET_SentEvent extends ET_GetSupport {		
-	function __construct() {	
-		$this->obj = "SentEvent";
-	}	
-}
-
-class ET_OpenEvent extends ET_GetSupport {		
-	function __construct() {	
-		$this->obj = "OpenEvent";
-	}	
-}
-
-class ET_BounceEvent extends ET_GetSupport {		
-	function __construct() {	
-		$this->obj = "BounceEvent";
-	}	
-}
-
-class ET_UnsubEvent extends ET_GetSupport {		
-	function __construct() {	
-		$this->obj = "UnsubEvent";
-	}	
-}
-
-class ET_ClickEvent extends ET_GetSupport {		
-	function __construct() {	
-		$this->obj = "ClickEvent";
-	}	
+	}
 }
 
 class ET_TriggeredSend extends ET_CUDSupport {
-	public  $subscribers;
+	public  $subscribers, $folderId;
 	function __construct() {	
 		$this->obj = "TriggeredSendDefinition";
+		$this->folderProperty = "CategoryID";
+		$this->folderMediaType = "triggered_send";
 	}
-
+	
 	public function Send() {
 		$tscall = array("TriggeredSendDefinition" => $this->props , "Subscribers" => $this->subscribers);
 		$response = new ET_Post($this->authStub, "TriggeredSend", $tscall);
 		return $response;
+	}
+}
+
+// Tracking Events
+class ET_SentEvent extends ET_GetSupport {
+	public  $getSinceLastBatch;
+	function __construct() 
+	{
+		$this->obj = "SentEvent";
+	}
+}
+
+class ET_OpenEvent extends ET_GetSupport {
+	public  $getSinceLastBatch;
+	function __construct() 
+	{
+		$this->obj = "OpenEvent";
+	}
+}
+
+class ET_BounceEvent extends ET_GetSupport {
+	public  $getSinceLastBatch;
+	function __construct() 
+	{
+		$this->obj = "BounceEvent";
+	}
+}
+
+class ET_UnsubEvent extends ET_GetSupport {
+	public  $getSinceLastBatch;
+	function __construct() 
+	{
+		$this->obj = "UnsubEvent";
+	}
+}
+
+class ET_ClickEvent extends ET_GetSupport {
+	public  $getSinceLastBatch;
+	function __construct() 
+	{
+		$this->obj = "ClickEvent";
 	}
 }
 
@@ -1099,7 +1364,6 @@ function restPatch($url, $content) {
 	
 	return $responseObject;
 }
-
 
 function restDelete($url) {
 	$ch = curl_init();

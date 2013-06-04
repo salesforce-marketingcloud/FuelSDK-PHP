@@ -1,10 +1,18 @@
-FuelSDK-Ruby
+FuelSDK-PHP
 ============
 
 ExactTarget Fuel SDK for PHP
 
 ## Overview ##
 The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family services, including a collection of REST APIs and a SOAP API. These APIs provide access to ExactTarget functionality via common collection types such as array/hash. 
+
+## New Features in Version .9 ##
+- **Streamlined Folder Support**: All objects that support folders within the UI now have a standardized property called folderId.
+- **Interaction Support**: Now supports Import and Email_SendDefinition objects .
+- **Profile Attribute Support**: Added the ability to manage profile attributes through the ProfileAttribute object.
+- **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension::Row, and List objects using the Put method.
+- **Tracking Events Batching Support**: By default, all tracking event types will only pull new data since the last time a request was made using the same filter.  If you would like to override this functionality to pull all data, simply set the GetSinceLastBatch property to false.
+- **Automatic Asset Organization for Hub Apps**: Applications that authenticate by providing a JWT will automatically have all created assets placed into a folder based on the HubExchange app's name. 
 
 ## Requirements ##
 PHP Version 5.2.3
