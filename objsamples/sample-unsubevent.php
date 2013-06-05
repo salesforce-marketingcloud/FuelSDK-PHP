@@ -16,6 +16,7 @@ try {
 	$getUnsubEvent->authStub = $myclient;
 	$getUnsubEvent->props = array("SendID","SubscriberKey","EventDate","Client.ID","EventType","BatchID","TriggeredSendDefinitionObjectID","PartnerKey");
 	$getUnsubEvent->filter = array('Property' => 'EventDate','SimpleOperator' => 'greaterThan','DateValue' => $retrieveDate);
+	$getUnsubEvent->getSinceLastBatch = false;
 	$getResponse = $getUnsubEvent->get();
 	print_r('Get Status: '.($getResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$getResponse->code."\n";

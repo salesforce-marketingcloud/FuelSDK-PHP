@@ -16,6 +16,7 @@ try {
 	$getSentEvent->authStub = $myclient;
 	$getSentEvent->props = array("SendID","SubscriberKey","EventDate","Client.ID","EventType","BatchID","TriggeredSendDefinitionObjectID","ListID","PartnerKey","SubscriberID");
 	$getSentEvent->filter = array('Property' => 'EventDate','SimpleOperator' => 'greaterThan','DateValue' => $retrieveDate);
+	$getSentEvent->getSinceLastBatch = false;
 	$getResponse = $getSentEvent->get();
 	print_r('Get Status: '.($getResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$getResponse->code."\n";

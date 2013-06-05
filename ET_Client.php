@@ -792,7 +792,11 @@ class ET_BaseObjectRest {
 class ET_GetSupport extends ET_BaseObject{
 	
 	public function get() {
-		$response = new ET_Get($this->authStub, $this->obj, $this->props, $this->filter);
+		$lastBatch = false;
+		if (property_exists($this,'getSinceLastBatch' )){
+			$lastBatch = $this->getSinceLastBatch;
+		}
+		$response = new ET_Get($this->authStub, $this->obj, $this->props, $this->filter, $lastBatch);
 		$this->lastRequestID = $response->request_id;		
 		return $response;
 	}
@@ -1236,6 +1240,7 @@ class ET_SentEvent extends ET_GetSupport {
 	function __construct() 
 	{
 		$this->obj = "SentEvent";
+		$this->getSinceLastBatch = true;
 	}
 }
 
@@ -1244,6 +1249,7 @@ class ET_OpenEvent extends ET_GetSupport {
 	function __construct() 
 	{
 		$this->obj = "OpenEvent";
+		$this->getSinceLastBatch = true;
 	}
 }
 
@@ -1252,6 +1258,7 @@ class ET_BounceEvent extends ET_GetSupport {
 	function __construct() 
 	{
 		$this->obj = "BounceEvent";
+		$this->getSinceLastBatch = true;
 	}
 }
 
@@ -1260,6 +1267,7 @@ class ET_UnsubEvent extends ET_GetSupport {
 	function __construct() 
 	{
 		$this->obj = "UnsubEvent";
+		$this->getSinceLastBatch = true;
 	}
 }
 
@@ -1268,6 +1276,7 @@ class ET_ClickEvent extends ET_GetSupport {
 	function __construct() 
 	{
 		$this->obj = "ClickEvent";
+		$this->getSinceLastBatch = true;
 	}
 }
 

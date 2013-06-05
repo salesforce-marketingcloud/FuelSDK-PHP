@@ -10,7 +10,7 @@ The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family servi
 - **Streamlined Folder Support**: All objects that support folders within the UI now have a standardized property called folderId.
 - **Interaction Support**: Now supports Import and Email_SendDefinition objects .
 - **Profile Attribute Support**: Added the ability to manage profile attributes through the ProfileAttribute object.
-- **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension::Row, and List objects using the Put method.
+- **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension_Row, and List objects using the Put method.
 - **Tracking Events Batching Support**: By default, all tracking event types will only pull new data since the last time a request was made using the same filter.  If you would like to override this functionality to pull all data, simply set the GetSinceLastBatch property to false.
 - **Automatic Asset Organization for Hub Apps**: Applications that authenticate by providing a JWT will automatically have all created assets placed into a folder based on the HubExchange app's name. 
 
@@ -126,9 +126,9 @@ Sample List:
  - [TriggeredSend](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsend.php)
  - [UnsubEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-unsubevent.php)
 
+## Copyright and license ##
+Copyright (c) 2013 ExactTarget
 
+Licensed under the MIT License (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the COPYING file.
 
- 
-
-
-
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.

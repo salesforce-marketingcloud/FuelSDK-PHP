@@ -16,6 +16,7 @@ try {
 	$getBounceEvent->authStub = $myclient;
 	$getBounceEvent->props = array("SendID","SubscriberKey","EventDate","Client.ID","EventType","BatchID","TriggeredSendDefinitionObjectID","PartnerKey");
 	$getBounceEvent->filter = array('Property' => 'EventDate','SimpleOperator' => 'greaterThan','DateValue' => $retrieveDate);
+	$getBounceEvent->getSinceLastBatch = false;
 	$getResponse = $getBounceEvent->get();
 	print_r('Get Status: '.($getResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$getResponse->code."\n";
