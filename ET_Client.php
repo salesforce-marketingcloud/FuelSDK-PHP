@@ -2,6 +2,8 @@
 require('soap-wsse.php');
 require('JWT.php');
 
+$SDKVersion = "FuelSDK-PHP-v0.9";
+
 class ET_Client extends SoapClient {
 	public $authToken, $packageName, $packageFolders, $parentFolders;
 	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
@@ -141,7 +143,7 @@ class ET_Client extends SoapClient {
 		$content = utf8_encode($objWSSE->saveXML());
 		$content_length = strlen($content); 
 		
-		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction);
+		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".$GLOBALS['SDKVersion']);
 
 		$ch = curl_init();
 		curl_setopt ($ch, CURLOPT_URL, $location);
@@ -1283,7 +1285,8 @@ class ET_ClickEvent extends ET_GetSupport {
 
 function restGet($url) {
 	$ch = curl_init();
-	
+	$headers = array("User-Agent: ".$GLOBALS['SDKVersion']);
+	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	// Uses the URL passed in that is specific to the API used
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_HTTPGET, true);
@@ -1316,7 +1319,7 @@ function restPost($url, $content) {
 	curl_setopt($ch, CURLOPT_URL, $url);	
 	
 	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-	$headers = array("Content-Type: application/json");
+	$headers = array("Content-Type: application/json", "User-Agent: ".$GLOBALS['SDKVersion']);
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// The content is the JSON payload that defines the request
@@ -1351,7 +1354,7 @@ function restPatch($url, $content) {
 	curl_setopt($ch, CURLOPT_URL, $url);	
 	
 	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-	$headers = array("Content-Type: application/json");
+	$headers = array("Content-Type: application/json", "User-Agent: ".$GLOBALS['SDKVersion']);
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// The content is the JSON payload that defines the request
@@ -1376,6 +1379,9 @@ function restPatch($url, $content) {
 
 function restDelete($url) {
 	$ch = curl_init();
+	
+	$headers = array("User-Agent: ".$GLOBALS['SDKVersion']);
+	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// Uses the URL passed in that is specific to the API used
 	curl_setopt($ch, CURLOPT_URL, $url);
