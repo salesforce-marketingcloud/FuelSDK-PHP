@@ -46,7 +46,7 @@ class ET_Client extends SoapClient {
 		parent::__setLocation($this->endpoint);
 	}
 	
-	function refreshToken($forceRefresh = true) {
+	function refreshToken($forceRefresh = false) {
 		try {							
 			$currentTime = new DateTime();
 			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') < 5) || $forceRefresh ){
