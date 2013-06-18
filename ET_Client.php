@@ -48,7 +48,7 @@ class ET_Client extends SoapClient {
 		parent::__setLocation($this->endpoint);
 	}
 	
-	function refreshToken() {
+	function refreshToken($forceRefresh = false) {
 		try {
 			$currentTime = new DateTime();
 			if (is_null($this->authTokenExpiration)){
@@ -58,12 +58,13 @@ class ET_Client extends SoapClient {
 				$timeDiff = $timeDiff  + (60 * $currentTime->diff($this->authTokenExpiration)->format('%H'));
 			}
 
-			if (is_null($this->authToken) || ($timeDiff < 5) ){
+			if (is_null($this->authToken) || ($timeDiff < 5) || $forceRefresh  ){
 				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
-				$jsonRequest->clientSecret = $this->clientSecret;	
+				$jsonRequest->clientSecret = $this->clientSecret;
 				$jsonRequest->accessType = "offline";
+				$jsonRequest->scope = "cas:".$this->internalAuthToken;
 				if (!is_null($this->refreshKey)){
 					$jsonRequest->refreshToken = $this->refreshKey;
 				}
