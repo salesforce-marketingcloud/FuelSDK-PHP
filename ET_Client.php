@@ -71,7 +71,7 @@ class ET_Client extends SoapClient {
 					$this->authTokenExpiration = $newexpTime->add($dv);	
 					$this->refreshKey = $authObject->refreshToken;
 				} else {
-					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse );			
+					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.  $authResponse->httpcode . ' ' . $authResponse->body);			
 				}				
 			}
 		} catch (Exception $e) {
@@ -1033,7 +1033,7 @@ function restGet($url) {
  * @param string      $url    The resource URL for the REST API
  * @param string      $content    A string of JSON which will be passed to the REST API
 	*
- * @return string     The response payload from the REST service
+ * @return object     The response payload from the REST service
  */
 function restPost($url, $content) {
 	$ch = curl_init();
