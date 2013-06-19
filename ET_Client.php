@@ -125,7 +125,7 @@ class ET_Client extends SoapClient {
 		
 	}
 				
-	function __doRequest($request, $location, $saction, $version) {
+	function __doRequest($request, $location, $saction, $version, $oneWay = null) {
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 		
