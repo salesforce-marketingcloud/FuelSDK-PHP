@@ -62,7 +62,7 @@ class ET_Client extends SoapClient {
 				$authResponse = restPost($url, json_encode($jsonRequest));
 				$authObject = json_decode($authResponse->body);
 				
-				if ($authResponse && property_exists($authObject,"accessToken")){		
+				if ($authResponse && isset($authObject->accessToken)){		
 					
 					$this->authToken = $authObject->accessToken;
 					$this->internalAuthToken = $authObject->legacyToken;
@@ -71,7 +71,7 @@ class ET_Client extends SoapClient {
 					$this->authTokenExpiration = $newexpTime->add($dv);	
 					$this->refreshKey = $authObject->refreshToken;
 				} else {
-					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.  $authResponse->httpcode . ' ' . $authResponse->body);			
+					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'. $authResponse->httpcode . ' ' . $authResponse->body );			
 				}				
 			}
 		} catch (Exception $e) {
@@ -274,7 +274,7 @@ class ET_Get extends ET_Constructor {
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
 		
 		if ($this->status){
-			if (property_exists($return, "Results")){
+			if (isset($return->Results)){
 				// We always want the results property when doing a retrieve to be an array
 				if (is_array($return->Results)){
 					$this->results = $return->Results;
@@ -318,7 +318,7 @@ class ET_Continue extends ET_Constructor {
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
 		
 		if ($this->status){
-			if (property_exists($return, "Results")){
+			if (isset($return->Results)){
 				// We always want the results property when doing a retrieve to be an array
 				if (is_array($return->Results)){
 					$this->results = $return->Results;
@@ -1032,8 +1032,8 @@ function restGet($url) {
 /**
  * @param string      $url    The resource URL for the REST API
  * @param string      $content    A string of JSON which will be passed to the REST API
-	*
- * @return object     The response payload from the REST service
+ *
+ * @return object    The response payload from the REST service
  */
 function restPost($url, $content) {
 	$ch = curl_init();
@@ -1134,3 +1134,4 @@ function isAssoc($array)
 }
 
 ?>
+
