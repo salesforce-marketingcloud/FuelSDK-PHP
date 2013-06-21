@@ -47,6 +47,9 @@ class ET_Client extends SoapClient {
 	}
 	
 	function refreshToken($forceRefresh = false) {
+		if ($this->sdl == 0){
+			parent::__construct('ExactTargetWSDL.xml', array('trace'=>1, 'exceptions'=>0));	
+		}
 		try {							
 			$currentTime = new DateTime();
 			if (is_null($this->authToken) || ($currentTime->diff($this->authTokenExpiration)->format('%i') < 5) || $forceRefresh ){
