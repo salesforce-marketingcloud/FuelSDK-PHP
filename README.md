@@ -13,8 +13,8 @@ The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family servi
 - **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension_Row, and List objects using the Put method.
 - **Tracking Events Batching Support**: By default, all tracking event types will only pull new data since the last time a request was made using the same filter.  If you would like to override this functionality to pull all data, simply set the GetSinceLastBatch property to false.
 - **Automatic Asset Organization for Hub Apps**: Applications that authenticate by providing a JWT will automatically have all created assets placed into a folder based on the HubExchange app's name. 
-- **Greater Flexibility for Auth Details**: Previously the application keys required for authentication had to be hard-coded in a php config file. While this option is still available, an additional option to pass these at the time the ET_Client class is instantiated allows has been added.  
-- **Easier Troubleshooting**: The ET_Client class now has the ability to log the full payload for API requests that are happening behind the scenes in the SDK in order to make troubleshooting issues easier. 
+- **Greater Flexibility for Authentication **: Previously the application keys required for authentication had to be hard-coded in a php config file. While this option is still available, an additional option to pass these at the time the ET_Client class is instantiated allows has been added.  
+- **Easier Troubleshooting**: The ability to log the full payload for API requests that are happening behind the scenes has been added in the SDK in order to make troubleshooting issues easier. 
 
 ## Requirements ##
 PHP Version 5.2.3
@@ -29,9 +29,9 @@ Extensions:
 ## Getting Started ##
 After downloading the project, rename the config.php.template file to config.php. 
 
-Edit config.php so you can input the ClientID and Client Secret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
+Edit config.php so you can input the ClientID and ClientSecret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
 
-See the ET_Client section below if you would prefer to 
+See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism. 
 
 If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to App Center at [Code@: ExactTarget's Developer Community](http://code.exacttarget.com/appcenter "Code@ App Center").
 
