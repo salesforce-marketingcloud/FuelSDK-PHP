@@ -2,27 +2,41 @@
 require('soap-wsse.php');
 require('JWT.php');
 
-$SDKVersion = "FuelSDK-PHP-v0.9";
-
 class ET_Client extends SoapClient {
 	public $authToken, $packageName, $packageFolders, $parentFolders;
-	private $authTokenExpiration, $internalAuthToken, $wsdlLoc,
+	private $authTokenExpiration, $internalAuthToken, $wsdlLoc, $debugSOAP,
 			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
+	
 		
-	function __construct($getWSDL = false, $params = null) {	
-		$config = include 'config.php';
-		$this->wsdlLoc = $config['defaultwsdl'];
-		$this->clientId = $config['clientid'];
-		$this->clientSecret = $config['clientsecret'];
-		$this->appsignature = $config['appsignature'];		
-
-		if ($getWSDL){
-			$this->CreateWSDL($this->wsdlLoc);	
+	function __construct($getWSDL = false, $debug = false, $params = null) {	
+		$config = @include 'config.php';
+		if ($config){
+			$this->wsdlLoc = $config['defaultwsdl'];
+			$this->clientId = $config['clientid'];
+			$this->clientSecret = $config['clientsecret'];
+			$this->appsignature = $config['appsignature'];
+		} else {
+			if ($params && array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
+			else {$this->wsdlLoc = "https://webservice.exacttarget.com/etframework.wsdl";}
+			if ($params && array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
+			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
+			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
 		}
 		
+		$this->debugSOAP = $debug;
+		
+		if (!property_exists($this,'clientId') || is_null($this->clientId) || !property_exists($this,'clientSecret') || is_null($this->clientSecret)){
+			throw new Exception('clientid or clientsecret is null: Must be provided in config file or passed when instantiating ET_Client');
+		}
+		
+		if ($getWSDL){$this->CreateWSDL($this->wsdlLoc);}
+		
 		if ($params && array_key_exists('jwt', $params)){
-			$decodedJWT = JWT::decode($params['jwt'], $this->appsignature);					
-			$this->authToken = $decodedJWT->request->user->oauthToken;			
+			if (!property_exists($this,'appsignature') || is_null($this->appsignature)){
+				throw new Exception('Unable to utilize JWT for SSO without appsignature: Must be provided in config file or passed when instantiating ET_Client');
+			}
+			$decodedJWT = JWT::decode($params['jwt'], $this->appsignature);
+			$this->authToken = $decodedJWT->request->user->oauthToken;
 			$this->internalAuthToken = $decodedJWT->request->user->internalOauthToken;
 			$dv = new DateInterval('PT'.$decodedJWT->request->user->expiresIn.'S');
 			$newexpTime = new DateTime();
@@ -33,23 +47,23 @@ class ET_Client extends SoapClient {
 		$this->refreshToken();
 
 		try {
-			$url = "https://www.exacttargetapis.com//platform/v1/endpoints/soap?access_token=".$this->authToken;
+			$url = "https://www.exacttargetapis.com/platform/v1/endpoints/soap?access_token=".$this->authToken;
 			$endpointResponse = restGet($url);			
 			$endpointObject = json_decode($endpointResponse->body);			
 			if ($endpointResponse && property_exists($endpointObject,"url")){		
 				$this->endpoint = $endpointObject->url;			
 			} else {
-				throw new Exception('Unable to determine stack using /platform/v1/tokenContext:'.$endpointResponse->body);			
+				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);			
 			}
 			} catch (Exception $e) {
-			throw new Exception('Unable to determine stack using /platform/v1/tokenContext: '.$e->getMessage());
+			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
 		} 		
 		parent::__construct('ExactTargetWSDL.xml', array('trace'=>1, 'exceptions'=>0));
 		parent::__setLocation($this->endpoint);
 	}
 	
 	function refreshToken($forceRefresh = false) {
-		if ($this->sdl == 0){
+		if (property_exists($this, "sdl") && $this->sdl == 0){
 			parent::__construct('ExactTargetWSDL.xml', array('trace'=>1, 'exceptions'=>0));	
 		}
 		try {
@@ -81,7 +95,9 @@ class ET_Client extends SoapClient {
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->authTokenExpiration = $newexpTime->add($dv);	
-					$this->refreshKey = $authObject->refreshToken;
+					if (property_exists($authObject,'refreshToken')){
+						$this->refreshKey = $authObject->refreshToken;
+					}
 				} else {
 					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse->body );			
 				}				
@@ -146,8 +162,12 @@ class ET_Client extends SoapClient {
 				
 		$content = utf8_encode($objWSSE->saveXML());
 		$content_length = strlen($content); 
+		if ($this->debugSOAP){
+			error_log ('Fuel SDK SOAP Request: ');
+			error_log (str_replace($this->internalAuthToken,"REMOVED",$content));
+		}
 		
-		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".$GLOBALS['SDKVersion']);
+		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".getSDKVersion());
 
 		$ch = curl_init();
 		curl_setopt ($ch, CURLOPT_URL, $location);
@@ -381,8 +401,7 @@ class ET_Info extends ET_Constructor {
 		if ($this->status){
 			if (property_exists($return->ObjectDefinition, "Properties")){
 
-				if (extended) {
-//					@results = @@body[:definition_response_msg][:object_definition][:extended_properties][:extended_property]
+				if ($extended) {
 					$this->results = $return->ObjectDefinition->ExtendedProperties->ExtendedProperty;
 				}
 				else {
@@ -1289,7 +1308,7 @@ class ET_ClickEvent extends ET_GetSupport {
 
 function restGet($url) {
 	$ch = curl_init();
-	$headers = array("User-Agent: ".$GLOBALS['SDKVersion']);
+	$headers = array("User-Agent: ".getSDKVersion());
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	// Uses the URL passed in that is specific to the API used
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -1323,7 +1342,7 @@ function restPost($url, $content) {
 	curl_setopt($ch, CURLOPT_URL, $url);	
 	
 	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-	$headers = array("Content-Type: application/json", "User-Agent: ".$GLOBALS['SDKVersion']);
+	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// The content is the JSON payload that defines the request
@@ -1358,7 +1377,7 @@ function restPatch($url, $content) {
 	curl_setopt($ch, CURLOPT_URL, $url);	
 	
 	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-	$headers = array("Content-Type: application/json", "User-Agent: ".$GLOBALS['SDKVersion']);
+	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// The content is the JSON payload that defines the request
@@ -1384,7 +1403,7 @@ function restPatch($url, $content) {
 function restDelete($url) {
 	$ch = curl_init();
 	
-	$headers = array("User-Agent: ".$GLOBALS['SDKVersion']);
+	$headers = array("User-Agent: ".getSDKVersion());
 	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 	
 	// Uses the URL passed in that is specific to the API used
@@ -1414,6 +1433,11 @@ function restDelete($url) {
 function isAssoc($array)
 {
     return ($array !== array_values($array));
+}
+
+function getSDKVersion()
+{
+	return "FuelSDK-PHP-v0.9";
 }
 
 ?>

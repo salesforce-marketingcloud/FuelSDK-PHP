@@ -2,8 +2,7 @@
 
 require('../ET_Client.php');
 try {	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 	
 	//Triggered Send Testing
 	print_r("Get all TriggeredSendDefinitions \n");

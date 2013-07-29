@@ -7,8 +7,7 @@ try {
 	$ExampleAssetType = "LIST";
 	$ExampleAssetItemID = "1953114";
 	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 	
 	// Retrieve All Campaigns with GetMoreResults
 	print "Retrieve All Campaigns with GetMoreResults \n";

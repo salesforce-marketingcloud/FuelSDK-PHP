@@ -13,6 +13,8 @@ The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family servi
 - **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension_Row, and List objects using the Put method.
 - **Tracking Events Batching Support**: By default, all tracking event types will only pull new data since the last time a request was made using the same filter.  If you would like to override this functionality to pull all data, simply set the GetSinceLastBatch property to false.
 - **Automatic Asset Organization for Hub Apps**: Applications that authenticate by providing a JWT will automatically have all created assets placed into a folder based on the HubExchange app's name. 
+- **Greater Flexibility for Auth Details**: Previously the application keys required for authentication had to be hard-coded in a php config file. While this option is still available, an additional option to pass these at the time the ET_Client class is instantiated allows has been added.  
+- **Easier Troubleshooting**: The ET_Client class now has the ability to log the full payload for API requests that are happening behind the scenes in the SDK in order to make troubleshooting issues easier. 
 
 ## Requirements ##
 PHP Version 5.2.3
@@ -28,6 +30,8 @@ Extensions:
 After downloading the project, rename the config.php.template file to config.php. 
 
 Edit config.php so you can input the ClientID and Client Secret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
+
+See the ET_Client section below if you would prefer to 
 
 If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to App Center at [Code@: ExactTarget's Developer Community](http://code.exacttarget.com/appcenter "Code@ App Center").
 
@@ -93,6 +97,22 @@ ET_Get Object
 ## ET\_Client Class ##
 
 The ET\_Client class takes care of many of the required steps when accessing ExactTarget's API, including retrieving appropriate access tokens, handling token state for managing refresh, and determining the appropriate endpoints for API requests.  In order to leverage the advantages this class provides, use a single instance of this class for an entire session.  Do not instantiate a new ET_Client object for each request made. 
+
+The ET_Client class accepts multiple parameters
+
+**Refresh WSDL** - If set to true, it will automatically download a local copy of the WSDL whenever an update is found.
+> $myclient = new ET_Client(true);
+
+**Debug** - If set to true, all API requests that the Fuel SDK is making behind the scenes will be logged to PHP's error log.  This option should only be set to true in order to troubleshoot during the development process and should never be used in a production scenario. 
+> $myclient = new ET_Client(true,true);
+
+**Parameters** - Allows for passing authentication information for use with SSO with a JWT or for passing ClientID/ClientSecret if you would prefer to not use the config file option. 
+
+Example passing JWT: 
+> $myclient = new ET_Client(true, array("jwt"=>"JWT Values goes here"));
+
+Example passing ClientID/ClientSecret: 
+> $myclient = new ET_Client(true, array("clientid" => "3bjbc3mg4nbk64z5kzczf89n", "clientsecret"=>"ssnGAPvZg6kmm775KPj2Q4Cs"));
 
 ## Responses ##
 All methods on Fuel SDK objects return a generic object that follows the same structure, regardless of the type of call.  This object contains a common set of properties used to display details about the request.

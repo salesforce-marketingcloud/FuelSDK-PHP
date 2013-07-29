@@ -2,8 +2,7 @@
 
 require('../ET_Client.php');
 try {	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 
 	// Modify the date below to reduce the number of results returned from the request
 	// Setting this too far in the past could result in a very large response size

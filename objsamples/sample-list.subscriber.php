@@ -8,8 +8,7 @@ try {
 	
 	$NewListName = "PHPSDKListSubscriber";
 	$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 
 	
 	// Create List

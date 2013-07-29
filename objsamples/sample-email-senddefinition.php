@@ -2,8 +2,7 @@
 
 require('../ET_Client.php');
 try {	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 	
 	$NewSendDefinitionName = "PHPSDKSendDefinition";
 	$SendableDataExtensionCustomerKey = "F6F3871A-D124-499B-BBF5-3EFC0E827A51";
