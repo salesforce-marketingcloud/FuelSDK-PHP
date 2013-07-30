@@ -81,7 +81,6 @@ class ET_Client extends SoapClient {
 				$jsonRequest->clientId = $this->clientId;
 				$jsonRequest->clientSecret = $this->clientSecret;
 				$jsonRequest->accessType = "offline";
-				$jsonRequest->scope = "cas:".$this->internalAuthToken;
 				if (!is_null($this->refreshKey)){
 					$jsonRequest->refreshToken = $this->refreshKey;
 				}
