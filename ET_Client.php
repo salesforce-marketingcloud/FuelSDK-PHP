@@ -285,6 +285,9 @@ class ET_Get extends ET_Constructor {
 		}
 		
 		$retrieveRequest["ObjectType"] = $objType;
+		if ("Account" == $objType) {
+			$retrieveRequest["QueryAllAccounts"] = true;
+		}
 		if ($filter){
 			if (array_key_exists("LogicalOperator",$filter )){				
 				$cfp = new stdClass();
@@ -1301,6 +1304,12 @@ class ET_ClickEvent extends ET_GetSupport {
 	{
 		$this->obj = "ClickEvent";
 		$this->getSinceLastBatch = true;
+	}
+}
+
+class ET_Organization extends ET_CUDSupport {
+	function __construct() {
+		$this->obj = "Account";
 	}
 }
 
