@@ -807,12 +807,12 @@ class ET_Campaign_Asset extends ET_CUDSupportRest {
 }
 
 class ET_BaseObject {
-	public  $authStub, $props, $filter;
+	public  $authStub, $props, $filter, $organizationId;
 	protected $obj, $lastRequestID;
 }
 
 class ET_BaseObjectRest {
-	public  $authStub, $props;
+	public  $authStub, $props, $organizationId;
 	protected  $endpoint, $urlProps, $urlPropsRequired;
 }
 
