@@ -1,4 +1,4 @@
-FuelSDK-Ruby
+FuelSDK-PHP
 ============
 
 ExactTarget Fuel SDK for PHP
