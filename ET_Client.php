@@ -162,7 +162,7 @@ class ET_Client extends SoapClient {
 		$content = utf8_encode($objWSSE->saveXML());
 		$content_length = strlen($content); 
 		if ($this->debugSOAP){
-			error_log ('Fuel SDK SOAP Request: ');
+			error_log ('FuelSDK SOAP Request: ');
 			error_log (str_replace($this->internalAuthToken,"REMOVED",$content));
 		}
 		
@@ -210,15 +210,132 @@ class ET_Client extends SoapClient {
 		return $postResponse;
 	}
 	
-	function CreateDataExtensions($dataExtensionDefinitions){		
+	function CreateDataExtensions($dataExtensionDefinitions){
 		$newDEs = new ET_DataExtension();
 		$newDEs->authStub = $this;
-		
 		$newDEs->props = $dataExtensionDefinitions;
-		$postResponse = $newDEs->post();		
+		$postResponse = $newDEs->post();
 		
-		return $postResponse;	
+		return $postResponse;
 	}
+	
+	function SendTriggeredSends($arrayOfTriggeredRecords){
+		$sendTS = new ET_TriggeredSend();
+		$sendTS->authStub = $this;
+		$sendTS->props = $arrayOfTriggeredRecords;
+		$sendResponse = $sendTS->send();
+		return $sendResponse;
+	}
+	
+	function SendEmailToList($emailID, $listID, $sendClassficationCustomerKey) {
+		$email = new ET_Email_SendDefinition();
+		$email->props = array("Name"=> uniqid(), "CustomerKey"=>uniqid(), "Description"=>"Created with FuelSDK");
+		$email->props["SendClassification"] = array("CustomerKey"=>$sendClassficationCustomerKey);
+		$email->props["SendDefinitionList"] = array("List"=> array("ID"=>$listID), "DataSourceTypeID"=>"List");
+		$email->props["Email"] = array("ID"=>$emailID);
+		$email->authStub = $this;
+		$result = $email->post();
+		
+		if ($result->status) {
+			$sendresult = $email->send();
+			if ($sendresult->status) {
+				$deleteresult = $email->delete();
+				return $sendresult;
+			} else { 
+				throw new Exception("Unable to send using send definition due to: ".print_r($result,true));
+			}
+		} else {
+			throw new Exception("Unable to create send definition due to: ".print_r($result,true));
+		}
+	}
+	
+	function SendEmailToDataExtension($emailID, $sendableDataExtensionCustomerKey, $sendClassficationCustomerKey){
+		$email = new ET_Email_SendDefinition();
+		$email->props = array("Name"=>uniqid(), "CustomerKey"=>uniqid(), "Description"=>"Created with FuelSDK"); 
+		$email->props["SendClassification"] = array("CustomerKey"=> $sendClassficationCustomerKey);
+		$email->props["SendDefinitionList"] = array("CustomerKey"=> $sendableDataExtensionCustomerKey, "DataSourceTypeID"=>"CustomObject");
+		$email->props["Email"] = array("ID"=>$emailID);
+		$email->authStub = $this;
+		$result = $email->post();
+		if ($result->status) { 
+			$sendresult = $email->send();
+			if ($sendresult->status) { 
+				$deleteresult = $email->delete();
+				return $sendresult;
+			} else {
+				throw new Exception("Unable to send using send definition due to:".print_r($result,true));
+			} 
+		} else {
+			throw new Exception("Unable to create send definition due to: ".print_r($result,true));
+		} 
+	}
+	
+	function CreateAndStartListImport($listId,$fileName){
+		$import = new ET_Import();
+		$import->authStub = $this;
+		$import->props = array("Name"=> "SDK Generated Import ".uniqid());
+		$import->props["CustomerKey"] = uniqid();
+		$import->props["Description"] = "SDK Generated Import";
+		$import->props["AllowErrors"] = "true";
+		$import->props["DestinationObject"] = array("ID"=>$listId);
+		$import->props["FieldMappingType"] = "InferFromColumnHeadings";
+		$import->props["FileSpec"] = $fileName;
+		$import->props["FileType"] = "CSV";
+		$import->props["RetrieveFileTransferLocation"] = array("CustomerKey"=>"ExactTarget Enhanced FTP");
+		$import->props["UpdateType"] = "AddAndUpdate";
+		$result = $import->post();
+		
+		if ($result->status) { 
+			return $import->start();
+		} else {
+			throw new Exception("Unable to create import definition due to: ".print_r($result,true));
+		} 
+	} 
+	
+	function CreateAndStartDataExtensionImport($dataExtensionCustomerKey, $fileName, $overwrite) {
+		$import = new ET_Import();
+		$import->authStub = $this;
+		$import->props = array("Name"=> "SDK Generated Import ".uniqid());
+		$import->props["CustomerKey"] = uniqid();
+		$import->props["Description"] = "SDK Generated Import";
+		$import->props["AllowErrors"] = "true";
+		$import->props["DestinationObject"] = array("ObjectID"=>$dataExtensionCustomerKey);
+		$import->props["FieldMappingType"] = "InferFromColumnHeadings";
+		$import->props["FileSpec"] = $fileName;
+		$import->props["FileType"] = "CSV";
+		$import->props["RetrieveFileTransferLocation"] = array("CustomerKey"=>"ExactTarget Enhanced FTP");
+		if ($overwrite) {
+			$import->props["UpdateType"] = "Overwrite";
+		} else {
+			$import->props["UpdateType"] = "AddAndUpdate";
+		} 
+		
+		$result = $import->post();
+		
+		if ($result->status) {
+			return $import->start();
+		} else {
+			throw new Exception("Unable to create import definition due to: ".print_r($result,true));
+		}
+	}
+	
+
+	function CreateProfileAttributes($allAttributes) {
+		$attrs = new ET_ProfileAttribute();
+		$attrs->authStub = $this;
+		$attrs->props = $allAttributes;
+		return $attrs->post();
+	}
+	
+	
+	function CreateContentAreas($arrayOfContentAreas) {
+		$postC = new ET_ContentArea();
+		$postC->authStub = $this;
+		$postC->props = $arrayOfContentAreas;
+		$sendResponse = $postC->post();
+		return $sendResponse;
+	}
+	
 }
 
 class ET_Constructor {
@@ -533,14 +650,21 @@ class ET_Delete extends ET_Constructor {
 	}
 }
 
-class ET_Configure extends ET_Constructor {	
+class ET_Configure extends ET_Constructor {
 	function __construct($authStub, $objType, $action, $props) {
 		$authStub->refreshToken();
 		$configure = array();
 		$configureRequest = array();
 		$configureRequest['Action'] = $action;
 		$configureRequest['Configurations'] = array();
-		$configureRequest['Configurations'][] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+		
+		if (!isAssoc($props)) {
+			foreach ($props as $value){
+				$configureRequest['Configurations'][] = new SoapVar($value, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+			}
+		} else {
+			$configureRequest['Configurations'][] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+		} 
 
 		$configure['ConfigureRequestMsg'] = $configureRequest;
 		$return = $authStub->__soapCall("Configure", $configure, null, null , $out_header);
