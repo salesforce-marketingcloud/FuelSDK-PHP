@@ -806,6 +806,53 @@ class ET_Campaign_Asset extends ET_CUDSupportRest {
 	}
 }
 
+class ET_Message_Guide extends ET_CUDSupportRest {
+	function __construct() {
+		$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/{id}";
+		$this->urlProps = array("id");
+		$this->urlPropsRequired = array();
+	}
+	
+	function convert() {
+		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/convert?access_token={$this->authStub->authToken}";
+
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);
+		return $response;
+		
+	}
+	
+	function send() {
+		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/sendnow?access_token={$this->authStub->authToken}";
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);
+		return $response;
+	}
+	
+	function render() {
+
+		$completeURL = null;
+		$response = null;
+		
+		if (is_array($this->props) && array_key_exists("id", $this->props)) {
+			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render/{$this->props['id']}?access_token={$this->authStub->authToken}";
+			$response = new ET_GetRest($this->authStub, $completeURL, null);
+		} else {
+			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render?access_token={$this->authStub->authToken}";
+			$response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
+		}
+		return $response;
+	}
+	
+	function preview() {
+
+		$props = $this->props->attrs;
+
+		$completeURL = "https://www.exacttargetapis.com/guide/v1/emails/{$this->props['emailID']}/lists/{$this->props['listID']}/preview?access_token={$this->authStub->authToken}";
+		
+		$response = new ET_PostRest($this->authStub, $completeURL, $props);
+		return $response;
+	}
+}
+
 class ET_BaseObject {
 	public  $authStub, $props, $filter, $organizationId, $organizationKey;
 	protected $obj, $lastRequestID;
