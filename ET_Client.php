@@ -102,7 +102,7 @@ class ET_Client extends SoapClient {
 			}
 			
 			if ($getNewWSDL){
-				$newWSDL = file_gET_contents($wsdlLoc);
+				$newWSDL = file_get_contents($wsdlLoc);
 				file_put_contents("ExactTargetWSDL.xml", $newWSDL);
 			}	
 		}
