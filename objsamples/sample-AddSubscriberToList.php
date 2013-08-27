@@ -5,6 +5,7 @@ try {
 
 	$myclient = new ET_Client();	
 	$NewListName = "PHPSDKList";
+	$EmailAddressesArray = array("PHPSDKListSubscriber121@bh.exacttarget.com", "PHPSDKListSubscriber212@bh.exacttarget.com", "PHPSDKListSubscriber312@bh.exacttarget.com", "PHPSDKListSubscriber412@bh.exacttarget.com", "PHPSDKListSubscriber512@bh.exacttarget.com", "PHPSDKListSubscriber612@bh.exacttarget.com");
 	
 	// Example using AddSubscriberToList() method
 	// Typically this method will be used with a pre-existing list but for testing purposes one is being created.
@@ -28,6 +29,17 @@ try {
 		// Adding Subscriber To a List
 		print "Adding Subscriber To a List \n";
 		$response = $myclient->AddSubscriberToList("AddSubTesting@bh.exacttarget.com", array($newListID));			
+		print_r('Response Status: '.($response->status ? 'true' : 'false')."\n");
+		print 'Code: '.$response->code."\n";
+		print 'Message: '.$response->message."\n";	
+		print 'Results Length: '. count($response->results)."\n";
+		print "Results: \n";
+		print_r($response->results);
+		print "\n---------------\n";
+		
+		// Adding Multiple Subscribers To a List in Bulk
+		print "Adding Multiple Subscribers To a List in Bulk \n";
+		$response = $myclient->AddSubscriberToList($EmailAddressesArray, array($newListID));			
 		print_r('Response Status: '.($response->status ? 'true' : 'false')."\n");
 		print 'Code: '.$response->code."\n";
 		print 'Message: '.$response->message."\n";	

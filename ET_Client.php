@@ -181,34 +181,56 @@ class ET_Client extends SoapClient {
 						
 		return $output;
 	}
-		
-	function AddSubscriberToList($emailAddress, $listIDs, $subscriberKey = null){		
+
+	function AddSubscriberToList($emailAddress, $listIDs, $subscriberKey = null){                   
 		$newSub = new ET_Subscriber;
 		$newSub->authStub = $this;
 		$lists = array();
-		
+
 		foreach ($listIDs as $key => $value){
 			$lists[] = array("ID" => $value);
 		}
-		
-		$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
-		if ($subscriberKey != null ){
-			$newSub->props['SubscriberKey']  = $subscriberKey;
-		}
-		
-		// Try to add the subscriber
-		$postResponse = $newSub->post();
-		
-		if ($postResponse->status == false) { 
-			// If the subscriber already exists in the account then we need to do an update.
-			// Update Subscriber On List 
-			if ($postResponse->results[0]->ErrorCode == "12014") {
-				$patchResponse = $newSub->patch();
-				return $patchResponse;
+
+		if (is_string($emailAddress)) {
+			$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
+			if ($subscriberKey != null ){
+				$newSub->props['SubscriberKey']  = $subscriberKey;
 			}
-		} 
-		return $postResponse;
-	}
+		} else if (is_array($emailAddress)) {
+			$newSub->props = array();
+			for ($i = 0; $i < count($emailAddress); $i++) {
+				$copyLists = array();
+				foreach ($lists as $k => $v) {
+					$NewProps = array();
+					foreach($v as $prop => $value) {
+						$NewProps[$prop] = $value;
+					}
+					$copyLists[$k] = $NewProps;
+				}
+				
+				$p = array("EmailAddress" => $emailAddress[$i], "Lists" => $copyLists);
+				if (is_array($subscriberKey) && $subscriberKey[$i] != null) {
+					$p['SubscriberKey']  = $subscriberKey[$i];
+				}
+				$newSub->props[] = $p;
+			}
+		}
+
+        // Try to add the subscriber
+        $postResponse = $newSub->post();
+        if ($postResponse->status == false) {
+			// If the subscriber already exists in the account then we need to do an update.
+			// Update Subscriber On List
+			if ($postResponse->results[0]->ErrorCode == "12014") {
+		        $patchResponse = $newSub->patch();
+		        return $patchResponse;
+			}
+        }
+
+        return $postResponse;
+
+    }		
+  
 	
 	function CreateDataExtensions($dataExtensionDefinitions){		
 		$newDEs = new ET_DataExtension();
@@ -437,7 +459,7 @@ class ET_Post extends ET_Constructor {
 		} else {
 			$objects["Options"] = "";
 		}
-		$cr["CreateReqest"] = $objects;
+		$cr["CreateRequest"] = $objects;
 		
 		$return = $authStub->__soapCall("Create", $cr, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());		
