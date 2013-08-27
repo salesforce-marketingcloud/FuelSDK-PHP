@@ -136,7 +136,7 @@ try {
 		if ($postResponse->status){
 		
 			$listID = $postResponse->results[0]->NewID;
-			$SubscriberTestEmail = "ryan.lowe@centricconsulting.com";
+			$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
 			
 			// Create Subscriber on List
 			print "Create Subscriber on List \n";
