@@ -191,12 +191,12 @@ class ET_Client extends SoapClient {
 			$lists[] = array("ID" => $value);
 		}
 
-		if (is_string($emailAddress)) {
+		//if (is_string($emailAddress)) {
 			$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
 			if ($subscriberKey != null ){
 				$newSub->props['SubscriberKey']  = $subscriberKey;
 			}
-		} else if (is_array($emailAddress)) {
+		/*} else if (is_array($emailAddress)) {
 			$newSub->props = array();
 			for ($i = 0; $i < count($emailAddress); $i++) {
 				$copyLists = array();
@@ -214,7 +214,7 @@ class ET_Client extends SoapClient {
 				}
 				$newSub->props[] = $p;
 			}
-		}
+		}*/
 
         // Try to add the subscriber
         $postResponse = $newSub->post();
@@ -226,10 +226,30 @@ class ET_Client extends SoapClient {
 		        return $patchResponse;
 			}
         }
-
         return $postResponse;
-
-    }		
+    }
+	
+	function AddSubscribersToLists($subs, $listIDs){
+		//Create Lists
+		foreach ($listIDs as $key => $value){
+			$lists[] = array("ID" => $value);
+		}
+		
+		for ($i = 0; $i < count($subs); $i++) {
+			$copyLists = array();
+			foreach ($lists as $k => $v) {
+				$NewProps = array();
+				foreach($v as $prop => $value) {
+					$NewProps[$prop] = $value;
+				}
+				$copyLists[$k] = $NewProps;
+			}
+			$subs[$i]["Lists"] = $copyLists;
+		}
+		
+		$response = new ET_Post($this, "Subscriber", $subs, true);
+		return $response;
+    }
   
 	
 	function CreateDataExtensions($dataExtensionDefinitions){
@@ -577,7 +597,6 @@ class ET_Post extends ET_Constructor {
 			$objects["Options"] = "";
 		}
 		$cr["CreateRequest"] = $objects;
-		
 		$return = $authStub->__soapCall("Create", $cr, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());		
 		
