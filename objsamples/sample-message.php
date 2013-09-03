@@ -32,7 +32,7 @@ try {
 	}	 
 	
 	
-	$convertHTML = "<html><head><meta name=\"messageType\" content=\"application/vnd.et.message.web.html\"><meta name=\"viewTypes\" content=\"web \" data-type=\"guide\"></head><body><h1>Hello World!</h1></body></html>";
+	$convertHTML = "<html><head><meta name=\"messageType\" content=\"application/vnd.et.message.email.html\"><meta name=\"viewTypes\" content=\"emailhtmlbody\" data-type=\"guide\"></head><body><div style=\"background: black; border: 1; width: 105px; height: 305px;\"><div data-type=\"slot\" style=\"background: red; border: 1; width: 100px; height: 100px;\" data-alias=\"master\">R</div><div data-type=\"slot\" data-alias=\"A\" style=\"background: white; border: 1; width: 100px; height: 100px;\">W</div><div data-type=\"slot\" data-alias=\"B\" style=\"background: blue; border: 1; width: 100px; height: 100px;\">B <div data-type=\"slot\" data-alias=\"C\" style=\"background: orange; border: 1; width: 100px; height: 100px;\">C <br /></div></div></div><a href=\"%%profile_center_url%%\" alias=\"Update Profile\">Update Profile</a><table cellpadding=\"2\" cellspacing=\"0\" width=\"600\" ID=\"Table5\" Border=0><tr><td><font face=\"verdana\" size=\"1\" color=\"#444444\">This email was sent to:  %%emailaddr%% <br><br><b>Email Sent By:</b> %%Member_Busname%%<br>%%Member_Addr%% %%Member_City%%, %%Member_State%%, %%Member_PostalCode%%, %%Member_Country%%<br><br></font></td></tr></table></body></html>";
 	
 	// Convert a Message
 	print "Convert a Message \n";
@@ -71,7 +71,7 @@ try {
 	if ($postResponse->status) {
 	
 		$IDofPostMessage = $postResponse->results->id;
-	
+		$message = $postResponse->results;
 				
 		// Retrieve the new Message
 		print "Retrieve the new Message \n";
@@ -136,7 +136,8 @@ try {
 		if ($postResponse->status){
 		
 			$listID = $postResponse->results[0]->NewID;
-			$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
+//			$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
+			$SubscriberTestEmail = "ryan.lowe@centricconsulting.com";
 			
 			// Create Subscriber on List
 			print "Create Subscriber on List \n";
@@ -158,8 +159,8 @@ try {
 				print "Preview the new Message \n";
 				$sendMG = new ET_Message_Guide();
 				$sendMG->authStub = $myclient;
-				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage);	
-				$sendResult = $sendMG->send();
+				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage, "attrs" => array("First Name" => "Jim Jones"));	
+				$sendResult = $sendMG->preview();
 				print_r('Retrieve Status: '.($sendResult->status ? 'true' : 'false')."\n");
 				print 'Code: '.$sendResult->code."\n";
 				print 'Message: '.$sendResult->message."\n";
@@ -187,11 +188,11 @@ try {
 		
 		}
 		
-		// Update a Message
+		// Update a Message		
 		print "Update a Message \n";
 		$patchMG = new ET_Message_Guide();
 		$patchMG->authStub = $myclient;
-		$patchMG->props = $message;
+		$patchMG->props = get_object_vars($message);
 		$patchResponse = $patchMG->Patch();
 		print_r('Patch Status: '.($patchResponse->status ? 'true' : 'false')."\n");
 		print 'Code: '.$patchResponse->code."\n";
