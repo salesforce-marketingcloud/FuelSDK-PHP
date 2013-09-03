@@ -877,7 +877,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest{
 		
 		// All URL Props are required when doing Patch	
 		foreach($this->urlProps as $value){
-			if (is_null($this->props) || in_array($value,$this->props)){
+			if (is_null($this->props) || !array_key_exists($value,$this->props)){
 				throw new Exception("Unable to process request due to missing required prop: {$value}");							
 			}
 		}
@@ -905,7 +905,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest{
 		
 		// All URL Props are required when doing Delete	
 		foreach($this->urlProps as $value){
-			if (is_null($this->props) || in_array($value,$this->props)){
+			if (is_null($this->props) || !array_key_exists($value,$this->props)){
 				throw new Exception("Unable to process request due to missing required prop: {$value}");							
 			}
 		}
