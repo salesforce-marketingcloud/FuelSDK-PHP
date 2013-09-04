@@ -977,6 +977,16 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 		$this->urlProps = array("id");
 		$this->urlPropsRequired = array();
 	}
+	function get() {
+		$origEndpoint = $this->endpoint;
+		if (count($this->props) == 0) {
+			$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/f:@all";
+		}
+		$response = parent::get();
+		$this->endpoint = $origEndpoint;
+		
+		return $response;
+	}
 	
 	function convert() {
 		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/convert?access_token={$this->authStub->authToken}";
@@ -1004,16 +1014,6 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render?access_token={$this->authStub->authToken}";
 			$response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
 		}
-		return $response;
-	}
-	
-	function preview() {
-
-		$props = $this->props['attrs'];
-
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/emails/{$this->props['messageID']}/lists/{$this->props['listID']}/preview?access_token={$this->authStub->authToken}";
-		
-		$response = new ET_PostRest($this->authStub, $completeURL, $props);
 		return $response;
 	}
 }
