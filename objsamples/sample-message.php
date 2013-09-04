@@ -153,22 +153,7 @@ try {
 			print_r($postResult->results);
 			print "\n---------------\n";
 			
-			if ($postResponse->status){
-			
-				// Preview the Message
-				print "Preview the new Message \n";
-				$sendMG = new ET_Message_Guide();
-				$sendMG->authStub = $myclient;
-				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage, "attrs" => array("First Name" => "Jim Jones"));	
-				$sendResult = $sendMG->preview();
-				print_r('Retrieve Status: '.($sendResult->status ? 'true' : 'false')."\n");
-				print 'Code: '.$sendResult->code."\n";
-				print 'Message: '.$sendResult->message."\n";
-				print 'Results Length: '. count($sendResult->results)."\n";
-				print 'Results: '."\n";
-				print_r($sendResult->results);
-				print "\n---------------\n";
-			
+			if ($postResponse->status){			
 			
 				// Send the Message
 				print "Send the new Message \n";

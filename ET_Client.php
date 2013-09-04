@@ -1006,16 +1006,6 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 		}
 		return $response;
 	}
-	
-	function preview() {
-
-		$props = $this->props['attrs'];
-
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/emails/{$this->props['messageID']}/lists/{$this->props['listID']}/preview?access_token={$this->authStub->authToken}";
-		
-		$response = new ET_PostRest($this->authStub, $completeURL, $props);
-		return $response;
-	}
 }
 
 class ET_Asset extends ET_CUDSupportRest {
