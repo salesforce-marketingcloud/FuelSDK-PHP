@@ -19,7 +19,6 @@ try {
 	//print_r($getResult->results);
 	print "\n---------------\n";
 	
-	
 	while ($getResult->moreResults) {
 		print "Continue Retrieve All Message with GetMoreResults \n";
 		$getResult = $getMG->GetMoreResults();
@@ -29,7 +28,25 @@ try {
 		print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
 		print 'Results Length(Items): '. count($getResult->results->items)."\n";
 		print "\n---------------\n";
-	}	 
+	}
+	
+	
+	//$RetrieveMessageByIDTestID = "562f7bc3-0df6-4eb5-ae7c-f2710a83c540";
+	
+	// Retrieve Message by ID	 
+	//print "Retrieve Message by ID \n";
+	//$getSingleMG = new ET_Message_Guide();
+	//$getSingleMG->authStub = $myclient;
+	//$getSingleMG->props = array("id" => $RetrieveMessageByIDTestID);
+	//$getSingleResult = $getSingleMG->get();
+	//print_r('Get Status: '.($getSingleResult->status ? 'true' : 'false')."\n");
+	//print 'Code: '.$getSingleResult->code."\n";
+	//print 'Message: '.$getSingleResult->message."\n";
+	//print_r('More Results: '.($getSingleResult->moreResults ? 'true' : 'false')."\n");
+	//print 'Results Length(Items): '. count($getSingleResult->results->items)."\n";
+	//print 'Results: "\n"';
+	//print_r($getSingleResult->results);
+	//print "\n---------------\n";
 	
 	
 	$convertHTML = "<html><head><meta name=\"messageType\" content=\"application/vnd.et.message.email.html\"><meta name=\"viewTypes\" content=\"emailhtmlbody\" data-type=\"guide\"></head><body><div style=\"background: black; border: 1; width: 105px; height: 305px;\"><div data-type=\"slot\" style=\"background: red; border: 1; width: 100px; height: 100px;\" data-alias=\"master\">R</div><div data-type=\"slot\" data-alias=\"A\" style=\"background: white; border: 1; width: 100px; height: 100px;\">W</div><div data-type=\"slot\" data-alias=\"B\" style=\"background: blue; border: 1; width: 100px; height: 100px;\">B <div data-type=\"slot\" data-alias=\"C\" style=\"background: orange; border: 1; width: 100px; height: 100px;\">C <br /></div></div></div><a href=\"%%profile_center_url%%\" alias=\"Update Profile\">Update Profile</a><table cellpadding=\"2\" cellspacing=\"0\" width=\"600\" ID=\"Table5\" Border=0><tr><td><font face=\"verdana\" size=\"1\" color=\"#444444\">This email was sent to:  %%emailaddr%% <br><br><b>Email Sent By:</b> %%Member_Busname%%<br>%%Member_Addr%% %%Member_City%%, %%Member_State%%, %%Member_PostalCode%%, %%Member_Country%%<br><br></font></td></tr></table></body></html>";
