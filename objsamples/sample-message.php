@@ -30,6 +30,20 @@ try {
 		print "\n---------------\n";
 	}
 	
+	$RetrieveMessageByKeyTestKey = "527BC1BC-E9B1-402D-8FB0-3125D1088A55";
+	
+	// Retrieve Message by Key	 
+	print "Retrieve Message by Key \n";
+	$getSingleMG = new ET_Message_Guide();
+	$getSingleMG->authStub = $myclient;
+	$getSingleMG->props = array("key" => $RetrieveMessageByKeyTestKey);
+	$getSingleResult = $getSingleMG->get();
+	print_r('Get Status: '.($getSingleResult->status ? 'true' : 'false')."\n");
+	print 'Code: '.$getSingleResult->code."\n";
+	print 'Message: '.$getSingleResult->message."\n";
+	print 'Results: "\n"';
+	print_r($getSingleResult->results);
+	print "\n---------------\n";
 	
 	//$RetrieveMessageByIDTestID = "562f7bc3-0df6-4eb5-ae7c-f2710a83c540";
 	

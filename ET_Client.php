@@ -979,11 +979,16 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 	}
 	function get() {
 		$origEndpoint = $this->endpoint;
+		$origProps = $this->urlProps;
 		if (count($this->props) == 0) {
 			$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/f:@all";
+		} elseif (array_key_exists('key',$this->props)){
+			$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/key:{key}";
+			$this->urlProps = array("key");
 		}
 		$response = parent::get();
 		$this->endpoint = $origEndpoint;
+		$this->urlProps = origProps;
 		
 		return $response;
 	}
