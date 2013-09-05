@@ -988,7 +988,7 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 		}
 		$response = parent::get();
 		$this->endpoint = $origEndpoint;
-		$this->urlProps = origProps;
+		$this->urlProps = $origProps;
 		
 		return $response;
 	}
@@ -1002,8 +1002,19 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 	}
 	
 	function send() {
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/sendnow?access_token={$this->authStub->authToken}";
-		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);
+		$renderMG = new ET_Message_Guide();
+		$renderMG->authStub = $this->authStub;
+		$renderMG->props = array("id" => $this->props['messageID']);	
+		$renderResult = $renderMG->render();
+		if(!$renderResult->status){
+			return $renderResult;
+		}
+		
+		$html = $renderResult->results->emailhtmlbody;
+		$send = array();
+		$send["Email"] = array("Subject"=> $this->props['subject'], "HTMLBody"=> $html);
+		$send["List"] = array("ID"=> $this->props['listID']);		
+		$response = new ET_Post($this->authStub, "Send", $send);
 		return $response;
 	}
 	
