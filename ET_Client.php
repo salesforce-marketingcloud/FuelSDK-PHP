@@ -1001,7 +1001,7 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 		
 	}
 	
-	function send() {
+	function sendProcess() {
 		$renderMG = new ET_Message_Guide();
 		$renderMG->authStub = $this->authStub;
 		$renderMG->props = array("id" => $this->props['messageID']);	
