@@ -160,7 +160,7 @@ class ET_Client extends SoapClient {
 		$lists = array();
 		
 		foreach ($listIDs as $key => $value){
-			$list[] = array("ID" => $value);
+			$lists[] = array("ID" => $value);
 		}
 		
 		$newSub->props = array("EmailAddress" => $emailAddress, "Lists" => $lists);
