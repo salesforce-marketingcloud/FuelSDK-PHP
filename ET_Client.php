@@ -3,12 +3,13 @@ require('soap-wsse.php');
 require('JWT.php');
 
 class ET_Client extends SoapClient {
-	public $authToken, $packageName, $packageFolders, $parentFolders;
-	private $authTokenExpiration, $internalAuthToken, $wsdlLoc, $debugSOAP,
-			$lastHTTPCode, $clientId, $clientSecret, $appsignature, $endpoint, $refreshKey;
-	
+	public $packageName, $packageFolders, $parentFolders;
+	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
+			$clientSecret, $appsignature, $endpoint, 
+			$tenantTokens, $tenantKey;
 		
 	function __construct($getWSDL = false, $debug = false, $params = null) {	
+		$tenantTokens = array();
 		$config = @include 'config.php';
 		if ($config){
 			$this->wsdlLoc = $config['defaultwsdl'];
@@ -36,18 +37,17 @@ class ET_Client extends SoapClient {
 				throw new Exception('Unable to utilize JWT for SSO without appsignature: Must be provided in config file or passed when instantiating ET_Client');
 			}
 			$decodedJWT = JWT::decode($params['jwt'], $this->appsignature);
-			$this->authToken = $decodedJWT->request->user->oauthToken;
-			$this->internalAuthToken = $decodedJWT->request->user->internalOauthToken;
 			$dv = new DateInterval('PT'.$decodedJWT->request->user->expiresIn.'S');
 			$newexpTime = new DateTime();
-			$this->authTokenExpiration = $newexpTime->add($dv);	
-			$this->refreshKey = $decodedJWT->request->user->refreshToken;
+			$this->setAuthToken($this->tenantKey, $decodedJWT->request->user->oauthToken, $newexpTime->add($dv));
+			$this->setInternalAuthToken($this->tenantKey, $decodedJWT->request->user->internalOauthToken);
+			$this->setRefreshToken($this->tenantKey, $decodedJWT->request->user->refreshToken);
 			$this->packageName = $decodedJWT->request->application->package;
 		}		
 		$this->refreshToken();
 
 		try {
-			$url = "https://www.exacttargetapis.com/platform/v1/endpoints/soap?access_token=".$this->authToken;
+			$url = "https://www.exacttargetapis.com/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
 			$endpointResponse = restGet($url);			
 			$endpointObject = json_decode($endpointResponse->body);			
 			if ($endpointResponse && property_exists($endpointObject,"url")){		
@@ -68,34 +68,35 @@ class ET_Client extends SoapClient {
 		}
 		try {
 			$currentTime = new DateTime();
-			if (is_null($this->authTokenExpiration)){
+			if (is_null($this->getAuthTokenExpiration($this->tenantKey))){
 				$timeDiff = 0;
 			} else {
-				$timeDiff = $currentTime->diff($this->authTokenExpiration)->format('%i');
-				$timeDiff = $timeDiff  + (60 * $currentTime->diff($this->authTokenExpiration)->format('%H'));
+				$timeDiff = $currentTime->diff($this->getAuthTokenExpiration($this->tenantKey))->format('%i');
+				$timeDiff = $timeDiff  + (60 * $currentTime->diff($this->getAuthTokenExpiration($this->tenantKey))->format('%H'));
 			}
 
-			if (is_null($this->authToken) || ($timeDiff < 5) || $forceRefresh  ){
-				$url = "https://auth.exacttargetapis.com/v1/requestToken?legacy=1";
+			if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
+				$url = $this->tenantKey == null 
+						? "https://auth.exacttargetapis.com/v1/requestToken?legacy=1"
+						: "https://www.exacttargetapis.com/provisioning/v1/tenants/{$this->tenantKey}/requestToken?legacy=1";
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
 				$jsonRequest->clientSecret = $this->clientSecret;
 				$jsonRequest->accessType = "offline";
-				if (!is_null($this->refreshKey)){
-					$jsonRequest->refreshToken = $this->refreshKey;
+				if (!is_null($this->getRefreshToken($this->tenantKey))){
+					$jsonRequest->refreshToken = $this->getRefreshToken($this->tenantKey);
 				}
 				$authResponse = restPost($url, json_encode($jsonRequest));
 				$authObject = json_decode($authResponse->body);
 				
 				if ($authResponse && property_exists($authObject,"accessToken")){		
 					
-					$this->authToken = $authObject->accessToken;
-					$this->internalAuthToken = $authObject->legacyToken;
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
-					$this->authTokenExpiration = $newexpTime->add($dv);	
+					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
+					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);					
 					if (property_exists($authObject,'refreshToken')){
-						$this->refreshKey = $authObject->refreshToken;
+						$this->setRefreshToken($this->tenantKey, $authObject->refreshToken);
 					}
 				} else {
 					throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse->body );			
@@ -157,13 +158,13 @@ class ET_Client extends SoapClient {
 		
 		$objWSSE = new WSSESoap($doc);
 		$objWSSE->addUserToken("*", "*", FALSE);
-		$objWSSE->addOAuth($this->internalAuthToken);
+		$objWSSE->addOAuth($this->getInternalAuthToken($this->tenantKey));
 				
 		$content = utf8_encode($objWSSE->saveXML());
 		$content_length = strlen($content); 
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
-			error_log (str_replace($this->internalAuthToken,"REMOVED",$content));
+			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
 		}
 		
 		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".getSDKVersion());
@@ -181,6 +182,68 @@ class ET_Client extends SoapClient {
 						
 		return $output;
 	}
+	
+	public function getAuthToken($tenantKey = null) {
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}		
+		return isset($this->tenantTokens[$tenantKey]['authToken']) 
+			? $this->tenantTokens[$tenantKey]['authToken']
+			: null;
+	}
+	
+	function setAuthToken($tenantKey, $authToken, $authTokenExpiration) {
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}
+		$this->tenantTokens[$tenantKey]['authToken'] = $authToken;
+		$this->tenantTokens[$tenantKey]['authTokenExpiration'] = $authTokenExpiration;
+	}
+	
+	function getAuthTokenExpiration($tenantKey) {
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}
+		return isset($this->tenantTokens[$tenantKey]['authTokenExpiration'])
+			? $this->tenantTokens[$tenantKey]['authTokenExpiration']
+			: null;
+	}
+
+	function getInternalAuthToken($tenantKey) {
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}
+		return isset($this->tenantTokens[$tenantKey]['internalAuthToken'])
+			? $this->tenantTokens[$tenantKey]['internalAuthToken']
+			: null;
+	}
+
+	function setInternalAuthToken($tenantKey, $internalAuthToken) {
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}	
+		$this->tenantTokens[$tenantKey]['internalAuthToken'] = $internalAuthToken;
+	}
+	
+	function setRefreshToken($tenantKey, $refreshToken) {
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}	
+		$this->tenantTokens[$tenantKey]['refreshToken'] = $refreshToken;
+	}
+	
+	function getRefreshToken($tenantKey) {
+		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
+		if ($this->tenantTokens[$tenantKey] == null) {
+			$this->tenantTokens[$tenantKey] = array();
+		}
+		return isset($this->tenantTokens[$tenantKey]['refreshToken']) 
+			? $this->tenantTokens[$tenantKey]['refreshToken']
+			: null;
+	}	
 
 	function AddSubscriberToList($emailAddress, $listIDs, $subscriberKey = null){                   
 		$newSub = new ET_Subscriber;
@@ -376,6 +439,28 @@ class ET_Client extends SoapClient {
 		$postC->props = $arrayOfContentAreas;
 		$sendResponse = $postC->post();
 		return $sendResponse;
+	}
+	
+}
+
+class ET_OEM_Client extends ET_Client {
+	
+	function CreateTenant($tenantInfo) {
+		$key = $tenantInfo['key'];
+		unset($tenantInfo['key']);
+		$additionalQS = array();
+		$additionalQS["access_token"] = $this->getAuthToken();
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "https://www.exacttargetapis.com/provisioning/v1/tenants/{$key}?{$queryString}";
+		return new ET_PutRest($this, $completeURL, $tenantInfo);
+	}
+	
+	function GetTenants() {
+		$additionalQS = array();
+		$additionalQS["access_token"] = $this->getAuthToken();
+		$queryString = http_build_query($additionalQS);		
+		$completeURL = "https://www.exacttargetapis.com/provisioning/v1/tenants/?{$queryString}";
+		return new ET_GetRest($this, $completeURL, $queryString);
 	}
 	
 }
@@ -783,7 +868,7 @@ class ET_GetSupportRest extends ET_BaseObjectRest{
 		foreach ($this->urlProps as $value){
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
 		}		
-		$additionalQS["access_token"] = $this->authStub->authToken;
+		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
 		$response = new ET_GetRest($this->authStub, $completeURL, $queryString);						
@@ -862,7 +947,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest{
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
 		}
 		
-		$additionalQS["access_token"] = $this->authStub->authToken;
+		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
 		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);				
@@ -890,7 +975,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest{
 				} 
 			}				
 		}
-		$additionalQS["access_token"] = $this->authStub->authToken;
+		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
 		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props);				
@@ -917,7 +1002,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest{
 				} 
 			}				
 		}
-		$additionalQS["access_token"] = $this->authStub->authToken;
+		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 		$queryString = http_build_query($additionalQS);		
 		$completeURL = "{$completeURL}?{$queryString}";
 		$response = new ET_DeleteRest($this->authStub, $completeURL);				
@@ -951,6 +1036,13 @@ class ET_DeleteRest extends ET_Constructor {
 class ET_PatchRest extends ET_Constructor {
 	function __construct($authStub, $url, $props) {
 		$restResponse = restPatch($url, json_encode($props));			
+		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
+	}
+}
+
+class ET_PutRest extends ET_Constructor {
+	function __construct($authStub, $url, $props) {
+		$restResponse = restPut($url, json_encode($props));			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }
@@ -994,7 +1086,7 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 	}
 	
 	function convert() {
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/convert?access_token={$this->authStub->authToken}";
+		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/convert?access_token=" . $this->authStub->getAuthToken();
 
 		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);
 		return $response;
@@ -1024,10 +1116,10 @@ class ET_Message_Guide extends ET_CUDSupportRest {
 		$response = null;
 		
 		if (is_array($this->props) && array_key_exists("id", $this->props)) {
-			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render/{$this->props['id']}?access_token={$this->authStub->authToken}";
+			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render/{$this->props['id']}?access_token=" . $this->authStub->getAuthToken();
 			$response = new ET_GetRest($this->authStub, $completeURL, null);
 		} else {
-			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render?access_token={$this->authStub->authToken}";
+			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render?access_token=" . $this->authStub->getAuthToken();
 			$response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
 		}
 		return $response;
@@ -1042,7 +1134,7 @@ class ET_Asset extends ET_CUDSupportRest {
 	}
 	
 	public function upload() {
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/contentItems/portfolio/fileupload?access_token={$this->authStub->authToken}";
+		$completeURL = "https://www.exacttargetapis.com/guide/v1/contentItems/portfolio/fileupload?access_token=" . $this->authStub->getAuthToken();
 
 		$post = array('file_contents'=>'@'.$this->attrs['filePath']);
  
@@ -1675,6 +1767,43 @@ function restPatch($url, $content) {
 	
 	//Need to set the request to be a PATCH
 	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH" ); 
+		
+	// Disable VerifyPeer for SSL
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	
+	$outputJSON = curl_exec($ch);
+	$responseObject = new stdClass(); 
+	$responseObject->body = $outputJSON;
+	$responseObject->httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	
+	return $responseObject;
+}
+
+// Function for calling a Fuel API using PATCH
+/**
+ * @param string      $url    The resource URL for the REST API
+ * @param string      $content    A string of JSON which will be passed to the REST API
+	*
+ * @return string     The response payload from the REST service
+ */
+function restPut($url, $content) {
+	$ch = curl_init();
+	
+	// Uses the URL passed in that is specific to the API used
+	curl_setopt($ch, CURLOPT_URL, $url);	
+	
+	// When posting to a Fuel API, content-type has to be explicitly set to application/json
+	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
+	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
+	
+	// The content is the JSON payload that defines the request
+	curl_setopt ($ch, CURLOPT_POSTFIELDS, $content);
+	
+	//Need to set ReturnTransfer to True in order to store the result in a variable
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	
+	//Need to set the request to be a PATCH
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT" ); 
 		
 	// Disable VerifyPeer for SSL
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
