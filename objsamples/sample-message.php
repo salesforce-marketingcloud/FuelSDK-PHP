@@ -30,6 +30,20 @@ try {
 		print "\n---------------\n";
 	}
 	
+	$RetrieveMessageByKeyTestKey = "527BC1BC-E9B1-402D-8FB0-3125D1088A55";
+	
+	// Retrieve Message by Key	 
+	print "Retrieve Message by Key \n";
+	$getSingleMG = new ET_Message_Guide();
+	$getSingleMG->authStub = $myclient;
+	$getSingleMG->props = array("key" => $RetrieveMessageByKeyTestKey);
+	$getSingleResult = $getSingleMG->get();
+	print_r('Get Status: '.($getSingleResult->status ? 'true' : 'false')."\n");
+	print 'Code: '.$getSingleResult->code."\n";
+	print 'Message: '.$getSingleResult->message."\n";
+	print 'Results: "\n"';
+	print_r($getSingleResult->results);
+	print "\n---------------\n";
 	
 	//$RetrieveMessageByIDTestID = "562f7bc3-0df6-4eb5-ae7c-f2710a83c540";
 	
@@ -153,30 +167,28 @@ try {
 		if ($postResponse->status){
 		
 			$listID = $postResponse->results[0]->NewID;
-//			$SubscriberTestEmail = "PHPSDKListSubscriber@bh.exacttarget.com";
-			$SubscriberTestEmail = "ryan.lowe@centricconsulting.com";
+			$SubscriberTestEmail = "ExampleTestEmail@bh.exacttarget.com";
 			
 			// Create Subscriber on List
-			print "Create Subscriber on List \n";
+			print "Upsert Subscriber to List \n";
 			$subCreate = new ET_Subscriber();
 			$subCreate->authStub = $myclient;
 			$subCreate->props = array("EmailAddress" => $SubscriberTestEmail, "Lists" => array("ID" => $listID));
-			$postResult = $subCreate->post();
-			print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
-			print 'Code: '.$postResult->code."\n";
-			print 'Message: '.$postResult->message."\n";	
-			print 'Results Length: '. count($postResult->results)."\n";
+			$putResult = $subCreate->put();
+			print_r('Put Status: '.($putResult->status ? 'true' : 'false')."\n");
+			print 'Code: '.$putResult->code."\n";
+			print 'Message: '.$putResult->message."\n";	
+			print 'Results Length: '. count($putResult->results)."\n";
 			print 'Results: '."\n";
-			print_r($postResult->results);
+			print_r($putResult->results);
 			print "\n---------------\n";
 			
-			if ($postResponse->status){			
-			
+			if ($postResponse->status){
 				// Send the Message
 				print "Send the new Message \n";
 				$sendMG = new ET_Message_Guide();
 				$sendMG->authStub = $myclient;
-				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage);	
+				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage, "subject"=>"Example Subject");	
 				$sendResult = $sendMG->send();
 				print_r('Retrieve Status: '.($sendResult->status ? 'true' : 'false')."\n");
 				print 'Code: '.$sendResult->code."\n";
@@ -184,8 +196,9 @@ try {
 				print 'Results Length: '. count($sendResult->results)."\n";
 				print 'Results: '."\n";
 				print_r($sendResult->results);
+				print 'New JobID: '."\n";
+				print_r($sendResult->results[0]->NewID);
 				print "\n---------------\n";
-				
 			}
 		
 		}
