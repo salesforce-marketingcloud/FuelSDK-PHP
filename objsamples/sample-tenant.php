@@ -14,11 +14,10 @@ try {
 	print 'Code: '.$getResult->code."\n";
 	print 'Message: '.$getResult->message."\n";
 	print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
-	print 'Results Length(Items): '. count($getResult->results->items)."\n";
+	print 'Results Length(Items): '. count($getResult->results)."\n";
 	//print 'Results: "\n"';
 	//print_r($getResult->results);
 	print "\n---------------\n";
-	
 	
 	
 	// Create a new Tenant

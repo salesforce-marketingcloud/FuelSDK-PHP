@@ -480,7 +480,7 @@ class ET_Constructor {
 				$this->status = true;
 			}
 		} else {
-			if ($this->code != 200) {
+			if ($this->code != 200 && $this->code != 201 && $this->code != 202) {
 				$this->status = false;
 			} else {
 				$this->status = true;
