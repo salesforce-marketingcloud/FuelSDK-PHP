@@ -7,11 +7,11 @@ try {
 	$NameOfAttributeOne = "ExampleAttributeOne";
 	$NameOfAttributeTwo = "ExampleAttributeTwo";
 	
-	# Declare a Ruby Hash which contain all of the details for a DataExtension
+	# Declare an arrat which contain all of the details for a DataExtension
 	$profileAttrOne = array("Name" => $NameOfAttributeOne, "PropertyType"=>"string", "Description"=>"New Attribute from the SDK", "IsRequired"=>"false", "IsViewable"=>"false", "IsEditable"=>"true", "IsSendTime"=>"false");
 	$profileAttrTwo = array("Name" => $NameOfAttributeTwo, "PropertyType"=>"string", "Description"=>"New Attribute from the SDK", "IsRequired"=>"false", "IsViewable"=>"false", "IsEditable"=>"true", "IsSendTime"=>"false");
 	
-	# Call CreateDataExtensions passing in both DataExtension Hashes as an Array
+	# Call CreateDataExtensions passing in both DataExtension arrays
 	print '>>> CreateProfileAttributes';
 	$response = $myclient->CreateProfileAttributes(array($profileAttrOne,$profileAttrTwo));
 	print_r('CreateProfileAttributes Status: '.($response->status ? 'true' : 'false')."\n");
