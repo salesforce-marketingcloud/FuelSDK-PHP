@@ -11,7 +11,7 @@ try {
 	$profileAttrOne = array("Name" => $NameOfAttributeOne, "PropertyType"=>"string", "Description"=>"New Attribute from the SDK", "IsRequired"=>"false", "IsViewable"=>"false", "IsEditable"=>"true", "IsSendTime"=>"false");
 	$profileAttrTwo = array("Name" => $NameOfAttributeTwo, "PropertyType"=>"string", "Description"=>"New Attribute from the SDK", "IsRequired"=>"false", "IsViewable"=>"false", "IsEditable"=>"true", "IsSendTime"=>"false");
 	
-	# Call CreateDataExtensions passing in both Profile Attribute arrays
+	# Call CreateProfileAttributes passing in both Profile Attribute arrays
 	print '>>> CreateProfileAttributes';
 	$response = $myclient->CreateProfileAttributes(array($profileAttrOne,$profileAttrTwo));
 	print_r('CreateProfileAttributes Status: '.($response->status ? 'true' : 'false')."\n");
