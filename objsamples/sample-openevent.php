@@ -2,8 +2,7 @@
 
 require('../ET_Client.php');
 try {	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 
 	// Modify the date below to reduce the number of results returned from the request
 	// Setting this too far in the past could result in a very large response size
@@ -16,6 +15,7 @@ try {
 	$getOpenEvent->authStub = $myclient;
 	$getOpenEvent->props = array("SendID","SubscriberKey","EventDate","Client.ID","EventType","BatchID","TriggeredSendDefinitionObjectID","PartnerKey");
 	$getOpenEvent->filter = array('Property' => 'EventDate','SimpleOperator' => 'greaterThan','DateValue' => $retrieveDate);
+	$getOpenEvent->getSinceLastBatch = false;
 	$getResponse = $getOpenEvent->get();
 	print_r('Get Status: '.($getResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$getResponse->code."\n";

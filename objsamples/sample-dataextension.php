@@ -2,8 +2,7 @@
 
 require('../ET_Client.php');
 try {	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 		
 	//DataExtension Testing
 	//Get all Data Extensions
@@ -52,8 +51,8 @@ try {
 	$patchDE->props = array("Name" => $DataExtensionNameForTesting, "CustomerKey" => $DataExtensionNameForTesting);
 	$patchDE->columns = array();
 	$patchDE->columns[] = array("Name" => "AnExtraField", "FieldType" => "Text");
-	$patchResult = $patchDE->post();
-	print_r('Post Status: '.($patchResult->status ? 'true' : 'false')."\n");
+	$patchResult = $patchDE->patch();
+	print_r('Patch Status: '.($patchResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$patchResult->code."\n";
 	print 'Message: '.$patchResult->message."\n";	
 	print 'Result Count: '.count($patchResult->results)."\n";

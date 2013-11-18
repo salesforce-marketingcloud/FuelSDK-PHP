@@ -7,8 +7,7 @@ try {
 	$ExampleAssetType = "LIST";
 	$ExampleAssetItemID = "1953114";
 	
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 	
 	// Retrieve All Campaigns with GetMoreResults
 	print "Retrieve All Campaigns with GetMoreResults \n";
@@ -40,7 +39,7 @@ try {
 	print "Create a new Campaign \n";
 	$postCamp = new ET_Campaign();
 	$postCamp->authStub = $myclient;
-	$postCamp->props = array("name" => "SampleCampaignForPHPSDK4", "description"=> "SampleCampaignForPHPSDK", "color"=>"FF9933", "favorite"=>"false");	
+	$postCamp->props = array("name" => "CampaignForPHPSDK", "description"=> "CampaignForPHPSDK", "color"=>"FF9933", "favorite"=>"false");	
 	$postResponse = $postCamp->Post();
 	print_r('Post Status: '.($postResponse->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResponse->code."\n";
@@ -75,7 +74,7 @@ try {
 		print "Update a Campaign \n";
 		$patchCamp = new ET_Campaign();
 		$patchCamp->authStub = $myclient;
-		$patchCamp->props = array("id" => $IDOfpostCampaign,  "name" => "MAC9091 Updated!");	
+		$patchCamp->props = array("id" => $IDOfpostCampaign,  "name" => "CampaignForPHPSDK Updated!");	
 		$patchResponse = $patchCamp->Patch();
 		print_r('Patch Status: '.($patchResponse->status ? 'true' : 'false')."\n");
 		print 'Code: '.$patchResponse->code."\n";
