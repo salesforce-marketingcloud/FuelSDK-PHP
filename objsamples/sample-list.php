@@ -4,8 +4,7 @@ require('../ET_Client.php');
 try {
 	
 	$NewListName = "PHPSDKList";
-	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client();
 
 	// Retrieve All List with GetMoreResults
 	print "Retrieve All List with GetMoreResults \n";
