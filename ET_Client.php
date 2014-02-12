@@ -149,8 +149,8 @@ class ET_Client extends SoapClient {
 			
 			// sys_get_temp_dir() does not return a trailing slash on all OS's
 			// see http://php.net/manual/en/function.sys-get-temp-dir.php#80690
-			if ('/' !== substr($tmp, -1)) {
-				$tmp .= '/';
+			if ('/' !== substr($tmpPath, -1)) {
+				$tmpPath .= '/';
 			}
 		}
 		
