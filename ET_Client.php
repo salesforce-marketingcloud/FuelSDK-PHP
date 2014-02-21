@@ -173,7 +173,7 @@ class ET_Client extends SoapClient {
 		return curl_getinfo($curl, CURLINFO_FILETIME);
 	}
 				
-	function __doRequest($request, $location, $saction, $version) {
+	function __doRequest($request, $location, $saction, $version, $one_way=null) {
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 		
