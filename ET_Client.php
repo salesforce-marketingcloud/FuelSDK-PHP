@@ -10,7 +10,11 @@ class ET_Client extends SoapClient {
 		
 	function __construct($getWSDL = false, $debug = false, $params = null) {	
 		$tenantTokens = array();
-		$config = @include 'config.php';
+		$config = false;
+
+		if (file_exists(realpath(__DIR__ . "/config.php")))
+			$config = include 'config.php';
+
 		if ($config){
 			$this->wsdlLoc = $config['defaultwsdl'];
 			$this->clientId = $config['clientid'];
