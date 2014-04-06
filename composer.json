@@ -1,0 +1,9 @@
+{
+    "name": "exacttarget/fuel-sdk-php",
+    "description": "ExactTarget Fuel SDK for PHP",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "require": {
+
+    }
+}
