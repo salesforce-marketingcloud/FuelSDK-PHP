@@ -150,7 +150,7 @@ class ET_Client extends SoapClient {
 		$result = curl_exec($curl);
 		
 		if ($result === false) {
-			die (curl_error($curl)); 
+			throw new Exception(curl_error($curl)); 
 		}
 		
 		return curl_getinfo($curl, CURLINFO_FILETIME);
