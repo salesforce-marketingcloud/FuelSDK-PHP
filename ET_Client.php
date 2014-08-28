@@ -164,7 +164,7 @@ class ET_Client extends SoapClient {
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->getInternalAuthToken($this->tenantKey));
 				
-		$content = utf8_encode($objWSSE->saveXML());
+		$content = $objWSSE->saveXML();
 		$content_length = strlen($content); 
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
