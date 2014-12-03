@@ -12,7 +12,7 @@ class ET_Client extends SoapClient {
 		$tenantTokens = array();
 		$config = false;
 
-        $this->xmlLoc = 'ExactTargetWSDL.xml';
+		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
 		if (file_exists(realpath(__DIR__ . "/config.php")))
 			$config = include 'config.php';
@@ -21,15 +21,15 @@ class ET_Client extends SoapClient {
 			$this->wsdlLoc = $config['defaultwsdl'];
 			$this->clientId = $config['clientid'];
 			$this->clientSecret = $config['clientsecret'];
-            $this->appsignature = $config['appsignature'];
-            if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
+			$this->appsignature = $config['appsignature'];
+			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 		} else {
 			if ($params && array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
 			else {$this->wsdlLoc = "https://webservice.exacttarget.com/etframework.wsdl";}
 			if ($params && array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
 			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
-            if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
-            if ($params && array_key_exists('xmlloc', $params)){$this->xmlloc = $params['xmlloc'];}
+			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
+			if ($params && array_key_exists('xmlloc', $params)){$this->xmlloc = $params['xmlloc'];}
 		}
 		
 		$this->debugSOAP = $debug;
@@ -127,7 +127,7 @@ class ET_Client extends SoapClient {
 			
 			$remoteTS = $this->GetLastModifiedDate($wsdlLoc);
 			
-            if (file_exists($this->xmlLoc)){
+			if (file_exists($this->xmlLoc)){
 				$localTS = filemtime($this->xmlLoc);
 				if ($remoteTS <= $localTS) 
 				{
