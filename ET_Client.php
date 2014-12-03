@@ -29,7 +29,7 @@ class ET_Client extends SoapClient {
 			if ($params && array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
 			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
 			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
-			if ($params && array_key_exists('xmlloc', $params)){$this->xmlloc = $params['xmlloc'];}
+			if ($params && array_key_exists('xmlloc', $params)){$this->xmlLoc = $params['xmlloc'];}
 		}
 		
 		$this->debugSOAP = $debug;
