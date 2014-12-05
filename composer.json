@@ -13,8 +13,8 @@
         "php": ">=5.2.3"
     },
     "autoload": {
-        "files": [
-            "ET_Client.php"
-        ]
+        "psr-4": {
+            "ExactTarget\\": "src/ExactTarget/"
+        }
     }
 }
