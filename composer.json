@@ -5,11 +5,12 @@
     "license": "MIT",
     "minimum-stability": "stable",
     "require": {
+        "course-hero/wse-php": "2.0.*",
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "php": ">=5.2.3",
-        "simplesamlphp/xmlseclibs": "1.3.*"
+        "firebase/php-jwt": "dev-master",
+        "php": ">=5.2.3"
     },
     "autoload": {
         "files": [

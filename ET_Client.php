@@ -1,6 +1,6 @@
 <?php
-require('soap-wsse.php');
-require('JWT.php');
+
+use Wse\WSSESoap;
 
 class ET_Client extends SoapClient {
 	public $packageName, $packageFolders, $parentFolders;
@@ -1863,5 +1863,3 @@ function getSDKVersion()
 {
 	return "FuelSDK-PHP-v0.9";
 }
-
-?>
