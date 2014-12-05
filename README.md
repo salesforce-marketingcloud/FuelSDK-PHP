@@ -4,7 +4,7 @@ FuelSDK-PHP
 ExactTarget Fuel SDK for PHP
 *Course Hero Fork*
 
-[![Build Status](https://travis-ci.org/course-hero/fuel-sdk-php.svg)](https://travis-ci.org/course-hero/fuel-sdk-php) [![Coverage Status](https://img.shields.io/coveralls/course-hero/fuel-sdk-php.svg)](https://coveralls.io/r/course-hero/fuel-sdk-php)
+[![Build Status](https://travis-ci.org/course-hero/FuelSDK-PHP.svg)](https://travis-ci.org/course-hero/FuelSDK-PHP) [![Coverage Status](https://img.shields.io/coveralls/course-hero/FuelSDK-PHP.svg)](https://coveralls.io/r/course-hero/FuelSDK-PHP)
 
 ## Overview ##
 The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family services, including a collection of REST APIs and a SOAP API. These APIs provide access to ExactTarget functionality via common collection types such as array/hash. 
