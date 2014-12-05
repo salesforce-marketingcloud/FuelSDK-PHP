@@ -8,7 +8,8 @@
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "php": ">=5.2.3"
+        "php": ">=5.2.3",
+        "simplesamlphp/xmlseclibs": "1.3.*"
     },
     "autoload": {
         "files": [
