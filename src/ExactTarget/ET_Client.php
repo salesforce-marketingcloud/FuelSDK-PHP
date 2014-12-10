@@ -3,6 +3,7 @@
 namespace ExactTarget;
 
 use DOMDocument;
+use DateInterval;
 use DateTime;
 use Exception;
 use SoapClient;
