@@ -2,6 +2,8 @@
 
 namespace ExactTarget;
 
+use stdClass;
+
 class ET_Asset extends ET_CUDSupportRest {
 	function __construct() {
 		$this->endpoint = "https://www.exacttargetapis.com/guide/v1/contentItems/portfolio/{id}";

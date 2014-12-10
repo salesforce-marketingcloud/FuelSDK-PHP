@@ -2,6 +2,8 @@
 
 namespace ExactTarget;
 
+use stdClass;
+
 class ET_RestUtils
 {
     public static function restGet($url) {

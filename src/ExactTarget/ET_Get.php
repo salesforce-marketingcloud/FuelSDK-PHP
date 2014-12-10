@@ -2,6 +2,9 @@
 
 namespace ExactTarget;
 
+use SoapVar;
+use stdClass;
+
 class ET_Get extends ET_Constructor {
 	function __construct($authStub, $objType, $props, $filter, $getSinceLastBatch = false) {
 		$authStub->refreshToken();

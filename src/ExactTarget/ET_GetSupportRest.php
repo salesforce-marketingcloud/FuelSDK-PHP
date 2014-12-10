@@ -2,7 +2,7 @@
 
 namespace ExactTarget;
 
-use \Exception;
+use Exception;
 
 class ET_GetSupportRest extends ET_BaseObjectRest{
 	protected $lastPageNumber;

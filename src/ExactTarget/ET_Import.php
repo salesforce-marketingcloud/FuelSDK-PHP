@@ -2,6 +2,8 @@
 
 namespace ExactTarget;
 
+use SoapVar;
+
 class ET_Import extends ET_CUDSupport {
 	public  $lastTaskID;
 	function __construct()

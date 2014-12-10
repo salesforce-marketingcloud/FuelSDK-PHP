@@ -2,7 +2,7 @@
 
 namespace ExactTarget;
 
-use \Exception;
+use Exception;
 
 class ET_CUDSupport extends ET_GetSupport{
 

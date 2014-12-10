@@ -2,7 +2,7 @@
 
 namespace ExactTarget;
 
-use \Exception;
+use Exception;
 
 class ET_CUDSupportRest extends ET_GetSupportRest{
 	protected $folderProperty, $folderMediaType;

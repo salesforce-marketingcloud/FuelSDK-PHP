@@ -2,7 +2,7 @@
 
 namespace ExactTarget;
 
-use \Exception;
+use Exception;
 
 class ET_DataExtension_Row extends ET_CUDWithUpsertSupport {
 	public $Name, $CustomerKey;

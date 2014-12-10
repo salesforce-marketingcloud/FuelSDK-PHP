@@ -2,6 +2,8 @@
 
 namespace ExactTarget;
 
+use SoapVar;
+
 class ET_Patch extends ET_Constructor {
 	function __construct($authStub, $objType, $props,$upsert = false) {
 		$authStub->refreshToken();

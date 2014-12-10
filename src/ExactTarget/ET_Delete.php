@@ -2,6 +2,8 @@
 
 namespace ExactTarget;
 
+use SoapVar;
+
 class ET_Delete extends ET_Constructor {
 	function __construct($authStub, $objType, $props) {
 		$authStub->refreshToken();

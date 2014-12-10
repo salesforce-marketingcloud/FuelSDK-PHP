@@ -7,6 +7,7 @@ use DateTime;
 use Exception;
 use SoapClient;
 use Wse\WSSESoap;
+use stdClass;
 
 class ET_Client extends SoapClient {
 	public $packageName, $packageFolders, $parentFolders;
