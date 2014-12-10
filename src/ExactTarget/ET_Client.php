@@ -3,6 +3,7 @@
 namespace ExactTarget;
 
 use DOMDocument;
+use DateTime;
 use Exception;
 use SoapClient;
 use Wse\WSSESoap;
