@@ -9,7 +9,7 @@
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "firebase/php-jwt": "dev-master",
+        "firebase/php-jwt": "dev-master@dev",
         "php": ">=5.2.3"
     },
     "autoload": {
