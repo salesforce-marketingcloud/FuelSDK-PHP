@@ -182,7 +182,7 @@ class ET_Client extends SoapClient {
 			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
 		}
 
-		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".getSDKVersion());
+		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".ET_SDKUtils::getSDKVersion());
 
 		$ch = curl_init();
 		curl_setopt ($ch, CURLOPT_URL, $location);

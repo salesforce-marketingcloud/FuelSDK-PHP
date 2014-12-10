@@ -8,7 +8,7 @@ class ET_RestUtils
 {
     public static function restGet($url) {
     	$ch = curl_init();
-    	$headers = array("User-Agent: ".getSDKVersion());
+    	$headers = array("User-Agent: ".ET_SDKUtils::getSDKVersion());
     	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
     	// Uses the URL passed in that is specific to the API used
     	curl_setopt($ch, CURLOPT_URL, $url);
@@ -42,7 +42,7 @@ class ET_RestUtils
     	curl_setopt($ch, CURLOPT_URL, $url);
 
     	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-    	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
+    	$headers = array("Content-Type: application/json", "User-Agent: ".ET_SDKUtils::getSDKVersion());
     	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 
     	// The content is the JSON payload that defines the request
@@ -77,7 +77,7 @@ class ET_RestUtils
     	curl_setopt($ch, CURLOPT_URL, $url);
 
     	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-    	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
+    	$headers = array("Content-Type: application/json", "User-Agent: ".ET_SDKUtils::getSDKVersion());
     	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 
     	// The content is the JSON payload that defines the request
@@ -114,7 +114,7 @@ class ET_RestUtils
     	curl_setopt($ch, CURLOPT_URL, $url);
 
     	// When posting to a Fuel API, content-type has to be explicitly set to application/json
-    	$headers = array("Content-Type: application/json", "User-Agent: ".getSDKVersion());
+    	$headers = array("Content-Type: application/json", "User-Agent: ".ET_SDKUtils::getSDKVersion());
     	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 
     	// The content is the JSON payload that defines the request
@@ -140,7 +140,7 @@ class ET_RestUtils
     public static function restDelete($url) {
     	$ch = curl_init();
 
-    	$headers = array("User-Agent: ".getSDKVersion());
+    	$headers = array("User-Agent: ".ET_SDKUtils::getSDKVersion());
     	curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 
     	// Uses the URL passed in that is specific to the API used

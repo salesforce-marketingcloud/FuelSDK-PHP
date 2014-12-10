@@ -18,7 +18,7 @@ class ET_Asset extends ET_CUDSupportRest {
 
         $ch = curl_init();
 
-		$headers = array("User-Agent: ".getSDKVersion());
+		$headers = array("User-Agent: ".ET_SDKUtils::getSDKVersion());
 		curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 
 		curl_setopt($ch, CURLOPT_URL, $completeURL);
