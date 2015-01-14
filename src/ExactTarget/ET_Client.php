@@ -7,7 +7,6 @@ use DateInterval;
 use DateTime;
 use Exception;
 use SoapClient;
-use Wse\WSSESoap;
 use stdClass;
 
 class ET_Client extends SoapClient {
@@ -172,7 +171,7 @@ class ET_Client extends SoapClient {
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 
-		$objWSSE = new WSSESoap($doc);
+		$objWSSE = new ET_WSSESoap($doc);
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->getInternalAuthToken($this->tenantKey));
 
