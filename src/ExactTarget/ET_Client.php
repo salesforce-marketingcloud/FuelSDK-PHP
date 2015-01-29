@@ -65,7 +65,7 @@ class ET_Client extends SoapClient {
 			$url = "https://www.exacttargetapis.com/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
 			$endpointResponse = ET_RestUtils::restGet($url);
 			$endpointObject = json_decode($endpointResponse->body);
-			if ($endpointResponse && property_exists($endpointObject,"url")){
+			if ($endpointObject && property_exists($endpointObject,"url")){
 				$this->endpoint = $endpointObject->url;
 			} else {
 				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);
