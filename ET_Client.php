@@ -39,6 +39,12 @@ class ET_Client extends SoapClient {
 		}
 		
 		if ($getWSDL){$this->CreateWSDL($this->wsdlLoc);}
+
+		if ($params && array_key_exists('BusinessUnit', $params)) {
+			$bu = new ET_Business_Unit();
+			$bu->ClientID = $params['BusinessUnit'];
+			$this->BusinessUnit = $bu;
+		}
 		
 		if ($params && array_key_exists('jwt', $params)){
 			if (!property_exists($this,'appsignature') || is_null($this->appsignature)){
@@ -557,6 +563,8 @@ class ET_Get extends ET_Constructor {
 		}
 		
 		
+		$retrieveRequest["ClientIDs"] = $authStub->BusinessUnit;
+
 		$request["RetrieveRequest"] = $retrieveRequest;
 		$rrm["RetrieveRequestMsg"] = $request;
 		
@@ -1868,6 +1876,16 @@ function isAssoc($array)
 function getSDKVersion()
 {
 	return "FuelSDK-PHP-v0.9";
+}
+
+class ET_Business_Unit {
+	public $ClientID; // int
+	public $ID; // int
+	public $PartnerClientKey; // string
+	public $UserID; // int
+	public $PartnerUserKey; // string
+	public $CreatedBy; // int
+	public $ModifiedBy; // int
 }
 
 ?>
