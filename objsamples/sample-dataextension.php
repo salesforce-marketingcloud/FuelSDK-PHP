@@ -174,7 +174,7 @@ try {
 	print_r("Delete a row from a DataExtension   \n");
 	$deleteDRRow = new ET_DataExtension_Row();
 	$deleteDRRow->authStub = $myclient;
-	$deleteDRRow->props = array("Key" => "PHPSDKTEST2", "Value" => "ItWorksUPDATED!");
+	$deleteDRRow->props = array("PHPSDKTEST2" => "ItWorksUPDATED!");
 	$deleteDRRow->CustomerKey = $DataExtensionNameForTesting;	
 	$deleteResult = $deleteDRRow->delete();
 	print_r('Delete Status: '.($deleteResult->status ? 'true' : 'false')."\n");
