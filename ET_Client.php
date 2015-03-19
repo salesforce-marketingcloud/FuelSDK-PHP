@@ -1472,13 +1472,14 @@ class ET_DataExtension_Row extends ET_CUDWithUpsertSupport {
                                 $props['Properties'] = array("Property"=>$af);
                                 $props['CustomerKey'] = $this->CustomerKey;
                                 $overrideProps[] = $props;
-                        } else {
-                                $fields = array();
-                                $fields[]  = array("Name" => $key, "Value" => $value);
-                                $overrideProps['Properties'] = array("Property"=> $fields);
-                                $overrideProps['CustomerKey'] = $this->CustomerKey;
-                        }
-                }
+			} else {
+				$fields[]  = array("Name" => $key, "Value" => $value);
+			}
+		}
+		if (!$overrideProps && $fields) {
+			$overrideProps['Properties'] = array("Property"=> $fields);
+			$overrideProps['CustomerKey'] = $this->CustomerKey;
+		}
                 return $overrideProps;
         }
 }
