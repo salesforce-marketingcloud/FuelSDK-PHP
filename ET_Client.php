@@ -501,6 +501,29 @@ class ET_Constructor {
 			}						
 		}
 	}
+
+        protected function buildObjects($props, $objType, $upsert) {
+               
+                $objects = array();
+
+                if (isAssoc($props)){
+                        $objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+                } else {
+                        $objects["Objects"] = array();
+                        foreach($props as $object){
+                                $objects["Objects"][] = new SoapVar($object, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
+                        }
+                }
+
+                if ($upsert) {
+                        $objects["Options"] = array('SaveOptions' => array('SaveOption' => array('PropertyName' => '*', 'SaveAction' => 'UpdateAdd' )));
+                } else {
+                        $objects["Options"] = "";
+                }
+                return $objects;
+        }
+
+	
 }
 
 class ET_Get extends ET_Constructor {
@@ -672,24 +695,8 @@ class ET_Post extends ET_Constructor {
 	function __construct($authStub, $objType, $props, $upsert = false) {
 		$authStub->refreshToken();
 		$cr = array(); 
-		$objects = array(); 
-		
-		if (isAssoc($props)){
-			$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
-		} else {
-			$objects["Objects"] = array();
-			foreach($props as $object){				
-				$objects["Objects"][] = new SoapVar($object, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
-			}
-		}		
-		
-		
-		if ($upsert) {
-			$objects["Options"] = array('SaveOptions' => array('SaveOption' => array('PropertyName' => '*', 'SaveAction' => 'UpdateAdd' )));
-		} else {
-			$objects["Options"] = "";
-		}
-		$cr["CreateRequest"] = $objects;
+                $cr["CreateRequest"] = $this->buildObjects($props, $objType, $upsert);
+
 		$return = $authStub->__soapCall("Create", $cr, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());		
 		
@@ -717,17 +724,8 @@ class ET_Patch extends ET_Constructor {
 	function __construct($authStub, $objType, $props,$upsert = false) {	
 		$authStub->refreshToken();	
 		$cr = array(); 
-		$objects = array(); 
-		$object = $props; 				
-		
-		$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
-		if ($upsert) {
-			$objects["Options"] = array('SaveOptions' => array('SaveOption' => array('PropertyName' => '*', 'SaveAction' => 'UpdateAdd' )));
-		} else {
-			$objects["Options"] = "";
-		}
-		$cr["UpdateRequest"] = $objects;
-		
+                $cr["UpdateRequest"] = $this->buildObjects($props, $objType, $upsert);
+
 		$return = $authStub->__soapCall("Update", $cr, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());		
 		
@@ -755,13 +753,9 @@ class ET_Delete extends ET_Constructor {
 	function __construct($authStub, $objType, $props) {	
 		$authStub->refreshToken();
 		$cr = array(); 
-		$objects = array(); 
-		$object = $props; 				
-		
-		$objects["Objects"] = new SoapVar($props, SOAP_ENC_OBJECT, $objType, "http://exacttarget.com/wsdl/partnerAPI");
-		$objects["Options"] = "";
-		$cr["DeleteRequest"] = $objects;
-		
+
+                $cr["DeleteRequest"] = $this->buildObjects($props, $objType, $upsert);
+ 
 		$return = $authStub->__soapCall("Delete", $cr, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());		
 		
@@ -1392,60 +1386,39 @@ class ET_DataExtension_Row extends ET_CUDWithUpsertSupport {
 		return $response;
 	}
 	
-	public function post(){
-		$this->getCustomerKey();
-		$originalProps = $this->props;		
-		$overrideProps = array();
-		$fields = array();
-		
-		foreach ($this->props as $key => $value){
-			$fields[]  = array("Name" => $key, "Value" => $value);	
-		}		
-		$overrideProps['CustomerKey'] = $this->CustomerKey;
-		$overrideProps['Properties'] = array("Property"=> $fields);
-		
-		$this->props = $overrideProps;		
-		$response = parent::post();		
-		$this->props = $originalProps;
-		return $response;
-	}
-	
-	public function patch(){
-		$this->getCustomerKey();
-		$originalProps = $this->props;		
-		$overrideProps = array();
-		$fields = array();
-		
-		foreach ($this->props as $key => $value){
-			$fields[]  = array("Name" => $key, "Value" => $value);	
-		}		
-		$overrideProps['CustomerKey'] = $this->CustomerKey;
-		$overrideProps['Properties'] = array("Property"=> $fields);
-		
-		$this->props = $overrideProps;		
-		$response = parent::patch();		
-		$this->props = $originalProps;
-		return $response;
-	}
-	
-	public function delete(){
-		$this->getCustomerKey();
-		$originalProps = $this->props;		
-		$overrideProps = array();
-		$fields = array();
-		
-		foreach ($this->props as $key => $value){
-			$fields[]  = array("Name" => $key, "Value" => $value);	
-		}		
-		$overrideProps['CustomerKey'] = $this->CustomerKey;
-		$overrideProps['Keys'] = array("Key"=> $fields);
-		
-		$this->props = $overrideProps;		
-		$response = parent::delete();		
-		$this->props = $originalProps;
-		return $response;
-	}
-	
+        public function post(){
+                $this->getCustomerKey();
+
+                $originalProps = $this->props;
+                $this->props = $this->buildOverrideProps();
+                $response = parent::post();
+                $this->props = $originalProps;
+
+                return $response;
+        }
+
+        public function patch(){
+                $this->getCustomerKey();
+
+                $originalProps = $this->props;
+                $this->props = $this->buildOverrideProps();
+                $response = parent::patch();
+                $this->props = $originalProps;
+
+                return $response;
+        }
+
+        public function delete(){
+                $this->getCustomerKey();
+
+                $originalProps = $this->props;
+                $this->props = $this->buildOverrideProps();
+                $response = parent::delete();
+                $this->props = $originalProps;
+
+                return $response;
+        }
+
 	private function getName() {
 		if (is_null($this->Name)){
 			if (is_null($this->CustomerKey))
@@ -1484,6 +1457,31 @@ class ET_DataExtension_Row extends ET_CUDWithUpsertSupport {
 			}					
 		}		
 	}	
+
+        //handles arrays of input parameters
+        private function buildOverrideProps() {
+
+                $overrideProps = array();
+                foreach ($this->props as $key => $value) {
+                        if (is_array($value)) {
+                                $af = array();
+                                foreach ($value as $ak => $av) {
+                                        $af[] = array("Name" => $ak, "Value" => $av);
+                                }
+                                $props = array();
+                                $props['Properties'] = array("Property"=>$af);
+                                $props['CustomerKey'] = $this->CustomerKey;
+                                $overrideProps[] = $props;
+			} else {
+				$fields[]  = array("Name" => $key, "Value" => $value);
+			}
+		}
+		if (!$overrideProps && $fields) {
+			$overrideProps['Properties'] = array("Property"=> $fields);
+			$overrideProps['CustomerKey'] = $this->CustomerKey;
+		}
+                return $overrideProps;
+        }
 }
 
 class ET_ContentArea extends ET_CUDSupport {
