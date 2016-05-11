@@ -1620,15 +1620,18 @@ class ET_List_Subscriber extends ET_GetSupport {
 }
 
 class ET_TriggeredSend extends ET_CUDSupport {
-	public  $subscribers, $folderId;
+	public  $subscribers, $folderId, $client;
 	function __construct() {	
 		$this->obj = "TriggeredSendDefinition";
 		$this->folderProperty = "CategoryID";
 		$this->folderMediaType = "triggered_send";
 	}
 	
-	public function Send() {
+	public function Send( $clientMID = null ) {
 		$tscall = array("TriggeredSendDefinition" => $this->props , "Subscribers" => $this->subscribers);
+		if( !empty( $clientMID ) && "string" == gettype( $clientMID ) ) {
+			$tscall["Client"] = array( "ID" => $clientMID );
+		}
 		$response = new ET_Post($this->authStub, "TriggeredSend", $tscall);
 		return $response;
 	}
