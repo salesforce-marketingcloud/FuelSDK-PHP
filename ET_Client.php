@@ -412,7 +412,7 @@ class ET_Client extends SoapClient {
 		$import->props["CustomerKey"] = uniqid();
 		$import->props["Description"] = "SDK Generated Import";
 		$import->props["AllowErrors"] = "true";
-		$import->props["DestinationObject"] = array("ObjectID"=>$dataExtensionCustomerKey);
+		$import->props["DestinationObject"] = array("CustomerKey"=>$dataExtensionCustomerKey);
 		$import->props["FieldMappingType"] = "InferFromColumnHeadings";
 		$import->props["FileSpec"] = $fileName;
 		$import->props["FileType"] = "CSV";
