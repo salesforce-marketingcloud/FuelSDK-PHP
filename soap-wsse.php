@@ -1,4 +1,6 @@
 <?php
+use RobRichards\XMLSecLibs\XMLSecurityDSig;
+use RobRichards\XMLSecLibs\XMLSecurityKey;
 /**
  * soap-wsse.php
 	*
