@@ -95,6 +95,22 @@ try {
 	print_r($sendResult->results);
 	print "\n---------------\n";
 
+	$clientMID = '0000001';
+
+	// Send an email with TriggeredSend with Client context
+	print_r("Send an email using a triggered send with Client context\n");
+	$sendTrigger = new ET_TriggeredSend();
+	$sendTrigger->props = array('CustomerKey' => 'TEXTEXT');
+	$sendTrigger->authStub = $myclient;
+	$sendTrigger->subscribers = array(array("EmailAddress" => "testing@bh.exacttarget.com", "SubscriberKey" => "testing@bh.exacttarget.com"));
+	$sendResult = $sendTrigger->send( $clientMID );
+	print_r('Send Status: '.($sendResult->status ? 'true' : 'false')."\n");
+	print 'Code: '.$sendResult->code."\n";
+	print 'Message: '.$sendResult->message."\n";
+	print 'Results: '."\n";
+	print_r($sendResult->results);
+	print "\n---------------\n";
+
 	// Generate a unique identifier for the TriggeredSend customer key since they cannot be re-used even after deleted
 	$TSNameForCreateThenDelete = uniqid();
 

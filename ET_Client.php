@@ -145,6 +145,27 @@ class ET_Client extends SoapClient {
 		}
 	}
 	
+	function LocalWsdlPath()
+	{
+		$wsdlName = 'ExactTargetWSDL.xml';
+		$tmpPath = '';
+		
+		// if open_basedir is set then we cannot trust sys_get_temp_dir()
+		// see http://php.net/manual/en/function.sys-get-temp-dir.php#97044
+		if ('' === ini_get('open_basedir')) {
+			$tmpPath = sys_get_temp_dir();
+			
+			// sys_get_temp_dir() does not return a trailing slash on all OS's
+			// see http://php.net/manual/en/function.sys-get-temp-dir.php#80690
+			if ('/' !== substr($tmpPath, -1)) {
+				$tmpPath .= '/';
+			}
+		}
+		
+		return "{$tmpPath}{$wsdlName}";
+		
+	}
+	
 	function GetLastModifiedDate($remotepath) {
 		$curl = curl_init($remotepath);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -1620,15 +1641,18 @@ class ET_List_Subscriber extends ET_GetSupport {
 }
 
 class ET_TriggeredSend extends ET_CUDSupport {
-	public  $subscribers, $folderId;
+	public  $subscribers, $folderId, $client;
 	function __construct() {	
 		$this->obj = "TriggeredSendDefinition";
 		$this->folderProperty = "CategoryID";
 		$this->folderMediaType = "triggered_send";
 	}
 	
-	public function Send() {
+	public function Send( $clientMID = null ) {
 		$tscall = array("TriggeredSendDefinition" => $this->props , "Subscribers" => $this->subscribers);
+		if( !empty( $clientMID ) && "string" == gettype( $clientMID ) ) {
+			$tscall["Client"] = array( "ID" => $clientMID );
+		}
 		$response = new ET_Post($this->authStub, "TriggeredSend", $tscall);
 		return $response;
 	}
