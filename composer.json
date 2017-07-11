@@ -1,0 +1,18 @@
+{
+    "name": "exacttarget/fuel-sdk-php",
+    "description": "ExactTarget Fuel SDK for PHP",
+    "homepage": "https://code.exacttarget.com/apis-sdks/fuel-sdks/",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "require": {
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-soap": "*",
+        "php": ">=5.2.3"
+    },
+    "autoload": {
+        "files": [
+            "ET_Client.php"
+        ]
+    }
+}

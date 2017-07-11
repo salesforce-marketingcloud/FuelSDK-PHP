@@ -17,11 +17,10 @@ The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family servi
 - **Easier Troubleshooting**: The ability to log the full payload for API requests that are happening behind the scenes has been added in the SDK in order to make troubleshooting issues easier. 
 
 ## Requirements ##
-PHP Version 5.2.3
+PHP Version >= 5.6.24
 
 Extensions:
 
-- mcrypt
 - openssl
 - SOAP
 
