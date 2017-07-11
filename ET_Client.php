@@ -6,22 +6,30 @@ class ET_Client extends SoapClient {
 	public $packageName, $packageFolders, $parentFolders;
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey;
+			$tenantTokens, $tenantKey, $xmlLoc;
 		
 	function __construct($getWSDL = false, $debug = false, $params = null) {	
 		$tenantTokens = array();
-		$config = @include 'config.php';
+		$config = false;
+
+		$this->xmlLoc = 'ExactTargetWSDL.xml';
+
+		if (file_exists(realpath(__DIR__ . "/config.php")))
+			$config = include 'config.php';
+
 		if ($config){
 			$this->wsdlLoc = $config['defaultwsdl'];
 			$this->clientId = $config['clientid'];
 			$this->clientSecret = $config['clientsecret'];
 			$this->appsignature = $config['appsignature'];
+			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 		} else {
 			if ($params && array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
 			else {$this->wsdlLoc = "https://webservice.exacttarget.com/etframework.wsdl";}
 			if ($params && array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
 			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
 			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
+			if ($params && array_key_exists('xmlloc', $params)){$this->xmlLoc = $params['xmlloc'];}
 		}
 		
 		$this->debugSOAP = $debug;
@@ -50,7 +58,7 @@ class ET_Client extends SoapClient {
 			$url = "https://www.exacttargetapis.com/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
 			$endpointResponse = restGet($url);			
 			$endpointObject = json_decode($endpointResponse->body);			
-			if ($endpointResponse && property_exists($endpointObject,"url")){		
+			if ($endpointObject && property_exists($endpointObject,"url")){
 				$this->endpoint = $endpointObject->url;			
 			} else {
 				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);			
@@ -58,13 +66,13 @@ class ET_Client extends SoapClient {
 			} catch (Exception $e) {
 			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
 		} 		
-		parent::__construct($this->LocalWsdlPath(), array('trace'=>1, 'exceptions'=>0));
+		parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0,'connection_timeout'=>120));
 		parent::__setLocation($this->endpoint);
 	}
 	
 	function refreshToken($forceRefresh = false) {
 		if (property_exists($this, "sdl") && $this->sdl == 0){
-			parent::__construct($this->LocalWsdlPath(), array('trace'=>1, 'exceptions'=>0));	
+			parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0));	
 		}
 		try {
 			$currentTime = new DateTime();
@@ -119,8 +127,8 @@ class ET_Client extends SoapClient {
 			
 			$remoteTS = $this->GetLastModifiedDate($wsdlLoc);
 			
-			if (file_exists($this->LocalWsdlPath())){
-				$localTS = filemtime($this->LocalWsdlPath());
+			if (file_exists($this->xmlLoc)){
+				$localTS = filemtime($this->xmlLoc);
 				if ($remoteTS <= $localTS) 
 				{
 					$getNewWSDL = false;
@@ -128,8 +136,8 @@ class ET_Client extends SoapClient {
 			}
 			
 			if ($getNewWSDL){
-				$newWSDL = file_get_contents($wsdlLoc);
-				file_put_contents($this->LocalWsdlPath(), $newWSDL);
+				$newWSDL = file_gET_contents($wsdlLoc);
+				file_put_contents($this->xmlLoc, $newWSDL);
 			}	
 		}
 		catch (Exception $e) {
@@ -167,13 +175,13 @@ class ET_Client extends SoapClient {
 		$result = curl_exec($curl);
 		
 		if ($result === false) {
-			die (curl_error($curl)); 
+			throw new Exception(curl_error($curl)); 
 		}
 		
 		return curl_getinfo($curl, CURLINFO_FILETIME);
 	}
 				
-	function __doRequest($request, $location, $saction, $version, $one_way=null) {
+	function __doRequest($request, $location, $saction, $version, $one_way = 0) {
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 		
@@ -181,7 +189,7 @@ class ET_Client extends SoapClient {
 		$objWSSE->addUserToken("*", "*", FALSE);
 		$objWSSE->addOAuth($this->getInternalAuthToken($this->tenantKey));
 				
-		$content = utf8_encode($objWSSE->saveXML());
+		$content = $objWSSE->saveXML();
 		$content_length = strlen($content); 
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
@@ -425,7 +433,7 @@ class ET_Client extends SoapClient {
 		$import->props["CustomerKey"] = uniqid();
 		$import->props["Description"] = "SDK Generated Import";
 		$import->props["AllowErrors"] = "true";
-		$import->props["DestinationObject"] = array("ObjectID"=>$dataExtensionCustomerKey);
+		$import->props["DestinationObject"] = array("CustomerKey"=>$dataExtensionCustomerKey);
 		$import->props["FieldMappingType"] = "InferFromColumnHeadings";
 		$import->props["FileSpec"] = $fileName;
 		$import->props["FileType"] = "CSV";
@@ -1705,6 +1713,12 @@ class ET_Organization extends ET_CUDSupport {
 class ET_User extends ET_CUDSupport {
 	function __construct() {
 		$this->obj = "AccountUser";
+	}
+}
+
+class ET_Send extends ET_CUDSupport {
+	function __construct() {
+		$this->obj = "Send";
 	}
 }
 
