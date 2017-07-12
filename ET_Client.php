@@ -6,7 +6,9 @@ class ET_Client extends SoapClient {
 	public $packageName, $packageFolders, $parentFolders;
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc;
+			$tenantTokens, $tenantKey, $xmlLoc,
+            $proxyHost, $proxyPort, $proxyLogin, $proxyPassword
+    ;
 		
 	function __construct($getWSDL = false, $debug = false, $params = null) {	
 		$tenantTokens = array();
@@ -30,6 +32,10 @@ class ET_Client extends SoapClient {
 			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
 			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
 			if ($params && array_key_exists('xmlloc', $params)){$this->xmlLoc = $params['xmlloc'];}
+            if ($params && array_key_exists('proxyhost', $params)){$this->proxyHost = $params['proxyhost'];}
+            if ($params && array_key_exists('proxyport', $params)){$this->proxyPort = $params['proxyport'];}
+            if ($params && array_key_exists('proxylogin', $params)) {$this->proxyLogin = $params['proxylogin'];}
+            if ($params && array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}
 		}
 		
 		$this->debugSOAP = $debug;
@@ -65,8 +71,25 @@ class ET_Client extends SoapClient {
 			}
 			} catch (Exception $e) {
 			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
-		} 		
-		parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0,'connection_timeout'=>120));
+		}
+        $soapOptions = array(
+            'trace'=>1,
+            'exceptions'=>0,
+            'connection_timeout'=>120,
+        );
+        if (!empty($this->proxyHost)) {
+            $soapOptions['proxy_host'] = $this->proxyHost;
+        }
+        if (!empty($this->proxyPort)) {
+            $soapOptions['proxy_port'] = $this->proxyPort;
+        }
+        if (!empty($this->proxyLogin)) {
+            $soapOptions['proxy_login'] = $this->proxyLogin;
+        }
+        if (!empty($this->proxyPassword)) {
+            $soapOptions['proxy_password'] = $this->proxyPassword;
+        }
+		parent::__construct($this->xmlLoc, $soapOptions);
 		parent::__setLocation($this->endpoint);
 	}
 	
@@ -172,6 +195,16 @@ class ET_Client extends SoapClient {
 		curl_setopt($curl, CURLOPT_NOBODY, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_FILETIME, true);
+        if (!empty($this->proxyHost)) {
+            curl_setopt($curl, CURLOPT_PROXY, $this->proxyHost);
+        }
+        if (!empty($this->proxyPort)) {
+            curl_setopt($curl, CURLOPT_PROXYPORT, $this->proxyPort);
+        }
+        if (!empty($this->proxyLogin) && !empty($this->proxyPassword)) {
+            curl_setopt($curl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
+            curl_setopt($curl, CURLOPT_PROXYUSERPWD, $this->proxyLogin.':'.$this->proxyPassword);
+        }
 		$result = curl_exec($curl);
 		
 		if ($result === false) {
