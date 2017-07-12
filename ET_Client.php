@@ -141,7 +141,7 @@ class ET_Client extends SoapClient {
 			}	
 		}
 		catch (Exception $e) {
-			throw new Exception('Unable to store local copy of WSDL file'."\n");
+			throw new Exception('Unable to store local copy of WSDL file:' . $e->getMessage() . "\n");
 		}
 	}
 	
