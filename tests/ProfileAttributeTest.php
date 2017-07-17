@@ -12,7 +12,7 @@ final class ProfileAttributeTest extends TestCase
 
     function __construct()
     {
-        $this->myclient = new ET_Client(true, false, array("clientid" => "6775h8xgk6n8xwllkngm7w55", "clientsecret"=>"tgsLZUvsskc4QC82xwBsnh7S", "baseAuthUrl"=>"https://auth-qa3s1.exacttargetapis.com") );
+        $this->myclient = new ET_Client(true);
         $this->NameOfAttribute = "PHPSDKTestAttribute";//.uniqid();        
     }
 
