@@ -1,33 +1,70 @@
 FuelSDK-PHP
 ============
 
-ExactTarget Fuel SDK for PHP
+Salesforce Marketing Cloud Fuel SDK for PHP
 
 ## Overview ##
-The Fuel SDK for PHP provides easy access to ExactTarget's Fuel API Family services, including a collection of REST APIs and a SOAP API. These APIs provide access to ExactTarget functionality via common collection types such as array/hash. 
+The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
-## New Features in Version .9 ##
-- **Streamlined Folder Support**: All objects that support folders within the UI now have a standardized property called folderId.
-- **Interaction Support**: Now supports Import and Email_SendDefinition objects .
-- **Profile Attribute Support**: Added the ability to manage profile attributes through the ProfileAttribute object.
-- **Support for single request to Add/Update**:A single request can be made which will create the object if one doesn't already or update one if it does.  This works for Subscriber, DataExtension_Row, and List objects using the Put method.
-- **Tracking Events Batching Support**: By default, all tracking event types will only pull new data since the last time a request was made using the same filter.  If you would like to override this functionality to pull all data, simply set the GetSinceLastBatch property to false.
-- **Automatic Asset Organization for Hub Apps**: Applications that authenticate by providing a JWT will automatically have all created assets placed into a folder based on the HubExchange app's name. 
-- **Greater Flexibility for Authentication **: Previously the application keys required for authentication had to be hard-coded in a php config file. While this option is still available, an additional option to pass these at the time the ET_Client class is instantiated allows has been added.  
-- **Easier Troubleshooting**: The ability to log the full payload for API requests that are happening behind the scenes has been added in the SDK in order to make troubleshooting issues easier. 
+## New Features in Version 1.0.0 ##
+
+* **mcrypt :** mcrypt dependency removed.
+mcrypt extension dependency prevented client application from upgrading to PHP 7.x. This release supports any PHP version > 5.6.24 and PHP 7.x
+
+* **proxy :** added proxy server support.
+If your client application sits behind a proxy server,  you can use PHP SDK with following configuration settings in config.php file.
+    - proxyhost
+    - proxyport
+    - proxyusername
+    - proxypassword
+
+You can override these configuration setting using $params parameter passed to the constructor of ET_Client class.
+
+* **jwt :** jwt.php is removed from the project source tree and added as dependency.
+jwt.php removed and added as dependency in composer.json. If you are manually downloading the project, call **composer update** to get **jwt** downloaded.
+
+* **soap-wsse :** soap-wsse.php is removed from the project source tree and added as dependency in composer.json. If you are manually downloading the project, call **composer update** to get the **soap-wsse** downloaded.
+
+* **code refactor :** code refactored to individual class files. (under src/ directory)
+Project tree structure is now changed to: 
+    - src           : source files
+    - doc           : SDK API documentation
+    - tests         : unit test cases
+    - objsamples    : sample files
+
+* **unit test :** added unit test cases (happy path for now) using phpunit testing framework. (under tests/ directory)
+
+* **API docs :** added API documentation using phpdocumentor framework. (under docs/ directory)
+
+* **auto loader :** integrated auto loader (spl_autoload_register) for all source code under src/, tests/, objsamples/ directory.
 
 ## Requirements ##
-PHP Version >= 5.6.24
+PHP Version >=5.6.24
 
 Extensions:
-
 - openssl
 - SOAP
+- curl
 
 
-## Getting Started ##
+## Installation ##
+
+### Manual Installation
 After downloading the project, rename the config.php.template file to config.php. 
 
+### Composer
+Add a dependency to composer require salesforce-mc/fuel-sdk-php to the require section of your project's composer.json configuration file, and update your application.
+
+The following code is an example of a minimal composer.json file:
+<pre>
+{
+    "require": {
+        "salesforce-mc/fuel-sdk-php": "1.0.0"
+    }
+}
+</pre>
+
+## Getting Started ##
 Edit config.php so you can input the ClientID and ClientSecret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
 
 See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism. 
@@ -144,10 +181,3 @@ Sample List:
  - [Subscriber](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-subscriber.php)
  - [TriggeredSend](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsend.php)
  - [UnsubEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-unsubevent.php)
-
-## Copyright and license ##
-Copyright (c) 2013 ExactTarget
-
-Licensed under the MIT License (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the COPYING file.
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.

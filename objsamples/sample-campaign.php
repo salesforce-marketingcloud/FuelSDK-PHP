@@ -1,13 +1,19 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Campaign.php');
+// include_once('src/ET_Campaign_Asset.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 
 	# In order for this sample to run, it needs to have an asset that it can associate the campaign to
-	$ExampleAssetType = "LIST";
-	$ExampleAssetItemID = "1953114";
+	$ExampleAssetType = "EMAIL";
+	$ExampleAssetItemID = "90840";
 	
-	$myclient = new ET_Client();
+	$myclient = new ET_Client(true);
 	
 	// Retrieve All Campaigns with GetMoreResults
 	print "Retrieve All Campaigns with GetMoreResults \n";
@@ -22,7 +28,6 @@ try {
 	//print 'Results: "\n"';
 	//print_r($getResult->results);
 	print "\n---------------\n";
-	
 	
 	while ($getResult->moreResults) {
 		print "Continue Retrieve All Campaigns with GetMoreResults \n";
@@ -49,10 +54,7 @@ try {
 	print_r($postResponse->results);
 	print "\n---------------\n";
 
-	
-
 	if ($postResponse->status) {
-		
 		$IDOfpostCampaign = $postResponse->results->id;
 		
 		// Retrieve the new Campaign
@@ -128,14 +130,14 @@ try {
 			print 'Message: '.$getResult->message."\n";
 			print 'Results Length: '. count($getResult->results)."\n";
 			print 'Results: '."\n";
-			print_r($getResult->results);
+			print_r($getResult);
 			print "\n---------------\n";	
 			
 			// Retrieve a single new Campaign Asset
 			print "Retrieve a single new Campaign Asset \n";
 			$getCampAsset = new ET_Campaign_Asset();
 			$getCampAsset->authStub = $myclient;
-			$getCampAsset->props = array("id" => $IDOfpostCampaign, "assetId" => $IDOfpostCampaignAsset);	
+			$getCampAsset->props = array("id" => $IDOfpostCampaign, "ids"=> array($ExampleAssetItemID), "type"=> $ExampleAssetType);	
 			$getResult = $getCampAsset->Get();
 			print_r('Retrieve Status: '.($getResult->status ? 'true' : 'false')."\n");
 			print 'Code: '.$getResult->code."\n";

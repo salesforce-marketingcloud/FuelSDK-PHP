@@ -1,6 +1,12 @@
 <?php
 
-require('../ET_Client.php');
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Asset.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
+
 try {	
 
 	$myclient = new ET_Client();
@@ -15,8 +21,9 @@ try {
 	print 'Message: '.$getResult->message."\n";
 	print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
 	print 'Results Length(Items): '. count($getResult->results->items)."\n";
-	//print 'Results: "\n"';
-	//print_r($getResult->results);
+	
+	print 'Results: "\n"';
+	print_r($getResult->results);
 	print "\n---------------\n";
 	
 	
@@ -46,6 +53,7 @@ print "Create a new Asset Base 64 \n";
 	print 'Code: '.$postResponse->code."\n";
 	print 'Message: '.$postResponse->message."\n";
 	print 'Results Length: '. count($postResponse->results)."\n";
+	
 	print 'Results: '."\n";
 	print_r($postResponse->results);
 	print "\n---------------\n";
@@ -62,6 +70,7 @@ print "Create a new Asset Base 64 \n";
 	print 'Code: '.$postResponse->code."\n";
 	print 'Message: '.$postResponse->message."\n";
 	print 'Results Length: '. count($postResponse->results)."\n";
+	
 	print 'Results: '."\n";
 	print_r($postResponse->results);
 	print "\n---------------\n";	

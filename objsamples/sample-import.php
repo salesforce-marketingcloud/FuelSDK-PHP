@@ -1,12 +1,17 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Import.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 	$myclient = new ET_Client();
 
-	$NewImportName = "PHPSDKImport";
-	$SendableDataExtensionCustomerKey = "62476204-bfd3-de11-95ca-001e0bbae8cc";
-	$ListIDForImport = "1956035";
+	$NewImportName = "PHPSDKImport_".uniqid();
+	$SendableDataExtensionCustomerKey = "3db97f7e-8957-e711-80d4-1402ec6b94d5";
+	$ListIDForImport = "307091";
 
 	print "Create Import to DataExtension\n";
 	$postImport = new ET_Import();
@@ -30,6 +35,20 @@ try {
 	print 'Results: '."\n";
 	print_r($postResponse->results);
 	print "\n---------------\n";
+
+
+	print "Start Import to DataExtension\n";
+	$startImport = new ET_Import();
+	$startImport->authStub = $myclient;
+	$startImport->props = array("CustomerKey"=>$NewImportName);
+	$startResponse = $startImport->start();
+	print_r('Start Status: '.($startResponse->status ? 'true' : 'false')."\n");
+	print 'Code: '.$startResponse->code."\n";
+	print 'Message: '.$startResponse->message."\n";	
+	print 'Results Length: '. count($startResponse->results)."\n";
+	print 'Results: '."\n";
+	print_r($startResponse->results);
+	print "\n---------------\n";	
 
 	print "Delete Import\n";
 	$deleteImport = new ET_Import();

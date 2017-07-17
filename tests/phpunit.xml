@@ -1,0 +1,30 @@
+<phpunit bootstrap="UnitBootstrap.php">
+  <testsuites>
+    <testsuite name="PHPSDK">
+        <file>AssetTest.php</file>
+        <file>CampaignTest.php</file>
+        <file>MessageTest.php</file>
+        <file>ListSubscriberTest.php</file>
+        <file>ContentAreaTest.php</file>
+        <file>DataExtensionTest.php</file>
+        <file>EmailTest.php</file>
+        <file>FolderTest.php</file>
+        <file>ListTest.php</file>
+        <file>SubscriberTest.php</file>
+        <file>UserTest.php</file>
+        <file>ImportTest.php</file>
+        <file>SendTest.php</file>
+        <file>ProfileAttributeTest.php</file>
+        <file>TriggeredSendTest.php</file>
+        <file>OrganizationTest.php</file>
+        <file>UnsubEventTest.php</file>
+        <file>SentEventTest.php</file>
+        <file>OpenEventTest.php</file>
+        <file>ClickEventTest.php</file>
+        <file>BounceEventTest.php</file>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <log type="testdox-html" target="./testdox.html"/>
+  </logging>
+</phpunit>

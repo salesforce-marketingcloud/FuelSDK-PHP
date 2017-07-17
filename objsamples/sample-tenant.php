@@ -1,6 +1,11 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_OEM_Client.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {
 
 	$testTenantKey = "testTenantKey";

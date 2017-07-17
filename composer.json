@@ -1,18 +1,36 @@
 {
-    "name": "exacttarget/fuel-sdk-php",
-    "description": "ExactTarget Fuel SDK for PHP",
-    "homepage": "https://code.exacttarget.com/apis-sdks/fuel-sdks/",
+    "name": "salesforce-mc/fuel-sdk-php",
+    "description": "Salesforce Marketing Cloud Fuel SDK for PHP",
+    "homepage": "https://developer.salesforce.com/docs/atlas.en-us.mc-sdks.meta/mc-sdks/index-sdk.htm",
     "license": "MIT",
+    "type": "library",
     "minimum-stability": "stable",
     "require": {
         "ext-curl": "*",
         "ext-openssl": "*",
         "ext-soap": "*",
-        "php": ">=5.2.3"
+        "php": ">=5.6.24",
+        "robrichards/wse-php":">=2.0.1",
+        "robrichards/xmlseclibs": "3.0.0 as 2.0.1",
+        "firebase/php-jwt":">=5.0.0"
     },
+    "require-dev": {
+        "phpunit/phpunit":">=5.7.20",
+        "phpdocumentor/phpdocumentor": "2.8.0",
+        "dompdf/dompdf": "0.6"
+    },
+    "keywords": [
+        "exacttarget",
+        "salesforce",
+        "marketing cloud",
+        "php sdk",
+        "sdk",
+        "fuel sdk",
+        "fuel-sdk"
+    ],
     "autoload": {
-        "files": [
-            "ET_Client.php"
-        ]
+        "psr-4": {
+            "\\" : "src/"
+        }
     }
 }
