@@ -46,6 +46,9 @@ Extensions:
 - SOAP
 - curl
 
+## API Documentation ##
+
+http://salesforce-marketingcloud.github.io/FuelSDK-PHP/index.html
 
 ## Installation ##
 
