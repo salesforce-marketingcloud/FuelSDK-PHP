@@ -5,6 +5,7 @@ return array(
 	'clientsecret' => 'CCCCCCCCCCCCCCCCCCCCCCC',
 	'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
     'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
+    'baseAuthUrl' => 'https://auth.exacttargetapis.com',
     'proxyhost' => 'localhost',
     'proxyport' => '8080',
     'proxyusername' => '',
