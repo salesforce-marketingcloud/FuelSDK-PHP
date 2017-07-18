@@ -1,6 +1,13 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_List.php');
+// include_once('src/ET_Subscriber.php');
+// include_once('src/ET_List_Subscriber.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {
 	
 	// NOTE: These examples only work in accounts where the SubscriberKey functionality is not enabled

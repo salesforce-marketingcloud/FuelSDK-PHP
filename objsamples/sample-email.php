@@ -1,6 +1,11 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Email.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 	$myclient = new ET_Client();
 
@@ -28,7 +33,7 @@ try {
 		print "\n---------------\n";
 	}	
 	
-	$NameOfTestEmail = "PHPSDKEmail";
+	$NameOfTestEmail = "PHPSDKEmail".uniqid();
 	
 	// Create Email
 	print "Create Email \n";
@@ -89,7 +94,7 @@ try {
 	print 'Results: '."\n";
 	print_r($getResponse->results);
 	print "\n---------------\n";
-	
+/*	
 	// Delete Email
 	print "Delete Email \n";
 	$deleteEmail = new ET_Email();
@@ -103,7 +108,7 @@ try {
 	print 'Results: '."\n";
 	print_r($deleteResponse->results);
 	print "\n---------------\n";
-	
+*/	
 	// Retrieve Email to confirm deletion
 	print "Retrieve Email to confirm deletion \n";
 	$getEmail = new ET_Email();
