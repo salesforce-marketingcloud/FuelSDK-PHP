@@ -1,13 +1,18 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_UnsubEvent.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 	$myclient = new ET_Client();
 
 	// Modify the date below to reduce the number of results returned from the request
 	// Setting this too far in the past could result in a very large response size
 	
-	$retrieveDate = "2012-01-15T13:00:00.000";
+	$retrieveDate = "2017-01-15T13:00:00.000";
 	
 	// Retrieve Filtered UnsubEvent with GetMoreResults
 	print "Retrieve Filtered UnsubEvent with GetMoreResults \n";

@@ -1,6 +1,14 @@
 <?php
 
-require('../ET_Client.php');
+// include_once('src/ET_Client.php');
+// include_once('src/ET_DataExtension.php');
+// include_once('src/ET_DataExtension_Column.php');
+// include_once('src/ET_DataExtension_Row.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
+
 try {	
 	$myclient = new ET_Client();
 		
@@ -25,7 +33,7 @@ try {
 	// WARNING: Data Extension will be deleted so don't use the name of a
 	// production data extension 
 	
-	$DataExtensionNameForTesting = "PHPSDKTestDE";
+	$DataExtensionNameForTesting = "PHPSDKTestDE_".uniqid();
 
 	// Create a Data Extension
 	print_r("Create a Data Extension  \n");

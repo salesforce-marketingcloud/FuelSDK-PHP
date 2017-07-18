@@ -1,0 +1,20 @@
+<?php
+return array(
+    'appsignature' => '32f580df-a83e-4c58-a9e3-06d100a4a3d6', 
+	//  'clientid' => '6775h8xgk6n8xwllkngm7w55',
+	//  'clientsecret' => 'tgsLZUvsskc4QC82xwBsnh7S',
+	//  'baseAuthUrl' => 'https://auth-qa3s1.exacttargetapis.com',
+	'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+	'xmlloc' => './ExactTargetWSDL.xml',
+    'baseUrl' => 'https://www.exacttargetapis.com',
+	'clientid' => 'eooqap5vfm9vjonc5uw5iavg',
+	'clientsecret' => 'VZVCdjRjlW52BvDK5PTTjSGN',	
+	'baseAuthUrl' => 'https://auth-qa.exacttargetapis.com',
+    // 'proxyhost' => 'localhost',
+    // 'proxyport' => '8080',
+	);
+
+//	'clientid' => 'eooqap5vfm9vjonc5uw5iavg',
+//	'clientsecret' => 'VZVCdjRjlW52BvDK5PTTjSGN',	
+//	'baseAuthUrl' => 'https://auth-qa.exacttargetapis.com',
+

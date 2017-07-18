@@ -1,6 +1,11 @@
 <?php
-date_default_timezone_set('America/New_York');
-require('../ET_Client.php');
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Organization.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
+
 try {	
 	$params = array();		
 	$myclient = new ET_Client(true, $params);
@@ -18,7 +23,7 @@ try {
 	print 'Results Length: '. count($getResponse->results)."\n";
 	print 'Results: '.print_r($getResponse->results)."\n";
 	print "\n---------------\n";
-	
+/*	
 	while ($getResponse->moreResults) {
 		print "Continue Retrieve All Organizations with GetMoreResults \n";
 		$getResponse = $getOrganization->GetMoreResults();
@@ -29,8 +34,8 @@ try {
 		print 'Results Length: '. count($getResponse->results)."\n";
 		print "\n---------------\n";
 	}
-	
-	$CustomerKeyofExistingOrganization = '1CC25B77-8BF9-4BF9-A718-168928AB0607';
+*/	
+	$CustomerKeyofExistingOrganization = '65941725-F407-49C4-A64A-F6C8E38A01B1';
 	$CustomerKeyOfTestOrganization = "TestOrganizationCustomerKey::" . substr(md5(rand()),0,7);
 	$NameOfTestOrganization = "TestOrganizationName";
 
@@ -60,7 +65,7 @@ try {
 	print "Create Organization \n";
 	$postOrganization = new ET_Organization();
 	$postOrganization->authStub = $myclient;
-	$postOrganization->props = array("CustomerKey" =>  $CustomerKeyOfTestOrganization, "Name" => $NameOfTestOrganization, "AccountType" => "PRO_CONNECT", "Email" => "test@organization.com", "FromName" => "AGENCY CLIENT", "Business Name" => "Test Organization", "Address" => "123 ABC Street", "City" => "Indianapolis", "State" => "IN", "Zip" => "46202", "IsTestAccount" => true, "EditionID" => 3, "IsActive" => true);
+	$postOrganization->props = array("CustomerKey" =>  $CustomerKeyOfTestOrganization, "Name" => $NameOfTestOrganization, "AccountType" => "ENTERPRISE_2", "DBID" => "101", "Email" => "test@organization.com", "FromName" => "AGENCY CLIENT", "Business Name" => "Test Organization", "Address" => "123 ABC Street", "City" => "Indianapolis", "State" => "IN", "Zip" => "46202", "IsTestAccount" => true, "EditionID" => 3, "IsActive" => true);
 	$postResult = $postOrganization->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";

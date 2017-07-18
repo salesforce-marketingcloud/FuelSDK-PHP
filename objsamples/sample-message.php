@@ -1,6 +1,13 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_Message_Guide.php');
+// include_once('src/ET_List.php');
+// include_once('src/ET_Subscriber.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 
 	$myclient = new ET_Client();
@@ -185,7 +192,7 @@ try {
 			
 			if ($postResponse->status){
 				// Send the Message
-				print "Send the new Message \n";
+/*				print "Send the new Message \n";
 				$sendMG = new ET_Message_Guide();
 				$sendMG->authStub = $myclient;
 				$sendMG->props = array("listID" => $listID, "messageID" => $IDofPostMessage, "subject"=>"Example Subject");	
@@ -199,7 +206,7 @@ try {
 				print 'New JobID: '."\n";
 				print_r($sendResult->results[0]->NewID);
 				print "\n---------------\n";
-			}
+*/			}
 		
 		}
 		

@@ -1,0 +1,55 @@
+<?php
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+
+/**
+ * This class defines any additional attribute for a subscriber.
+ */
+class ET_ProfileAttribute extends ET_BaseObject
+{
+	/** 
+	* Initializes a new instance of the class and set the since last batch to true.
+	*/
+	function __construct() 
+	{
+		$this->obj = "PropertyDefinition";
+	}
+
+    /**
+	* This method is used to create Property Definition for a subscriber
+    * @return ET_Configure     Object of type ET_Configure which contains http status code, response, etc from the POST SOAP service 
+    */
+	function post()
+	{
+		return new ET_Configure($this->authStub, $this->obj, "create", $this->props);
+	}
+
+    /**
+	* This method is used to get Property Definition for a subscriber
+    * @return ET_Info     Object of type ET_Info which contains http status code, response, etc from the GET SOAP service 
+    */		
+	function get()
+	{
+		return new ET_Info($this->authStub, 'Subscriber', true);
+	}
+	
+    /**
+	* This method is used to update Property Definition for a subscriber
+    * @return ET_Configure     Object of type ET_Configure which contains http status code, response, etc from the UPDATE SOAP service 
+    */	
+	function patch()
+	{
+		return new ET_Configure($this->authStub, $this->obj, "update", $this->props);
+	}
+
+    /**
+	* This method is used to delete Property Definition for a subscriber
+    * @return ET_Configure     Object of type ET_Configure which contains http status code, response, etc from the DELETE SOAP service
+    */		
+	function delete()
+	{
+		return new ET_Configure($this->authStub, $this->obj, "delete", $this->props);
+	}
+}
+?>

@@ -1,6 +1,11 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_TriggeredSend.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {	
 	$myclient = new ET_Client();
 	
@@ -95,22 +100,6 @@ try {
 	print_r($sendResult->results);
 	print "\n---------------\n";
 
-	$clientMID = '0000001';
-
-	// Send an email with TriggeredSend with Client context
-	print_r("Send an email using a triggered send with Client context\n");
-	$sendTrigger = new ET_TriggeredSend();
-	$sendTrigger->props = array('CustomerKey' => 'TEXTEXT');
-	$sendTrigger->authStub = $myclient;
-	$sendTrigger->subscribers = array(array("EmailAddress" => "testing@bh.exacttarget.com", "SubscriberKey" => "testing@bh.exacttarget.com"));
-	$sendResult = $sendTrigger->send( $clientMID );
-	print_r('Send Status: '.($sendResult->status ? 'true' : 'false')."\n");
-	print 'Code: '.$sendResult->code."\n";
-	print 'Message: '.$sendResult->message."\n";
-	print 'Results: '."\n";
-	print_r($sendResult->results);
-	print "\n---------------\n";
-
 	// Generate a unique identifier for the TriggeredSend customer key since they cannot be re-used even after deleted
 	$TSNameForCreateThenDelete = uniqid();
 
@@ -118,7 +107,7 @@ try {
 	print_r("Create a TriggeredSend Definition  \n");
 	$postTrig = new ET_TriggeredSend();
 	$postTrig->authStub = $myclient;
-	$postTrig->props = array('CustomerKey' => $TSNameForCreateThenDelete,'Name' => $TSNameForCreateThenDelete, 'Email' => array("ID"=>"3113962"), "SendClassification"=> array("CustomerKey"=> "2240") );
+	$postTrig->props = array('CustomerKey' => $TSNameForCreateThenDelete,'Name' => $TSNameForCreateThenDelete, 'Email' => array("ID"=>"90022"), "SendClassification"=> array("ObjectID"=> "7d949116-8b40-e711-80d3-1402ec6b94d5") );
 	$postResult = $postTrig->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";

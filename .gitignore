@@ -5,3 +5,4 @@ config.php
 /objsamples/AllTest.bat
 .DS_Store
 objsamples/sample-testing.php
+/vendor

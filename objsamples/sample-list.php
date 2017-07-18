@@ -1,6 +1,11 @@
 <?php
+// include_once('src/ET_Client.php');
+// include_once('src/ET_List.php');
+spl_autoload_register( function($class_name) {
+    include_once 'src/'.$class_name.'.php';
+});
+date_default_timezone_set('UTC');
 
-require('../ET_Client.php');
 try {
 	
 	$NewListName = "PHPSDKList";
@@ -97,7 +102,7 @@ try {
 		print "\n---------------\n";
 		
 		// Delete List
-		print "Delete List \n";
+/*		print "Delete List \n";
 		$deleteList = new ET_List();
 		$deleteList->authStub = $myclient;
 		$deleteList->props = array("ID" => $newListID);
@@ -109,7 +114,7 @@ try {
 		print 'Results: '."\n";
 		print_r($deleteResponse->results);
 		print "\n---------------\n";
-		
+*/		
 		// Retrieve List to confirm deletion
 		print "Retrieve List to confirm deletion \n";
 		$getList = new ET_List();
