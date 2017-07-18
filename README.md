@@ -53,13 +53,14 @@ Extensions:
 After downloading the project, rename the config.php.template file to config.php. 
 
 ### Composer
-Add a dependency to composer require salesforce-mc/fuel-sdk-php to the require section of your project's composer.json configuration file, and update your application.
+Add a dependency to composer require salesforce-mc/fuel-sdk-php and robrichards/xmlseclibs to the require section of your project's composer.json configuration file, and update your application.
 
 The following code is an example of a minimal composer.json file:
 <pre>
 {
     "require": {
-        "salesforce-mc/fuel-sdk-php": "1.0.0"
+        "salesforce-mc/fuel-sdk-php": "1.0.0",
+        "robrichards/xmlseclibs": "3.0.0 as 2.0.1"
     }
 }
 </pre>
