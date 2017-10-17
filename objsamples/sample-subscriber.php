@@ -18,7 +18,10 @@ try {
 	print "Create Subscriber \n";
 	$subCreate = new ET_Subscriber();
 	$subCreate->authStub = $myclient;
-	$subCreate->props = array("EmailAddress" => $SubscriberTestEmail);
+	$subCreate->props = array("SubscriberKey" => "PHPSDKSubscriber".uniqid(),
+								"EmailAddress" => $SubscriberTestEmail,
+								"Attributes" => array("Name" => "First Name", "Value" => "FirstName".uniqid())
+							);
 	$postResult = $subCreate->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";

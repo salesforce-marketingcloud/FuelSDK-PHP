@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+//require __DIR__ . '/../vendor/autoload.php';
 
 use \RobRichards\WsePhp\WSSESoap;
 use \Firebase\JWT;
@@ -158,8 +158,14 @@ class ET_Client extends SoapClient
 		$this->refreshToken();
 
 		try {
-			$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
-			$endpointResponse = ET_Util::restGet($url, $this);			
+			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
+			$url = $this->baseUrl."/platform/v1/endpoints/soap";
+			
+			//$endpointResponse = ET_Util::restGet($url, $this);			
+			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
+			//echo "endpoint:  \n";
+			//print_r($endpointResponse);
+							
 			$endpointObject = json_decode($endpointResponse->body);			
 			if ($endpointObject && property_exists($endpointObject,"url")){
 				$this->endpoint = $endpointObject->url;			
@@ -226,6 +232,8 @@ class ET_Client extends SoapClient
 				}
 				$authResponse = ET_Util::restPost($url, json_encode($jsonRequest), $this);
 				$authObject = json_decode($authResponse->body);
+				//echo "auth:  \n";
+				//print_r($authResponse);
 				
 				if ($authResponse && property_exists($authObject,"accessToken")){		
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');

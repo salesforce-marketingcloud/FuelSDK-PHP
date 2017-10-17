@@ -14,9 +14,10 @@ class ET_PatchRest extends ET_Constructor
 	* @param 	string 		$url 		The endpoint URL
 	* @param 	array       $props 		Dictionary type array which may hold e.g. array('id' => '', 'key' => '')
 	*/
-	function __construct($authStub, $url, $props)
+	function __construct($authStub, $url, $props, $qs="")
 	{
-		$restResponse = ET_Util::restPatch($url, json_encode($props), $authStub);			
+//		$restResponse = ET_Util::restPatch($url, json_encode($props), $authStub);			
+		$restResponse = ET_Util::restPatch($url, json_encode($props), $authStub, $qs);			
 		parent::__construct($restResponse->body, $restResponse->httpcode, true);							
 	}
 }

@@ -26,7 +26,7 @@ try {
 	print_r('More Results: '.($getResult->moreResults ? 'true' : 'false')."\n");
 	print 'Results Length(Items): '. count($getResult->results->items)."\n";
 	//print 'Results: "\n"';
-	//print_r($getResult->results);
+	print_r($getResult->results);
 	print "\n---------------\n";
 	
 	while ($getResult->moreResults) {

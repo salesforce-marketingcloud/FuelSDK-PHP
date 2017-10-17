@@ -27,6 +27,7 @@ try {
 	print 'Message: '.$getResponse->message."\n";
 	print_r('More Results: '.($getResponse->moreResults ? 'true' : 'false')."\n");
 	print 'Results Length: '. count($getResponse->results)."\n";
+	print 'Results: '. print_r( $getResponse->results )."\n";
 	print "\n---------------\n";
 	
 	while ($getResponse->moreResults) {

@@ -43,9 +43,11 @@ class ET_GetSupportRest extends ET_BaseObjectRest
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
 		}		
 		$additionalQS["access_token"] = $this->authStub->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new ET_GetRest($this->authStub, $completeURL, $queryString);						
+//		echo $additionalQS["access_token"] . "\n";
+		// $queryString = http_build_query($additionalQS);		
+		// $completeURL = "{$completeURL}?{$queryString}";
+		// $response = new ET_GetRest($this->authStub, $completeURL, $queryString);						
+		$response = new ET_GetRest($this->authStub, $completeURL, $additionalQS["access_token"]);						
 		
 		if (property_exists($response->results, 'page')){
 			$this->lastPageNumber = $response->results->page;
