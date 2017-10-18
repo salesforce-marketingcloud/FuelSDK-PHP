@@ -1,3 +1,10 @@
+# 1.1.0 (2017-10-18)
+* namespace
+* Result Message
+* Data Extract
+* Triggered Send Summary
+* composer autoload fix
+
 # 1.0.0 (2017-07-18)
 
 ### New Features 
