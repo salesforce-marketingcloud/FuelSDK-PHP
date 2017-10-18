@@ -1,13 +1,9 @@
 <?php
-
-// include_once('src/ET_Client.php');
-// include_once('src/ET_DataExtension.php');
-// include_once('src/ET_DataExtension_Column.php');
-// include_once('src/ET_DataExtension_Row.php');
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
-date_default_timezone_set('UTC');
+include_once('tests/UnitBootstrap.php');
+use FuelSdk\ET_Client;
+use FuelSdk\ET_DataExtension;
+use FuelSdk\ET_DataExtension_Column;
+use FuelSdk\ET_DataExtension_Row;
 
 try {	
 	$myclient = new ET_Client();

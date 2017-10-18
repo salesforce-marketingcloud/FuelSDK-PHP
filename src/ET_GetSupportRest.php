@@ -3,7 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
-
+use \Exception;
 /**
  * This class represents the get operation for REST service.
  */

@@ -3,6 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
+use \Exception;
 
 /**
  * This class represents the create, update, delete operation for REST service.

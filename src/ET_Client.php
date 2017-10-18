@@ -11,6 +11,7 @@ use \stdClass;
 use \DateInterval;
 use \DOMDocument;
 use \DOMXPath;
+use \Exception;
 
 /**
  * Auto load method to load dependent classes

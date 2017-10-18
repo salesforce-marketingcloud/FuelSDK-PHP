@@ -3,6 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
+use \Exception;
 
 /**
 * ETDataExtensionRow - Represents Data Extension Row.
