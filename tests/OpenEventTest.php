@@ -1,5 +1,8 @@
 <?php
+namespace FuelSdk\Test;
 
+use FuelSdk\ET_Client;
+use FuelSdk\ET_OpenEvent;
 use PHPUnit\Framework\TestCase;
 
 /**

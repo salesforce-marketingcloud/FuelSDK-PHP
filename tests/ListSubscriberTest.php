@@ -1,5 +1,10 @@
 <?php
+namespace FuelSdk\Test;
 
+use FuelSdk\ET_Client;
+use FuelSdk\ET_List;
+use FuelSdk\ET_Subscriber;
+use FuelSdk\ET_List_Subscriber;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -3,7 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
-
+use \SoapVar;
 /**
  * This class defines a reusable pattern of import options.
  */

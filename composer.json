@@ -31,5 +31,10 @@
         "psr-4": {
             "FuelSdk\\" : "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FuelSdk\\Test\\": "tests/"
+        }
     }
 }

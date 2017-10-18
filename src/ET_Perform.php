@@ -3,7 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
-
+use \SoapVar;
 /**
  * This class represents the PERFORM operation for SOAP service.
  */
