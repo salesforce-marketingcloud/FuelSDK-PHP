@@ -1,4 +1,6 @@
 <?php
+namespace FuelSdk;
+use \stdClass;
 /**
 *  This utility class performs all the REST operation over CURL.
 */

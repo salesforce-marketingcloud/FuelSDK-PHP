@@ -1,6 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use FuelSdk;
+//use FuelSdk;
 
 /**
 * @covers ET_Asset

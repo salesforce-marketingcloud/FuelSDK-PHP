@@ -1,17 +1,26 @@
 <?php
 //require __DIR__ . '/../vendor/autoload.php';
+namespace FuelSdk;
 
 use \RobRichards\WsePhp\WSSESoap;
 use \Firebase\JWT;
+
+use \Datetime;
+use \SoapClient;
+use \stdClass;
+use \DateInterval;
+use \DOMDocument;
+use \DOMXPath;
+
 /**
  * Auto load method to load dependent classes
  */
-spl_autoload_register( 
-	function($class_name) 
-	{
-		include_once 'src/'.$class_name.'.php';
-	}
-);
+// spl_autoload_register( 
+// 	function($class_name) 
+// 	{
+// 		include_once 'src/'.$class_name.'.php';
+// 	}
+// );
 /**
 * Defines a Client interface class which manages the authentication process.
 * This is the main client class which performs authentication, obtains auth token, if expired refresh auth token.

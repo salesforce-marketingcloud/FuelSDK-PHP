@@ -1,13 +1,16 @@
 <?php
 // include_once('src/ET_Client.php');
 // include_once('src/ET_BounceEvent.php');
-include_once('tests/UnitBootstrap.php');
+////include_once('tests/UnitBootstrap.php');
 /*
 spl_autoload_register( function($class_name) {
     include_once 'src/'.$class_name.'.php';
 });
 date_default_timezone_set('UTC');
 */
+use FuelSdk\ET_Client;
+use FuelSdk\ET_BounceEvent;
+
 try {	
 	$myclient = new ET_Client();
 
