@@ -1,5 +1,6 @@
 <?php
-include_once('tests/UnitBootstrap.php');
+//include_once('tests/UnitBootstrap.php');
+include_once(__DIR__ . '/../src/autoload.php');
 use FuelSdk\ET_Client;
 use FuelSdk\ET_BounceEvent;
 
