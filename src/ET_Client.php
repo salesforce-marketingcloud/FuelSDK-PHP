@@ -16,12 +16,6 @@ use \Exception;
 /**
  * Auto load method to load dependent classes
  */
-// spl_autoload_register( 
-// 	function($class_name) 
-// 	{
-// 		include_once 'src/'.$class_name.'.php';
-// 	}
-// );
 /**
 * Defines a Client interface class which manages the authentication process.
 * This is the main client class which performs authentication, obtains auth token, if expired refresh auth token.
@@ -94,7 +88,7 @@ class ET_Client extends SoapClient
 
 		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
-		if (file_exists(realpath(__DIR__ . "/config.php")))
+		if (file_exists(realpath("config.php")))
 			$config = include 'config.php';
 
 		if ($config)
