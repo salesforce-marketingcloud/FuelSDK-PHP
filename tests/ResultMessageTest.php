@@ -1,5 +1,7 @@
 <?php
-
+namespace FuelSdk\Test;
+use FuelSdk\ET_Client;
+use FuelSdk\ET_ResultMessage;
 use PHPUnit\Framework\TestCase;
 
 /**

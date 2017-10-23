@@ -1,6 +1,9 @@
 <?php
+namespace FuelSdk\Test;
 
 use PHPUnit\Framework\TestCase;
+use FuelSdk\ET_BounceEvent;
+use FuelSdk\ET_Client;
 
 /**
 * @covers ET_Asset

@@ -1,10 +1,7 @@
 <?php
-// include_once('src/ET_Client.php');
-// include_once('src/ET_Subscriber.php');
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
-date_default_timezone_set('UTC');
+include_once('tests/UnitBootstrap.php');
+use FuelSdk\ET_Client;
+use FuelSdk\ET_Subscriber;
 
 try {	
 	$myclient = new ET_Client();
@@ -18,7 +15,10 @@ try {
 	print "Create Subscriber \n";
 	$subCreate = new ET_Subscriber();
 	$subCreate->authStub = $myclient;
-	$subCreate->props = array("EmailAddress" => $SubscriberTestEmail);
+	$subCreate->props = array("SubscriberKey" => "PHPSDKSubscriber".uniqid(),
+								"EmailAddress" => $SubscriberTestEmail,
+								"Attributes" => array("Name" => "First Name", "Value" => "FirstName".uniqid())
+							);
 	$postResult = $subCreate->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";

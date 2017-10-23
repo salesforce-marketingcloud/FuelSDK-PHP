@@ -1,3 +1,11 @@
+# 1.1.0 (2017-10-19)
+* namespace integration in all source, test and sample code
+* composer autoload issue fix
+* newly supported objects:
+    - Result Message
+    - Data Extract
+    - Triggered Send Summary
+
 # 1.0.0 (2017-07-18)
 
 ### New Features 

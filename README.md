@@ -8,8 +8,19 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 ## Overview ##
 The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
-## New Features in Version 1.0.0 ##
+## New Features in Version 1.1.0 ##
 
+* **namespace :** namespace is introduced.
+
+* **newly supported objects:**
+    - Result Message
+    - Data Extract
+    - Triggered Send Summary
+
+* composer autoload issue fix
+
+
+<!--
 * **mcrypt :** mcrypt dependency removed.
 mcrypt extension dependency prevented client application from upgrading to PHP 7.x. This release supports any PHP version > 5.6.24 and PHP 7.x
 
@@ -39,6 +50,8 @@ Project tree structure is now changed to:
 * **API docs :** added API documentation using phpdocumentor framework. (under docs/ directory)
 
 * **auto loader :** integrated auto loader (spl_autoload_register) for all source code under src/, tests/, objsamples/ directory.
+-->
+
 
 ## Requirements ##
 PHP Version >=5.6.24
@@ -55,17 +68,16 @@ http://salesforce-marketingcloud.github.io/FuelSDK-PHP/index.html
 ## Installation ##
 
 ### Manual Installation
-After downloading the project, rename the config.php.template file to config.php. 
+After downloading the project, rename the config.php.template file to config.php. Most importantly, you also need to download all dependencies manually and include accordingly. That's why we highly encourage to get it from composer.
 
 ### Composer
-Add a dependency to composer require salesforce-mc/fuel-sdk-php and robrichards/xmlseclibs to the require section of your project's composer.json configuration file, and update your application.
+Add a dependency to composer require salesforce-mc/fuel-sdk-php to the require section of your project's composer.json configuration file, and update your application.
 
 The following code is an example of a minimal composer.json file:
 <pre>
 {
     "require": {
-        "salesforce-mc/fuel-sdk-php": "1.0.0",
-        "robrichards/xmlseclibs": "3.0.0 as 2.0.1"
+        "salesforce-mc/fuel-sdk-php": "1.1.0"
     }
 }
 </pre>
@@ -75,14 +87,21 @@ Edit config.php so you can input the ClientID and ClientSecret values provided w
 
 See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism. 
 
-If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to App Center at [Code@: ExactTarget's Developer Community](http://code.exacttarget.com/appcenter "Code@ App Center").
+If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to Salesforce Marketing Cloud App Center.
 
 ## Example Request ##
 All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with "ET\_".  Start by working with the ET_List object:
 
+Add composer's auto generated autoload.php file, change the path according to your directory structure:
+> require \_\_DIR\_\_ . '/../vendor/autoload.php'; 
+
+Add use statement to reference the FuelSdk namespace:
+> use FuelSdk\ET_Client;   
+> use FuelSdk\ET_List;
+<!--
 Add a require statement to reference the Fuel SDK's functionality:
 > require('ET_Client.php');
-
+-->
 Next, create an instance of the ET_Client class:
 > $myclient = new ET_Client();
 
@@ -179,11 +198,15 @@ Sample List:
  - [ClickEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-clickevent.php)
  - [ContentArea](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-contentarea.php)
  - [DataExtension](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-dataextension.php)
+ - [DataExtractActivity](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-data-extract-activity.php)
  - [Email](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-email.php)
+ - [Folder](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-folder.php)
  - [List](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-list.php)
  - [List > Subscriber](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-list.subscriber.php)
  - [OpenEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-openevent.php)
+ - [ResultMessage](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-resultmessage.php)
  - [SentEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-sentevent.php)
  - [Subscriber](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-subscriber.php)
  - [TriggeredSend](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsend.php)
+ - [TriggeredSendSummary](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-triggeredsendsummary.php)
  - [UnsubEvent](https://github.com/ExactTarget/FuelSDK-PHP/blob/master/objsamples/sample-unsubevent.php)

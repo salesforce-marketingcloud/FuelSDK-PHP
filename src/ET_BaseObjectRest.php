@@ -1,4 +1,5 @@
 <?php
+namespace FuelSdk;
 /**
  * This class represents the base object for REST operation.
  */

@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/FuelSdk.html">\FuelSdk</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">124</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-166467183"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-166467183" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-652773609"></a>
+                                <a href="../namespaces/FuelSdk.html" style="margin-left: 30px; padding-left: 0">FuelSdk</a>
+            </div>
+            <div id="namespace-652773609" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/FuelSdk.ET_Asset.html">ET_Asset</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_BaseObject.html">ET_BaseObject</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_BaseObjectRest.html">ET_BaseObjectRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_BounceEvent.html">ET_BounceEvent</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Campaign.html">ET_Campaign</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Campaign_Asset.html">ET_Campaign_Asset</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_ClickEvent.html">ET_ClickEvent</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Client.html">ET_Client</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Configure.html">ET_Configure</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Constructor.html">ET_Constructor</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_ContentArea.html">ET_ContentArea</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Continue.html">ET_Continue</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_CUDSupport.html">ET_CUDSupport</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_CUDSupportRest.html">ET_CUDSupportRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_CUDWithUpsertSupport.html">ET_CUDWithUpsertSupport</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_DataExtension.html">ET_DataExtension</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_DataExtension_Column.html">ET_DataExtension_Column</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_DataExtension_Row.html">ET_DataExtension_Row</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_DataExtractActivity.html">ET_DataExtractActivity</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Delete.html">ET_Delete</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_DeleteRest.html">ET_DeleteRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Email.html">ET_Email</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Email_SendDefinition.html">ET_Email_SendDefinition</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_ExtractDescription.html">ET_ExtractDescription</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Folder.html">ET_Folder</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Get.html">ET_Get</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_GetRest.html">ET_GetRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_GetSupport.html">ET_GetSupport</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_GetSupportRest.html">ET_GetSupportRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Import.html">ET_Import</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Info.html">ET_Info</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_List.html">ET_List</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_List_Subscriber.html">ET_List_Subscriber</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Message_Guide.html">ET_Message_Guide</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_OEM_Client.html">ET_OEM_Client</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_OpenEvent.html">ET_OpenEvent</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Organization.html">ET_Organization</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Patch.html">ET_Patch</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_PatchRest.html">ET_PatchRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Perform.html">ET_Perform</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_PerformExtract.html">ET_PerformExtract</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Post.html">ET_Post</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_PostRest.html">ET_PostRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_ProfileAttribute.html">ET_ProfileAttribute</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_PutRest.html">ET_PutRest</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_ResultMessage.html">ET_ResultMessage</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Send.html">ET_Send</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_SentEvent.html">ET_SentEvent</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Subscriber.html">ET_Subscriber</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_TriggeredSend.html">ET_TriggeredSend</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_TriggeredSendSummary.html">ET_TriggeredSendSummary</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_UnsubEvent.html">ET_UnsubEvent</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_User.html">ET_User</a></li>
+                                                    <li class="class"><a href="../classes/FuelSdk.ET_Util.html">ET_Util</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/FuelSdk.html">\FuelSdk</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\FuelSdk</small>ET_OEM_Client</h1>
+                    <p><em>The class can create and retrieve specific tenant.</em></p>
+                    <p>This is the main client class which performs authentication, obtains auth token, if expired refresh auth token.
+Settings/Configuration can be passed to this class during construction or set it in config.php file.
+Configuration passed as parameter overrides the values from the configuration file.</p>
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_refreshToken" class="">refreshToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method___getLastResponseHTTPCode" class="">__getLastResponseHTTPCode()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateWSDL" class="">CreateWSDL()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_GetLastModifiedDate" class="">GetLastModifiedDate()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method___doRequest" class="">__doRequest()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_addOAuth" class="">addOAuth()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_getAuthToken" class="">getAuthToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_setAuthToken" class="">setAuthToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_getAuthTokenExpiration" class="">getAuthTokenExpiration()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_getInternalAuthToken" class="">getInternalAuthToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_setInternalAuthToken" class="">setInternalAuthToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_setRefreshToken" class="">setRefreshToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_getRefreshToken" class="">getRefreshToken()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_AddSubscriberToList" class="">AddSubscriberToList()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_AddSubscribersToLists" class="">AddSubscribersToLists()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateDataExtensions" class="">CreateDataExtensions()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_SendTriggeredSends" class="">SendTriggeredSends()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_SendEmailToList" class="">SendEmailToList()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_SendEmailToDataExtension" class="">SendEmailToDataExtension()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateAndStartListImport" class="">CreateAndStartListImport()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateAndStartDataExtensionImport" class="">CreateAndStartDataExtensionImport()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateProfileAttributes" class="">CreateProfileAttributes()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#method_CreateContentAreas" class="">CreateContentAreas()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_OEM_Client.html#method_CreateTenant" class="">CreateTenant()</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_OEM_Client.html#method_GetTenants" class="">GetTenants()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_packageName" class="">$packageName</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_packageFolders" class="">$packageFolders</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_parentFolders" class="">$parentFolders</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_proxyHost" class="">$proxyHost</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_proxyPort" class="">$proxyPort</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_proxyUserName" class="">$proxyUserName</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_proxyPassword" class="">$proxyPassword</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_wsdlLoc" class="">$wsdlLoc</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_debugSOAP" class="">$debugSOAP</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_lastHTTPCode" class="">$lastHTTPCode</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_clientId" class="">$clientId</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_clientSecret" class="">$clientSecret</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_appsignature" class="">$appsignature</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_endpoint" class="">$endpoint</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_tenantTokens" class="">$tenantTokens</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_tenantKey" class="">$tenantKey</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_xmlLoc" class="">$xmlLoc</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_baseUrl" class="">$baseUrl</a><br />
+                                                                    <a href="../classes/FuelSdk.ET_Client.html#property_baseAuthUrl" class="">$baseAuthUrl</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/ET_OEM_Client.html"><div class="path-wrapper">ET_OEM_Client.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">Default</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                        <div class="namespace-wrapper">\SoapClient</div>
+                                                                    
+                                        <div class="namespace-wrapper"><a href="../classes/FuelSdk.ET_Client.html">\FuelSdk\ET_Client</a></div>
+                                                                                                    <div class="namespace-wrapper">\FuelSdk\ET_OEM_Client</div>
+                            </dd>
+
+                        
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_packageName" name="property_packageName" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$packageName</h3>
+                <pre class="signature">$packageName : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Folder/Package Name                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_packageFolders" name="property_packageFolders" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$packageFolders</h3>
+                <pre class="signature">$packageFolders : array</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                array
+                &mdash; Array of Folder object properties.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_parentFolders" name="property_parentFolders" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$parentFolders</h3>
+                <pre class="signature">$parentFolders : \FuelSdk\ET_Folder</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                <a href="../classes/FuelSdk.ET_Folder.html">\FuelSdk\ET_Folder</a>
+                &mdash; Parent folder object.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_proxyHost" name="property_proxyHost" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$proxyHost</h3>
+                <pre class="signature">$proxyHost : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Proxy host.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_proxyPort" name="property_proxyPort" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$proxyPort</h3>
+                <pre class="signature">$proxyPort : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Proxy port.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_proxyUserName" name="property_proxyUserName" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$proxyUserName</h3>
+                <pre class="signature">$proxyUserName : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Proxy username.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_proxyPassword" name="property_proxyPassword" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$proxyPassword</h3>
+                <pre class="signature">$proxyPassword : string</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                string
+                &mdash; Proxy password.                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_wsdlLoc" name="property_wsdlLoc" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$wsdlLoc</h3>
+                <pre class="signature">$wsdlLoc : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_debugSOAP" name="property_debugSOAP" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$debugSOAP</h3>
+                <pre class="signature">$debugSOAP : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_lastHTTPCode" name="property_lastHTTPCode" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$lastHTTPCode</h3>
+                <pre class="signature">$lastHTTPCode : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_clientId" name="property_clientId" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$clientId</h3>
+                <pre class="signature">$clientId : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_clientSecret" name="property_clientSecret" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$clientSecret</h3>
+                <pre class="signature">$clientSecret : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_appsignature" name="property_appsignature" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$appsignature</h3>
+                <pre class="signature">$appsignature : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_endpoint" name="property_endpoint" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$endpoint</h3>
+                <pre class="signature">$endpoint : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_tenantTokens" name="property_tenantTokens" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$tenantTokens</h3>
+                <pre class="signature">$tenantTokens : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_tenantKey" name="property_tenantKey" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$tenantKey</h3>
+                <pre class="signature">$tenantKey : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_xmlLoc" name="property_xmlLoc" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$xmlLoc</h3>
+                <pre class="signature">$xmlLoc : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_baseUrl" name="property_baseUrl" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$baseUrl</h3>
+                <pre class="signature">$baseUrl : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_baseAuthUrl" name="property_baseAuthUrl" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$baseAuthUrl</h3>
+                <pre class="signature">$baseAuthUrl : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct(boolean  <span class="argument">$getWSDL = false</span>, boolean  <span class="argument">$debug = false</span>, array  <span class="argument">$params = null</span>) </pre>
+                <p><em>Initializes a new instance of the ET_Client class.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$getWSDL </td>
+                                <td><p>Flag to indicate whether to load WSDL from source.
+If true, WSDL is load from the source and saved in to path set in xmlLoc variable.
+If false, WSDL stored in the path set in xmlLoc is loaded.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$debug </td>
+                                <td><p>Flag to indicate whether debug information needs to be logged.
+Logging is enabled when the value is set to true and disabled when set to false.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$params </td>
+                                <td><p>Array of settings as string.</br>
+<b>Following are the possible settings.</b></br>
+<i><b>defaultwsdl</b></i> - WSDL location/path</br>
+<i><b>clientid</b></i> - Client Identifier optained from App Center</br>
+<i><b>clientsecred</b></i> - Client secret associated with clientid</br>
+<i><b>appsignature</b></i> - Application signature optained from App Center</br>
+<i><b>baseUrl</b></i> - ExactTarget SOAP API Url</br>
+<i><b>baseAuthUrl</b></i> - ExactTarget authentication rest api resource url</br>
+<b>If your application behind a proxy server, use the following setting</b></br>
+<i><b>proxyhost</b></i> - proxy server host name or ip address</br>
+<i><b>proxyport</b></i> - proxy server prot number</br>
+<i><b>proxyusername</b></i> - proxy server user name</br>
+<i><b>proxypassword</b></i> - proxy server password</br></p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_refreshToken" name="method_refreshToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">refreshToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">refreshToken(boolean  <span class="argument">$forceRefresh = false</span>) : void</pre>
+                <p><em>Gets the refresh token using the authentication URL.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$forceRefresh </td>
+                                <td><p>Flag to indicate a force refresh of authentication toekn.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___getLastResponseHTTPCode" name="method___getLastResponseHTTPCode" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__getLastResponseHTTPCode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__getLastResponseHTTPCode() : \FuelSdk\lastHTTPCode</pre>
+                <p><em>Returns the  HTTP code return by the last SOAP/Rest call</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    \FuelSdk\lastHTTPCode
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateWSDL" name="method_CreateWSDL" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateWSDL()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateWSDL(  <span class="argument">$wsdlLoc</span>) : void</pre>
+                <p><em>Create the WSDL file at specified location.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$wsdlLoc </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_GetLastModifiedDate" name="method_GetLastModifiedDate" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">GetLastModifiedDate()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">GetLastModifiedDate(\FuelSdk\[type]  <span class="argument">$remotepath</span>) : string</pre>
+                <p><em>Returns last modified date of the URL</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\FuelSdk\[type]</td>
+                                <td>$remotepath </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Last modified date</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___doRequest" name="method___doRequest" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__doRequest()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__doRequest(string  <span class="argument">$request</span>, string  <span class="argument">$location</span>, string  <span class="argument">$saction</span>, string  <span class="argument">$version</span>, integer  <span class="argument">$one_way</span>) : string</pre>
+                <p><em>Perfoms an soap request.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$request </td>
+                                <td><p>Soap request xml</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$location </td>
+                                <td><p>Url as string</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$saction </td>
+                                <td><p>Soap action name</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$version </td>
+                                <td><p>Future use</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$one_way </td>
+                                <td><p>Future use</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Soap web service request result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_addOAuth" name="method_addOAuth" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">addOAuth()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">addOAuth(string  <span class="argument">$doc</span>, string  <span class="argument">$token</span>) : void</pre>
+                <p><em>Add OAuth token to the header of the soap request</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$doc </td>
+                                <td><p>Soap request as xml string</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$token </td>
+                                <td><p>OAuth token</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getAuthToken" name="method_getAuthToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getAuthToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getAuthToken(  <span class="argument">$tenantKey = null</span>) : string</pre>
+                <p><em>Get the authentication token.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$tenantKey </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setAuthToken" name="method_setAuthToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setAuthToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setAuthToken(string  <span class="argument">$tenantKey</span>, string  <span class="argument">$authToken</span>, string  <span class="argument">$authTokenExpiration</span>) </pre>
+                <p><em>Set the authentication token in the tenantTokens array.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td><p>Tenant key for which auth toke to be set</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$authToken </td>
+                                <td><p>Authentication token to be set</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$authTokenExpiration </td>
+                                <td><p>Authentication token expiration value</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getAuthTokenExpiration" name="method_getAuthTokenExpiration" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getAuthTokenExpiration()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getAuthTokenExpiration(string  <span class="argument">$tenantKey</span>) : string</pre>
+                <p><em>Get the Auth Token Expiration.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td><p>Tenant key for which authenication token is returned</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Authenticaiton token for the tenant key</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getInternalAuthToken" name="method_getInternalAuthToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getInternalAuthToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getInternalAuthToken(string  <span class="argument">$tenantKey</span>) : string</pre>
+                <p><em>Get the internal authentication token.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Internal authenication token</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setInternalAuthToken" name="method_setInternalAuthToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setInternalAuthToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setInternalAuthToken(string  <span class="argument">$tenantKey</span>, string  <span class="argument">$internalAuthToken</span>) </pre>
+                <p><em>Set the internal auth tokan.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$internalAuthToken </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setRefreshToken" name="method_setRefreshToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setRefreshToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setRefreshToken(string  <span class="argument">$tenantKey</span>, string  <span class="argument">$refreshToken</span>) </pre>
+                <p><em>Set the refresh authentication token.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td><p>Tenant key to which refresh token is set</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$refreshToken </td>
+                                <td><p>Refresh authenication token</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getRefreshToken" name="method_getRefreshToken" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getRefreshToken()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getRefreshToken(string  <span class="argument">$tenantKey</span>) : string</pre>
+                <p><em>Get the refresh token for the tenant.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tenantKey </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>Refresh token for the tenant</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_AddSubscriberToList" name="method_AddSubscriberToList" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">AddSubscriberToList()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">AddSubscriberToList(string  <span class="argument">$emailAddress</span>, array  <span class="argument">$listIDs</span>, string  <span class="argument">$subscriberKey = null</span>) : mixed</pre>
+                <p><em>Add subscriber to list.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$emailAddress </td>
+                                <td><p>Email address of the subscriber</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$listIDs </td>
+                                <td><p>Array of list id to which the subscriber is added</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$subscriberKey </td>
+                                <td><p>Newly added subscriber key</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>post or patch response object. If the subscriber already existing patch response is returned otherwise post response returned.</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_AddSubscribersToLists" name="method_AddSubscribersToLists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">AddSubscribersToLists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">AddSubscribersToLists(  <span class="argument">$subs</span>,   <span class="argument">$listIDs</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$subs </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$listIDs </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateDataExtensions" name="method_CreateDataExtensions" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateDataExtensions()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateDataExtensions(array  <span class="argument">$dataExtensionDefinitions</span>) : mixed</pre>
+                <p><em>Create a new data extension based on the definition passed</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$dataExtensionDefinitions </td>
+                                <td><p>Data extension definition properties as an array</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>post response object</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_SendTriggeredSends" name="method_SendTriggeredSends" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">SendTriggeredSends()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">SendTriggeredSends(array  <span class="argument">$arrayOfTriggeredRecords</span>) : mixed</pre>
+                <p><em>Starts an send operation for the TriggerredSend records</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$arrayOfTriggeredRecords </td>
+                                <td><p>Array of TriggeredSend records</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Send reponse object</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_SendEmailToList" name="method_SendEmailToList" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">SendEmailToList()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">SendEmailToList(string  <span class="argument">$emailID</span>, string  <span class="argument">$listID</span>, string  <span class="argument">$sendClassficationCustomerKey</span>) : mixed</pre>
+                <p><em>Create an email send definition, send the email based on the definition and delete the definition.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$emailID </td>
+                                <td><p>Email identifier for which the email is sent</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$listID </td>
+                                <td><p>Send definition list identifier</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sendClassficationCustomerKey </td>
+                                <td><p>Send classification customer key</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Final delete action result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_SendEmailToDataExtension" name="method_SendEmailToDataExtension" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">SendEmailToDataExtension()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">SendEmailToDataExtension(string  <span class="argument">$emailID</span>, string  <span class="argument">$sendableDataExtensionCustomerKey</span>, string  <span class="argument">$sendClassficationCustomerKey</span>) : mixed</pre>
+                <p><em>Create an email send definition, send the email based on the definition and delete the definition.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$emailID </td>
+                                <td><p>Email identifier for which the email is sent</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sendableDataExtensionCustomerKey </td>
+                                <td><p>Sendable data extension customer key</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sendClassficationCustomerKey </td>
+                                <td><p>Send classification customer key</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Final delete action result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateAndStartListImport" name="method_CreateAndStartListImport" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateAndStartListImport()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateAndStartListImport(string  <span class="argument">$listId</span>, string  <span class="argument">$fileName</span>) : mixed</pre>
+                <p><em>Create an import definition and start the import process</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$listId </td>
+                                <td><p>List identifier. Used as the destination object identifier.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$fileName </td>
+                                <td><p>Name of the file to be imported</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Returns the import process result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateAndStartDataExtensionImport" name="method_CreateAndStartDataExtensionImport" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateAndStartDataExtensionImport()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateAndStartDataExtensionImport(string  <span class="argument">$dataExtensionCustomerKey</span>, string  <span class="argument">$fileName</span>, boolean  <span class="argument">$overwrite</span>) : mixed</pre>
+                <p><em>Create an import definition and start the import process</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$dataExtensionCustomerKey </td>
+                                <td><p>Data extension customer key. Used as the destination object identifier.</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$fileName </td>
+                                <td><p>Name of the file to be imported</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$overwrite </td>
+                                <td><p>Flag to indicate to overwrite the uploaded file</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Returns the import process result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateProfileAttributes" name="method_CreateProfileAttributes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateProfileAttributes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateProfileAttributes(array  <span class="argument">$allAttributes</span>) : mixed</pre>
+                <p><em>Create a profile attribute</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$allAttributes </td>
+                                <td><p>Profile attribute properties as an array.</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>Post operation result</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateContentAreas" name="method_CreateContentAreas" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateContentAreas()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateContentAreas(array  <span class="argument">$arrayOfContentAreas</span>) : void</pre>
+                <p><em>Create one or more content areas</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$arrayOfContentAreas </td>
+                                <td><p>Content areas properties as an array</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/FuelSdk.ET_Client.html"><div class="path-wrapper">\FuelSdk\ET_Client</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_CreateTenant" name="method_CreateTenant" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">CreateTenant()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">CreateTenant(array  <span class="argument">$tenantInfo</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$tenantInfo </td>
+                                <td><p>Dictionary type array which may hold e.g. array('key' =&gt; '')</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_GetTenants" name="method_GetTenants" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">GetTenants()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">GetTenants() : \FuelSdk\ET_GetRest</pre>
+                <p><em></em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    <a href="../classes/FuelSdk.ET_GetRest.html">\FuelSdk\ET_GetRest</a>
+                                            &mdash; <p>Object of type ET_GetRest which contains http status code, response, etc from the GET REST service</p>
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">ET_OEM_Client.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/ET_OEM_Client.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/FuelSdk.html">\FuelSdk</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 23rd, 2017 at 15:16.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

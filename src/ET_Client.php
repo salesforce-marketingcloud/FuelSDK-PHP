@@ -1,17 +1,27 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+//require __DIR__ . '/../vendor/autoload.php';
+namespace FuelSdk;
 
 use \RobRichards\WsePhp\WSSESoap;
 use \Firebase\JWT;
+
+use \Datetime;
+use \SoapClient;
+use \stdClass;
+use \DateInterval;
+use \DOMDocument;
+use \DOMXPath;
+use \Exception;
+
 /**
  * Auto load method to load dependent classes
  */
-spl_autoload_register( 
-	function($class_name) 
-	{
-		include_once 'src/'.$class_name.'.php';
-	}
-);
+// spl_autoload_register( 
+// 	function($class_name) 
+// 	{
+// 		include_once 'src/'.$class_name.'.php';
+// 	}
+// );
 /**
 * Defines a Client interface class which manages the authentication process.
 * This is the main client class which performs authentication, obtains auth token, if expired refresh auth token.
@@ -158,8 +168,14 @@ class ET_Client extends SoapClient
 		$this->refreshToken();
 
 		try {
-			$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
-			$endpointResponse = ET_Util::restGet($url, $this);			
+			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
+			$url = $this->baseUrl."/platform/v1/endpoints/soap";
+			
+			//$endpointResponse = ET_Util::restGet($url, $this);			
+			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
+			//echo "endpoint:  \n";
+			//print_r($endpointResponse);
+							
 			$endpointObject = json_decode($endpointResponse->body);			
 			if ($endpointObject && property_exists($endpointObject,"url")){
 				$this->endpoint = $endpointObject->url;			
@@ -226,6 +242,8 @@ class ET_Client extends SoapClient
 				}
 				$authResponse = ET_Util::restPost($url, json_encode($jsonRequest), $this);
 				$authObject = json_decode($authResponse->body);
+				//echo "auth:  \n";
+				//print_r($authResponse);
 				
 				if ($authResponse && property_exists($authObject,"accessToken")){		
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
