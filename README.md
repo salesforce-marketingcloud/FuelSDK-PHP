@@ -97,12 +97,11 @@ Add composer's auto generated autoload.php file, change the path according to yo
 
 Add use statement to reference the FuelSdk namespace:
 > use FuelSdk\ET_Client;
-
 > use FuelSdk\ET_List;
-
+<!-->
 Add a require statement to reference the Fuel SDK's functionality:
 > require('ET_Client.php');
-
+-->
 Next, create an instance of the ET_Client class:
 > $myclient = new ET_Client();
 
