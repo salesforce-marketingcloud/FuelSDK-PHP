@@ -3,6 +3,7 @@ include_once('tests/UnitBootstrap.php');
 use FuelSdk\ET_Client;
 use FuelSdk\ET_TriggeredSendSummary;
 
+
 try {
 
 	$myclient = new ET_Client();

@@ -1,6 +1,5 @@
 <?php
 namespace FuelSdk\Test;
-
 use FuelSdk\ET_Client;
 use FuelSdk\ET_TriggeredSendSummary;
 use PHPUnit\Framework\TestCase;

@@ -4,6 +4,7 @@ use FuelSdk\ET_Client;
 use FuelSdk\ET_DataExtractActivity;
 use FuelSdk\ET_ExtractDescription;
 
+
 try {
     $myclient = new ET_Client();
 	$extracttype = "Data Extension Extract";
