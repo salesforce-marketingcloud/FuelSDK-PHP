@@ -93,10 +93,11 @@ If you have not registered your application or you need to lookup your Applicati
 All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with "ET\_".  Start by working with the ET_List object:
 
 Add composer's auto generated autoload.php file, change the path according to your directory structure:
-> require __DIR__ . '/../vendor/autoload.php'; 
+> require \_\_DIR\_\_ . '/../vendor/autoload.php'; 
 
 Add use statement to reference the FuelSdk namespace:
 > use FuelSdk\ET_Client;
+
 > use FuelSdk\ET_List;
 
 Add a require statement to reference the Fuel SDK's functionality:
