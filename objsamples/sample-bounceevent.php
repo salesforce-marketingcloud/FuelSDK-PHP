@@ -1,10 +1,8 @@
 <?php
-// include_once('src/ET_Client.php');
-// include_once('src/ET_BounceEvent.php');
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
-date_default_timezone_set('UTC');
+include_once('tests/UnitBootstrap.php');
+//include_once(__DIR__ . '/../src/autoload.php');
+use FuelSdk\ET_Client;
+use FuelSdk\ET_BounceEvent;
 
 try {	
 	$myclient = new ET_Client();
@@ -27,6 +25,7 @@ try {
 	print 'Message: '.$getResponse->message."\n";
 	print_r('More Results: '.($getResponse->moreResults ? 'true' : 'false')."\n");
 	print 'Results Length: '. count($getResponse->results)."\n";
+	print 'Results: '. print_r($getResponse->results)."\n";
 	print "\n---------------\n";
 	
 	while ($getResponse->moreResults) {

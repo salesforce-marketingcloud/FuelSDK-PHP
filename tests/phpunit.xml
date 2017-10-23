@@ -14,7 +14,7 @@
         <file>UserTest.php</file>
         <file>ImportTest.php</file>
         <file>SendTest.php</file>
-        <file>ProfileAttributeTest.php</file>
+<!--        <file>ProfileAttributeTest.php</file> -->
         <file>TriggeredSendTest.php</file>
         <file>OrganizationTest.php</file>
         <file>UnsubEventTest.php</file>
@@ -22,6 +22,10 @@
         <file>OpenEventTest.php</file>
         <file>ClickEventTest.php</file>
         <file>BounceEventTest.php</file>
+        <file>DataExtractTest.php</file>
+        <file>ResultMessageTest.php</file>
+        <file>TriggeredSendSummaryTest.php</file>
+        
     </testsuite>
   </testsuites>
   <logging>

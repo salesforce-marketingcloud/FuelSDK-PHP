@@ -1,7 +1,9 @@
 <?php
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
+// spl_autoload_register( function($class_name) {
+//     include_once 'src/'.$class_name.'.php';
+// });
+namespace FuelSdk;
+
 /**
  *	An asset is an instance of any kind of content in the CMS.
  */

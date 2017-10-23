@@ -1,5 +1,8 @@
 <?php
+namespace FuelSdk\Test;
 
+use FuelSdk\ET_Client;
+use FuelSdk\ET_Message_Guide;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +33,7 @@ final class MessageTest extends TestCase
         $postMG->authStub = $this->myclient;
 
         $getResult = $postMG->get();
-        //  print_r($getResult);
+        //print_r($getResult);
         $message = $getResult->results;
 
         $postMG->props = $message;	
@@ -97,7 +100,9 @@ final class MessageTest extends TestCase
     public function updateMessage($id)
     {
         $desc = "chaning the description";
-        $message = new ET_Message();
+        $message = new ET_Message_Guide();
+//        $message = new ET_Message();
+        
         $auth = $this->client;
         $message->authStub = $auth;
         $message->props["id"] = $id;
@@ -110,7 +115,9 @@ final class MessageTest extends TestCase
 
     public function deleteMessage($id)
     {
-        $message = new ET_Message();
+        $message = new ET_Message_Guide();
+//        $message = new ET_Message();
+        
         $auth = $this->client;
         $message->authStub = $auth;
         $message->props["id"] = $id;

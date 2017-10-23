@@ -1,7 +1,8 @@
 <?php
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
+// spl_autoload_register( function($class_name) {
+//     include_once 'src/'.$class_name.'.php';
+// });
+namespace FuelSdk;
 
 /**
  * The class can create and retrieve specific tenant.

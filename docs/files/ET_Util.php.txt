@@ -1,4 +1,6 @@
 <?php
+namespace FuelSdk;
+use \stdClass;
 /**
 *  This utility class performs all the REST operation over CURL.
 */
@@ -10,10 +12,17 @@ class ET_Util
     * @param ET_Client   $authStub 	The ET client object which performs the auth token, refresh token using clientID clientSecret
     * @return string     The response payload from the REST service
     */
-    public static function restGet($url, $authStub)
+    public static function restGet($url, $authStub, $isAuthConnection="")
     {
         $ch = curl_init();
         $headers = array("User-Agent: ".self::getSDKVersion());
+        
+        if($isAuthConnection !== ""){
+            $authorization = "Authorization: Bearer ".$isAuthConnection;
+            $headers = array("User-Agent: ".self::getSDKVersion(), $authorization);
+            //echo "inside GET auth conn\n";
+        }
+
         curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
         // Uses the URL passed in that is specific to the API used
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -37,6 +46,8 @@ class ET_Util
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $authStub->proxyUserName.':'.$authStub->proxyPassword);
 		}
 
+
+
         $outputJSON = curl_exec($ch);
         $responseObject = new stdClass(); 
         $responseObject->body = $outputJSON;
@@ -52,7 +63,7 @@ class ET_Util
     * @param ET_Client   $authStub 	The ET client object which performs the auth token, refresh token using clientID clientSecret
     * @return string     The response payload from the REST service
     */
-    public static function restPost($url, $content, $authStub)
+    public static function restPost($url, $content, $authStub, $isAuthConnection="")
     {
         $ch = curl_init();
         
@@ -61,6 +72,11 @@ class ET_Util
         
         // When posting to a Fuel API, content-type has to be explicitly set to application/json
         $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion());
+        if($isAuthConnection !== ""){
+            $authorization = "Authorization: Bearer ".$isAuthConnection;
+            $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion(), $authorization);
+        }
+
         curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
         
         // The content is the JSON payload that defines the request
@@ -100,7 +116,7 @@ class ET_Util
     * @param ET_Client   $authStub 	The ET client object which performs the auth token, refresh token using clientID clientSecret
     * @return string     The response payload from the REST service
     */
-    public static function restPatch($url, $content, $authStub)
+    public static function restPatch($url, $content, $authStub, $isAuthConnection="")
     {
         $ch = curl_init();
         
@@ -109,6 +125,10 @@ class ET_Util
         
         // When posting to a Fuel API, content-type has to be explicitly set to application/json
         $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion());
+        if($isAuthConnection !== ""){
+            $authorization = "Authorization: Bearer ".$isAuthConnection;
+            $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion(), $authorization);
+        }        
         curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
         
         // The content is the JSON payload that defines the request
@@ -150,7 +170,7 @@ class ET_Util
     * @param ET_Client   $authStub 	The ET client object which performs the auth token, refresh token using clientID clientSecret
     * @return string     The response payload from the REST service
     */
-    public static function restPut($url, $content, $authStub)
+    public static function restPut($url, $content, $authStub, $isAuthConnection="")
     {
         $ch = curl_init();
         
@@ -159,6 +179,10 @@ class ET_Util
         
         // When posting to a Fuel API, content-type has to be explicitly set to application/json
         $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion());
+        if($isAuthConnection !== ""){
+            $authorization = "Authorization: Bearer ".$isAuthConnection;
+            $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion(), $authorization);
+        }        
         curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
         
         // The content is the JSON payload that defines the request
@@ -199,11 +223,15 @@ class ET_Util
     * @param ET_Client   $authStub 	The ET client object which performs the auth token, refresh token using clientID clientSecret
     * @return string     The response payload from the REST service
     */
-    public static function restDelete($url, $authStub)
+    public static function restDelete($url, $authStub, $isAuthConnection="")
     {
         $ch = curl_init();
         
         $headers = array("User-Agent: ".self::getSDKVersion());
+        if($isAuthConnection !== ""){
+            $authorization = "Authorization: Bearer ".$isAuthConnection;
+            $headers = array("Content-Type: application/json", "User-Agent: ".self::getSDKVersion(), $authorization);
+        }        
         curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
         
         // Uses the URL passed in that is specific to the API used
