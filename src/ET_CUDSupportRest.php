@@ -1,7 +1,9 @@
 <?php
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
+// spl_autoload_register( function($class_name) {
+//     include_once 'src/'.$class_name.'.php';
+// });
+namespace FuelSdk;
+use \Exception;
 
 /**
  * This class represents the create, update, delete operation for REST service.
@@ -48,9 +50,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 		}
 		
 		$additionalQS["access_token"] = $this->authStub->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);				
+//		echo $additionalQS["access_token"] . "\n";
+		// $queryString = http_build_query($additionalQS);		
+		// $completeURL = "{$completeURL}?{$queryString}";
+		// $response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props, $additionalQS["access_token"]);		
 		
 		return $response;
 	}
@@ -81,9 +85,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 			}				
 		}
 		$additionalQS["access_token"] = $this->authStub->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props);				
+//		echo $additionalQS["access_token"] . "\n";
+		// $queryString = http_build_query($additionalQS);		
+		// $completeURL = "{$completeURL}?{$queryString}";
+		// $response = new ET_PatchRest($this->authStub, $completeURL, $this->props);	
+		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props, $additionalQS["access_token"]);				
 		
 		return $response;
 	}
@@ -113,9 +119,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 			}				
 		}
 		$additionalQS["access_token"] = $this->authStub->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "{$completeURL}?{$queryString}";
-		$response = new ET_DeleteRest($this->authStub, $completeURL);				
+//		echo $additionalQS["access_token"] . "\n";
+		// $queryString = http_build_query($additionalQS);		
+		// $completeURL = "{$completeURL}?{$queryString}";
+		// $response = new ET_DeleteRest($this->authStub, $completeURL);	
+		$response = new ET_DeleteRest($this->authStub, $completeURL, $additionalQS["access_token"]);				
 		
 		return $response;
 	}

@@ -1,7 +1,8 @@
 <?php
-
+namespace FuelSdk\Test;
+use FuelSdk\ET_Client;
+use FuelSdk\ET_Asset;
 use PHPUnit\Framework\TestCase;
-
 /**
 * @covers ET_Asset
 */

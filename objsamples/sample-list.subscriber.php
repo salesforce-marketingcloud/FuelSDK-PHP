@@ -1,12 +1,9 @@
 <?php
-// include_once('src/ET_Client.php');
-// include_once('src/ET_List.php');
-// include_once('src/ET_Subscriber.php');
-// include_once('src/ET_List_Subscriber.php');
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
-date_default_timezone_set('UTC');
+include_once('tests/UnitBootstrap.php');
+use FuelSdk\ET_Client;
+use FuelSdk\ET_Subscriber;
+use FuelSdk\ET_List_Subscriber;
+use FuelSdk\ET_List;
 
 try {
 	

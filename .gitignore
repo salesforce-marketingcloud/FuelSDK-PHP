@@ -6,3 +6,7 @@ config.php
 .DS_Store
 objsamples/sample-testing.php
 /vendor
+/objsamples/sample-asset-TestFilePath.txt
+/objsamples/sample-asset-upload.php
+/tests/CampaignAssetTest.php
+/tests/ImportListTest.php

@@ -1,12 +1,7 @@
 <?php
-// include_once('src/ET_Client.php');
-// include_once('src/ET_DataExtension.php');
-// include_once('src/ET_DataExtension_Column.php');
-// include_once('src/ET_DataExtension_Row.php');
-spl_autoload_register( function($class_name) {
-    include_once 'src/'.$class_name.'.php';
-});
-date_default_timezone_set('UTC');
+include_once('tests/UnitBootstrap.php');
+use FuelSdk\ET_Client;
+use FuelSdk\ET_DataExtension;
 
 try {	
 	$myclient = new ET_Client();
@@ -51,20 +46,23 @@ try {
     "Name"                       => $DataExtensionNameForTesting, 
     "CustomerKey"                => $DataExtensionNameForTesting,
     "IsSendable"                 => "true",
-    "SendableCustomObjectField" => array(
+//    "SendableCustomObjectField" => array(
+    "SendableDataExtensionField" => array("Name" => "EmailAddress"), /*array(
       'Name' => 'EmailAddress',
-      'Value' => 'EmailAddress'
-      ),
+      'Value' => NULL
+      ),*/
     "SendableSubscriberField"    => array(
-      'Name' => 'TEXT',
-      'Value' => 'TEXT'
+      'Name' => 'Subscriber Key',
+      'Value' => NULL
       )
     );
 
 
 	$postDE->columns = array();
 	$postDE->columns[] = array("Name" => "EmailAddress", "FieldType" => "EmailAddress", "IsPrimaryKey" => "true","MaxLength" => "100", "IsRequired" => "true");
-	$postDE->columns[] = array("Name" => "TEXT", "FieldType" => "Text");
+	//$postDE->columns[] = array("Name" => "SUBSCRIBER_KEY", "FieldType" => "Text");
+	$postDE->columns[] = array("Name" => "Subscriber Key", "FieldType" => "Text");
+	
 	$postResult = $postDE->post();
 	print_r('Post Status: '.($postResult->status ? 'true' : 'false')."\n");
 	print 'Code: '.$postResult->code."\n";
