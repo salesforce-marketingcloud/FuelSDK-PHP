@@ -90,7 +90,10 @@ See the ET_Client section below for details on how to specify these values at th
 If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to Salesforce Marketing Cloud App Center.
 
 ## Example Request ##
-All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with "ET\_".  Start by working with the ET_List object:
+All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with "ET\_".  Start by working with the ET_List object:  
+
+Get the config.php.template file (under vendor/salesforce-mc/ using composer), rename it to config.php and update clientId & clientSecret.  
+Most importantly, put it in your project's root directory where composer.json file exists.  
 
 Add composer's auto generated autoload.php file, change the path according to your directory structure:
 > require \_\_DIR\_\_ . '/../vendor/autoload.php'; 
