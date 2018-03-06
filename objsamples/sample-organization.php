@@ -5,7 +5,7 @@ use FuelSdk\ET_Organization;
 
 try {	
 	$params = array();		
-	$myclient = new ET_Client(true, $params);
+	$myclient = new ET_Client(true, true, $params);
 
 	// Retrieve All Organizations with GetMoreResults
 	print "Retrieve All Organizations with GetMoreREsults \n";
