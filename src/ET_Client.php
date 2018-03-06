@@ -88,8 +88,9 @@ class ET_Client extends SoapClient
 
 		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
-		if (file_exists(realpath("config.php")))
-			$config = include 'config.php';
+		$config_path = realpath(__DIR__ . "/../config.php");
+		if (file_exists($config_path))
+			$config = include $config_path;
 
 		if ($config)
 		{
