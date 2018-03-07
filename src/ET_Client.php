@@ -80,6 +80,7 @@ class ET_Client extends SoapClient
 	 * <i><b>proxyport</b></i> - proxy server prot number</br>
 	 * <i><b>proxyusername</b></i> - proxy server user name</br>
 	 * <i><b>proxypassword</b></i> - proxy server password</br>
+	 * <i><b>exceptions</b></i> - the exceptions setting is a boolean value defining whether soap errors throw exceptions of type SoapFault</br>
 	 */
 	function __construct($getWSDL = false, $debug = false, $params = null) 
 	{
