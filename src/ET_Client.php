@@ -58,7 +58,7 @@ class ET_Client extends SoapClient
 
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc,$baseUrl, $baseAuthUrl;
+			$tenantTokens, $tenantKey, $xmlLoc,$baseUrl, $baseAuthUrl, $exceptions;
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -80,6 +80,7 @@ class ET_Client extends SoapClient
 	 * <i><b>proxyport</b></i> - proxy server prot number</br>
 	 * <i><b>proxyusername</b></i> - proxy server user name</br>
 	 * <i><b>proxypassword</b></i> - proxy server password</br>
+	 * <i><b>exceptions</b></i> - the exceptions setting is a boolean value defining whether soap errors throw exceptions of type SoapFault</br>
 	 */
 	function __construct($getWSDL = false, $debug = false, $params = null) 
 	{
@@ -135,6 +136,14 @@ class ET_Client extends SoapClient
 			{
 				$this->baseAuthUrl = "https://auth.exacttargetapis.com";
 			}
+			if ($params && array_key_exists('exceptions', $params))
+			{
+				$this->exceptions = $params['exceptions'];
+			}
+			else
+			{
+				$this->exceptions = false;
+			}
 		}
 
 
@@ -182,7 +191,7 @@ class ET_Client extends SoapClient
 
         $soapOptions = array(
             'trace'=>1,
-            'exceptions'=>0,
+            'exceptions'=>$this->exceptions,
             'connection_timeout'=>120,
         );
         if (!empty($this->proxyHost)) {
@@ -211,7 +220,7 @@ class ET_Client extends SoapClient
 	{
 		
 		if (property_exists($this, "sdl") && $this->sdl == 0){
-			parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0));	
+			parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>$this->exceptions));
 		}
 		try {
 			$currentTime = new DateTime();
