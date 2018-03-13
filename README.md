@@ -6,7 +6,7 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 > Salesforce Marketing Cloud Fuel SDK for PHP is free to use but are not official Salesforce Marketing Cloud products and should be considered community projects. This SDK is not officially tested or documented. For help on any Salesforce Marketing Cloud Fuel SDK for PHP, please consult the Salesforce message boards or the issues section of this repository. Salesforce Marketing Cloud support is not available for this SDK.
 
 ## Overview ##
-The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
+The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash.
 
 ## New Features in Version 1.1.0 ##
 
@@ -39,7 +39,7 @@ jwt.php removed and added as dependency in composer.json. If you are manually do
 * **soap-wsse :** soap-wsse.php is removed from the project source tree and added as dependency in composer.json. If you are manually downloading the project, call **composer update** to get the **soap-wsse** downloaded.
 
 * **code refactor :** code refactored to individual class files. (under src/ directory)
-Project tree structure is now changed to: 
+Project tree structure is now changed to:
     - src           : source files
     - doc           : SDK API documentation
     - tests         : unit test cases
@@ -65,6 +65,12 @@ Extensions:
 
 http://salesforce-marketingcloud.github.io/FuelSDK-PHP/index.html
 
+## Support
+The Salesforce Marketing Cloud SDKs are community-supported projects. The SDK source code, samples, and documentation are publicly available on Github to use as-is or fork and modify for your needs. We invite everyone in the community to collaborate with us on Github and submit pull requests to help improve the source code and samples.
+* Post questions on [StackExchange](https://salesforce.stackexchange.com/questions/tagged/marketing-cloud).
+* Submit ideas and suggestions to the [Trailblazer Community](https://success.salesforce.com/ideaSearch?sort=2&filter=Marketing+Cloud).
+* File issues and feature requests here on Github.
+
 ## Installation ##
 
 ### Manual Installation
@@ -85,7 +91,7 @@ The following code is an example of a minimal composer.json file:
 ## Getting Started ##
 Edit config.php so you can input the ClientID and ClientSecret values provided when you registered your application. If you are building a HubExchange application for the Interactive Marketing Hub then, you must also provide the Application Signature (appsignature).  Only change the value for the defaultwsdl configuration item if instructed by ExactTarget.
 
-See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism. 
+See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism.
 
 If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to Salesforce Marketing Cloud App Center.
 
@@ -96,7 +102,7 @@ Get the config.php.template file (under vendor/salesforce-mc/ using composer), r
 Most importantly, put it in your project's root directory where composer.json file exists.  
 
 Add composer's auto generated autoload.php file, change the path according to your directory structure:
-> require \_\_DIR\_\_ . '/../vendor/autoload.php'; 
+> require \_\_DIR\_\_ . '/../vendor/autoload.php';
 
 Add use statement to reference the FuelSdk namespace:
 > use FuelSdk\ET_Client;   
@@ -115,7 +121,7 @@ Associate the ET_Client to the object using the authStub property:
 > $getList->authStub = $myclient;
 
 Utilize one of the ET_List methods:
-> $getResponse = $getList->get();	
+> $getResponse = $getList->get();
 
 Print out the results for viewing
 > print_r($getResponse);
@@ -135,7 +141,7 @@ ET_Get Object
                     [Client] => stdClass Object
                         (
                             [ID] => 1000001
-                            [PartnerClientKey] => 
+                            [PartnerClientKey] =>
                         )
 
                     [PartnerKey] =>
@@ -154,28 +160,28 @@ ET_Get Object
         )
 
     [request_id] => 5d56a37e-4b13-4f0a-aa13-2e108e60a990
-    [moreResults] => 
+    [moreResults] =>
 )
 </pre>
 
 ## ET\_Client Class ##
 
-The ET\_Client class takes care of many of the required steps when accessing ExactTarget's API, including retrieving appropriate access tokens, handling token state for managing refresh, and determining the appropriate endpoints for API requests.  In order to leverage the advantages this class provides, use a single instance of this class for an entire session.  Do not instantiate a new ET_Client object for each request made. 
+The ET\_Client class takes care of many of the required steps when accessing ExactTarget's API, including retrieving appropriate access tokens, handling token state for managing refresh, and determining the appropriate endpoints for API requests.  In order to leverage the advantages this class provides, use a single instance of this class for an entire session.  Do not instantiate a new ET_Client object for each request made.
 
 The ET_Client class accepts multiple parameters
 
 **Refresh WSDL** - If set to true, it will automatically download a local copy of the WSDL whenever an update is found.
 > $myclient = new ET_Client(true);
 
-**Debug** - If set to true, all API requests that the Fuel SDK is making behind the scenes will be logged to PHP's error log.  This option should only be set to true in order to troubleshoot during the development process and should never be used in a production scenario. 
+**Debug** - If set to true, all API requests that the Fuel SDK is making behind the scenes will be logged to PHP's error log.  This option should only be set to true in order to troubleshoot during the development process and should never be used in a production scenario.
 > $myclient = new ET_Client(true,true);
 
-**Parameters** - Allows for passing authentication information for use with SSO with a JWT or for passing ClientID/ClientSecret if you would prefer to not use the config file option. 
+**Parameters** - Allows for passing authentication information for use with SSO with a JWT or for passing ClientID/ClientSecret if you would prefer to not use the config file option.
 
-Example passing JWT: 
+Example passing JWT:
 > $myclient = new ET_Client(true, array("jwt"=>"JWT Values goes here"));
 
-Example passing ClientID/ClientSecret: 
+Example passing ClientID/ClientSecret:
 > $myclient = new ET_Client(true, array("clientid" => "3bjbc3mg4nbk64z5kzczf89n", "clientsecret"=>"ssnGAPvZg6kmm775KPj2Q4Cs"));
 
 ## Responses ##
@@ -184,15 +190,15 @@ All methods on Fuel SDK objects return a generic object that follows the same st
 - status: Boolean value that indicates if the call was successful
 - code: HTTP Error Code (will always be 200 for SOAP requests)
 - message: Text values containing more details in the event of an error
-- results: Collection containing the details unique to the method called. 
+- results: Collection containing the details unique to the method called.
 
 Get Methods also return an addition value to indicate if more information is available (that information can be retrieved using the getMoreResults method):
 
- - moreResults - Boolean value that indicates on Get requests if more data is available. 
+ - moreResults - Boolean value that indicates on Get requests if more data is available.
 
 
 ## Samples ##
-Find more sample files that illustrate using all of the available functions for ExactTarget objects exposed through the API in the objsamples directory. 
+Find more sample files that illustrate using all of the available functions for ExactTarget objects exposed through the API in the objsamples directory.
 
 Sample List:
 
