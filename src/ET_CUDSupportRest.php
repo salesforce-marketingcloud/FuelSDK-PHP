@@ -27,7 +27,8 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function post()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
+
 		$additionalQS = array();
 		
 		if (!is_null($this->props)) {
@@ -66,7 +67,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function patch()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		// All URL Props are required when doing Patch	
@@ -101,7 +102,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function delete()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		// All URL Props are required when doing Delete	

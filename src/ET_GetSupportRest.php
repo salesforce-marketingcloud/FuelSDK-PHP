@@ -21,7 +21,7 @@ class ET_GetSupportRest extends ET_BaseObjectRest
 	public function get()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		if (!is_null($this->props)) {

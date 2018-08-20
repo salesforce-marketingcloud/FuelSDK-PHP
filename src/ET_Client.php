@@ -56,9 +56,14 @@ class ET_Client extends SoapClient
 	 */
 	public $proxyPassword;
 
+	/**
+	 * @var string APIs hostname
+	 */
+	public $baseUrl;
+
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc,$baseUrl, $baseAuthUrl;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl;
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -165,7 +170,7 @@ class ET_Client extends SoapClient
 			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
 			$url = $this->baseUrl."/platform/v1/endpoints/soap";
 			
-			//$endpointResponse = ET_Util::restGet($url, $this);			
+			//$endpointResponse = ET_Util::restGet($url, $this);	
 			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
 			//echo "endpoint:  \n";
 			//print_r($endpointResponse);
