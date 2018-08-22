@@ -22,11 +22,9 @@ class ET_BaseObjectRest
     */
     public  $organizationKey;
     /**
-     * @var      string      $endpoint         URL of the API endpoint
-     * @var      string[]    $urlProps         array of string having properties or fields name found in the endpoint URL
-     * @var      string[]    $urlPropsRequired array of string having only required fields
+     * @var      string      $path         path to use when constructing the endpoint URL ($client->baseUrl.$this->path)
      */
-	protected  $endpoint;
+	protected  $path;
     /**
      * @var      string[]    $urlProps         array of string having properties or fields name found in the endpoint URL
      */
