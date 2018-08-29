@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "279d7d9b366d26fb6554dc836af1bca9",
+    "content-hash": "4fdb9bfc39f35716c526e6735c911a1a",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,21 +54,21 @@
         },
         {
             "name": "robrichards/wse-php",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/wse-php.git",
-                "reference": "5dde350ec77930f2ff6c1bb15c4d9e257b1d2496"
+                "reference": "7d2218937008e8badac5d080309bab76431fbc61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/wse-php/zipball/5dde350ec77930f2ff6c1bb15c4d9e257b1d2496",
-                "reference": "5dde350ec77930f2ff6c1bb15c4d9e257b1d2496",
+                "url": "https://api.github.com/repos/robrichards/wse-php/zipball/7d2218937008e8badac5d080309bab76431fbc61",
+                "reference": "7d2218937008e8badac5d080309bab76431fbc61",
                 "shasum": ""
             },
             "require": {
                 "php": ">= 5.3",
-                "robrichards/xmlseclibs": "^2.0"
+                "robrichards/xmlseclibs": ">=2.0"
             },
             "type": "library",
             "autoload": {
@@ -94,7 +94,7 @@
                 "soap",
                 "ws-addressing"
             ],
-            "time": "2017-03-09T16:42:34+00:00"
+            "time": "2017-08-31T09:48:18+00:00"
         },
         {
             "name": "robrichards/xmlseclibs",
