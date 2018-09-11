@@ -124,30 +124,20 @@ class ET_Client extends SoapClient
 			if ($params && array_key_exists('proxyport', $params)){$this->proxyPort = $params['proxyport'];}
 			if ($params && array_key_exists('proxyusername', $params)) {$this->proxyUserName = $params['proxyusername'];}
 			if ($params && array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}			
-			if ($params && array_key_exists('baseUrl', $params))
-			{
-				$this->baseUrl = $params['baseUrl'];
-			}
-			else 
-			{
-				$this->baseUrl = "https://www.exacttargetapis.com";
-			}
-			if ($params && array_key_exists('baseAuthUrl', $params))
-			{
-				$this->baseAuthUrl = $params['baseAuthUrl'];
-			}
-			else 
-			{
-				$this->baseAuthUrl = "https://auth.exacttargetapis.com";
-			}
+			if ($params && array_key_exists('baseUrl', $params)) {$this->baseUrl = $params['baseUrl'];}
+			if ($params && array_key_exists('baseAuthUrl', $params)) {$this->baseAuthUrl = $params['baseAuthUrl'];}
 		}
 
 
-		
 		$this->debugSOAP = $debug;
 		
-		if (!property_exists($this,'clientId') || is_null($this->clientId) || !property_exists($this,'clientSecret') || is_null($this->clientSecret)){
-			throw new Exception('clientid or clientsecret is null: Must be provided in config file or passed when instantiating ET_Client');
+		if (
+			!property_exists($this,'clientId') || is_null($this->clientId) ||
+			!property_exists($this,'clientSecret') || is_null($this->clientSecret) ||
+			!property_exists($this,'baseUrl') || is_null($this->baseUrl) ||
+			!property_exists($this,'baseAuthUrl') || is_null($this->baseAuthUrl)
+		){
+			throw new Exception('clientId, clientSecret, baseUrl and baseAuthUrl must be provided in config file or passed when instantiating ET_Client');
 		}
 		
 		if ($getWSDL){$this->CreateWSDL($this->wsdlLoc);}
