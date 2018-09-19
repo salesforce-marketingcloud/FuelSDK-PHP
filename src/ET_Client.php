@@ -181,7 +181,7 @@ class ET_Client extends SoapClient
 			} else {
 				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);			
 			}
-			} catch (Exception $e) {
+		} catch (Exception $e) {
 			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
 		} 		
 
@@ -248,7 +248,7 @@ class ET_Client extends SoapClient
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
-					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);					
+					$this->setInternalAuthToken($this->tenantKey, $authObject->accessToken);
 					if (property_exists($authObject,'refreshToken')){
 						$this->setRefreshToken($this->tenantKey, $authObject->refreshToken);
 					}
@@ -348,7 +348,7 @@ class ET_Client extends SoapClient
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 		$objWSSE = new WSSESoap($doc);
-		$objWSSE->addUserToken("*", "*", FALSE);
+//		$objWSSE->addUserToken("*", "*", FALSE);
 		$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
 				
 		$content = $objWSSE->saveXML();
@@ -397,23 +397,21 @@ class ET_Client extends SoapClient
 		$soapDoc = $doc;
 		$envelope = $doc->documentElement;
 		$soapNS = $envelope->namespaceURI;
-		$soapPFX = $envelope->prefix;
+//		$soapPFX = $envelope->prefix;
 		$SOAPXPath = new DOMXPath($doc);
 		$SOAPXPath->registerNamespace('wssoap', $soapNS);
-        $SOAPXPath->registerNamespace('wswsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
+//        $SOAPXPath->registerNamespace('wswsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
 
 		$headers = $SOAPXPath->query('//wssoap:Envelope/wssoap:Header');
 		$header = $headers->item(0);
-		if (! $header) {
-			$header = $soapDoc->createElementNS($soapNS, $soapPFX.':Header');
-			$envelope->insertBefore($header, $envelope->firstChild);
-		}
+//		if (! $header) {
+//			$header = $soapDoc->createElementNS($soapNS, $soapPFX.':Header');
+//			$envelope->insertBefore($header, $envelope->firstChild);
+//		}
 		
-		$authnode = $soapDoc->createElementNS('http://exacttarget.com', 'oAuth');
+		$authnode = $soapDoc->createElementNS('http://exacttarget.com', 'fueloauth', $token);
 		$header->appendChild($authnode);
 		
-		$oauthtoken = $soapDoc->createElementNS(null,'oAuthToken',$token);
-		$authnode->appendChild($oauthtoken);
 	}
 
 	/** 
