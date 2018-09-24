@@ -26,13 +26,13 @@ class ET_Asset extends ET_CUDSupportRest
 	public function upload()
 	{
 		// TODO create unit test for this function
-		$completeURL = $this->authStub->baseUrl . "/guide/v1/contentItems/portfolio/fileupload?access_token=" . $this->authStub->getAuthToken();
+		$completeURL = $this->authStub->baseUrl . "/guide/v1/contentItems/portfolio/fileupload";
 
 		$post = array('file_contents'=>'@'.$this->props['filePath']);
 
         $ch = curl_init();
         
-		$headers = array("User-Agent: ".ET_Util::getSDKVersion());
+		$headers = array("User-Agent: ".ET_Util::getSDKVersion(), "Authorization: Bearer ".$this->authStub->getAuthToken());
 		curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);	
 
 		curl_setopt($ch, CURLOPT_URL, $completeURL);
