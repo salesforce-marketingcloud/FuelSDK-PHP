@@ -348,11 +348,10 @@ class ET_Client extends SoapClient
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 		$objWSSE = new WSSESoap($doc);
-//		$objWSSE->addUserToken("*", "*", FALSE);
 		$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
 				
 		$content = $objWSSE->saveXML();
-		$content_length = strlen($content); 
+		$content_length = strlen($content);
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
 			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
@@ -397,18 +396,12 @@ class ET_Client extends SoapClient
 		$soapDoc = $doc;
 		$envelope = $doc->documentElement;
 		$soapNS = $envelope->namespaceURI;
-//		$soapPFX = $envelope->prefix;
 		$SOAPXPath = new DOMXPath($doc);
 		$SOAPXPath->registerNamespace('wssoap', $soapNS);
-//        $SOAPXPath->registerNamespace('wswsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
 
 		$headers = $SOAPXPath->query('//wssoap:Envelope/wssoap:Header');
 		$header = $headers->item(0);
-//		if (! $header) {
-//			$header = $soapDoc->createElementNS($soapNS, $soapPFX.':Header');
-//			$envelope->insertBefore($header, $envelope->firstChild);
-//		}
-		
+
 		$authnode = $soapDoc->createElementNS('http://exacttarget.com', 'fueloauth', $token);
 		$header->appendChild($authnode);
 		
