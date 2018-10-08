@@ -63,7 +63,7 @@ class ET_Client extends SoapClient
 
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl;
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -104,6 +104,7 @@ class ET_Client extends SoapClient
 			$this->appsignature = $config['appsignature'];
 			$this->baseUrl = $config["baseUrl"];
 			$this->baseAuthUrl = $config["baseAuthUrl"];
+			$this->baseSoapUrl = $config["baseSoapUrl"];
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 
 			if(array_key_exists('proxyhost', $config)){$this->proxyHost = $config['proxyhost'];}
@@ -140,10 +141,12 @@ class ET_Client extends SoapClient
 			{
 				$this->baseAuthUrl = "https://auth.exacttargetapis.com";
 			}
+			if ($params && array_key_exists('baseSoapUrl', $params))
+			{
+				$this->baseSoapUrl = $params['baseSoapUrl'];
+			}
 		}
 
-
-		
 		$this->debugSOAP = $debug;
 		
 		if (!property_exists($this,'clientId') || is_null($this->clientId) || !property_exists($this,'clientSecret') || is_null($this->clientSecret)){
@@ -166,24 +169,22 @@ class ET_Client extends SoapClient
 		}		
 		$this->refreshToken();
 
-		try {
-			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
-			$url = $this->baseUrl."/platform/v1/endpoints/soap";
-			
-			//$endpointResponse = ET_Util::restGet($url, $this);	
-			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
-			//echo "endpoint:  \n";
-			//print_r($endpointResponse);
-							
-			$endpointObject = json_decode($endpointResponse->body);			
-			if ($endpointObject && property_exists($endpointObject,"url")){
-				$this->endpoint = $endpointObject->url;			
-			} else {
-				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);			
+		if ($this->baseSoapUrl) {
+            $this->endpoint = $this->baseSoapUrl;
+		} else {
+			try {
+				$url = $this->baseUrl."/platform/v1/endpoints/soap";
+				$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));
+				$endpointObject = json_decode($endpointResponse->body);
+				if ($endpointObject && property_exists($endpointObject,"url")){
+					$this->endpoint = $endpointObject->url;
+				} else {
+					$this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
+				}
+			} catch (Exception $e) {
+				$this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
 			}
-		} catch (Exception $e) {
-			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
-		} 		
+		}
 
         $soapOptions = array(
             'trace'=>1,
