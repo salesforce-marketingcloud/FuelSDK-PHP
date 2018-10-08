@@ -229,8 +229,8 @@ class ET_Client extends SoapClient
 			if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
 				
 				$url = $this->tenantKey == null 
-						? $this->baseAuthUrl."/v1/requestToken?legacy=1"
-						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken?legacy=1";
+						? $this->baseAuthUrl."/v1/requestToken"
+						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken";
 						
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
