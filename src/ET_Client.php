@@ -172,18 +172,25 @@ class ET_Client extends SoapClient
 		if ($this->baseSoapUrl) {
             $this->endpoint = $this->baseSoapUrl;
 		} else {
-			try {
-				$url = $this->baseUrl."/platform/v1/endpoints/soap";
-				$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));
-				$endpointObject = json_decode($endpointResponse->body);
-				if ($endpointObject && property_exists($endpointObject,"url")){
-					$this->endpoint = $endpointObject->url;
-				} else {
-					$this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
-				}
-			} catch (Exception $e) {
-				$this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
-			}
+            $cache = new ET_CacheService($this->clientId, $this->clientSecret);
+            $cacheData = $cache->get();
+            if (!is_null($cacheData) && $cacheData->url) {
+                $this->endpoint = $cacheData->url;
+            } else {
+                try {
+                    $url = $this->baseUrl."/platform/v1/endpoints/soap";
+                    $endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));
+                    $endpointObject = json_decode($endpointResponse->body);
+                    if ($endpointObject && property_exists($endpointObject,"url")){
+                        $this->endpoint = $endpointObject->url;
+                    } else {
+                        $this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
+                    }
+                } catch (Exception $e) {
+                    $this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
+                }
+                $cache->write($this->endpoint);
+            }
 		}
 
         $soapOptions = array(

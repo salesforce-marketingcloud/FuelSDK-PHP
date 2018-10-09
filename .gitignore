@@ -14,3 +14,4 @@ objsamples/sample-testing.php
 phpunit-*.phar
 composer.phar
 .idea
+.cache
