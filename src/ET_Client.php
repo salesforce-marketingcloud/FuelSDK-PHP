@@ -64,6 +64,9 @@ class ET_Client extends SoapClient
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
 			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl;
+
+	private $defaultBaseSoapUrl = 'https://webservice.exacttarget.com/Service.asmx';
+
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -104,7 +107,13 @@ class ET_Client extends SoapClient
 			$this->appsignature = $config['appsignature'];
 			$this->baseUrl = $config["baseUrl"];
 			$this->baseAuthUrl = $config["baseAuthUrl"];
-			$this->baseSoapUrl = $config["baseSoapUrl"];
+			if (array_key_exists('baseSoapUrl', $config)) {
+				if (!empty($config["baseSoapUrl"])) {
+					$this->baseSoapUrl = $config["baseSoapUrl"];
+				} else {
+					$this->baseSoapUrl = $this->defaultBaseSoapUrl;
+				}
+			}
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 
 			if(array_key_exists('proxyhost', $config)){$this->proxyHost = $config['proxyhost'];}
@@ -143,7 +152,11 @@ class ET_Client extends SoapClient
 			}
 			if ($params && array_key_exists('baseSoapUrl', $params))
 			{
-				$this->baseSoapUrl = $params['baseSoapUrl'];
+				if (!empty($params["baseSoapUrl"])) {
+					$this->baseSoapUrl = $params['baseSoapUrl'];
+				} else {
+                    $this->baseSoapUrl = $this->defaultBaseSoapUrl;
+				}
 			}
 		}
 
@@ -184,10 +197,10 @@ class ET_Client extends SoapClient
                     if ($endpointObject && property_exists($endpointObject,"url")){
                         $this->endpoint = $endpointObject->url;
                     } else {
-                        $this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
+                        $this->endpoint = $this->defaultBaseSoapUrl;
                     }
                 } catch (Exception $e) {
-                    $this->endpoint = 'https://webservice.exacttarget.com/Service.asmx';
+                    $this->endpoint = $this->defaultBaseSoapUrl;
                 }
                 $cache->write($this->endpoint);
             }
