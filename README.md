@@ -8,6 +8,10 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 ## Overview ##
 The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
+## New Features in Version 1.2.0 ##
+
+* added support for defining base SOAP url.
+
 ## New Features in Version 1.1.0 ##
 
 * **namespace :** namespace is introduced.
@@ -88,6 +92,8 @@ Edit config.php so you can input the ClientID and ClientSecret values provided w
 See the ET_Client section below for details on how to specify these values at the time the ET_Client object is instantiated if you would prefer to store the ClientID and ClientSecret values in a database or other configuration storage mechanism. 
 
 If you have not registered your application or you need to lookup your Application Key or Application Signature values, please go to Salesforce Marketing Cloud App Center.
+
+You can define your own REST, SOAP and Authentication base urls both in the config file and the ET_Client constructor params argument. If the REST & SOAP base urls are not defined, it should default to `https://www.exacttargetapis.com` and `https://auth.exacttargetapis.com`.
 
 ## Example Request ##
 All ExactTarget objects exposed through the Fuel SDK begin with be prefixed with "ET\_".  Start by working with the ET_List object:  
@@ -177,6 +183,11 @@ Example passing JWT:
 
 Example passing ClientID/ClientSecret: 
 > $myclient = new ET_Client(true, array("clientid" => "3bjbc3mg4nbk64z5kzczf89n", "clientsecret"=>"ssnGAPvZg6kmm775KPj2Q4Cs"));
+
+Example passing base urls for REST, Authentication and SOAP: 
+> $myclient = new ET_Client(true, array("baseUrl" => "http://rest.endpoint.com", "baseAuthUrl" => "http://auth.endpoint.com", "baseSoapUrl" => "http://soap.endpoint.com"));
+
+
 
 ## Responses ##
 All methods on Fuel SDK objects return a generic object that follows the same structure, regardless of the type of call.  This object contains a common set of properties used to display details about the request.

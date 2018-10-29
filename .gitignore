@@ -11,3 +11,7 @@ objsamples/sample-testing.php
 /tests/CampaignAssetTest.php
 /tests/ImportListTest.php
 .vscode
+phpunit-*.phar
+composer.phar
+.idea
+.cache

@@ -7,6 +7,7 @@ return array(
     'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
     'baseUrl' => 'https://www.exacttargetapis.com',
     'baseAuthUrl' => 'https://auth.exacttargetapis.com',
+    'baseSoapUrl' => 'https://webservice.exacttarget.com/Service.asmx',
     'proxyhost' => 'localhost',
     'proxyport' => '8080',
     'proxyusername' => '',

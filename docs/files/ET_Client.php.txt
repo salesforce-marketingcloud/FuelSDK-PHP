@@ -229,8 +229,8 @@ class ET_Client extends SoapClient
 			if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
 				
 				$url = $this->tenantKey == null 
-						? $this->baseAuthUrl."/v1/requestToken?legacy=1"
-						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken?legacy=1";
+						? $this->baseAuthUrl."/v1/requestToken"
+						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken";
 						
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
@@ -248,7 +248,7 @@ class ET_Client extends SoapClient
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
-					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);					
+					$this->setInternalAuthToken($this->tenantKey, $authObject->accessToken);
 					if (property_exists($authObject,'refreshToken')){
 						$this->setRefreshToken($this->tenantKey, $authObject->refreshToken);
 					}
