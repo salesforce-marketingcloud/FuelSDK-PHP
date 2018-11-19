@@ -10,7 +10,7 @@ The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel AP
 
 ## New Features in Version 1.2.0 ##
 
-* added support for defining base SOAP url.
+* Added support for your tenant’s endpoints - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm)
 
 ## New Features in Version 1.1.0 ##
 
