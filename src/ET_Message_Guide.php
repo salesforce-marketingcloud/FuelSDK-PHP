@@ -14,7 +14,7 @@ class ET_Message_Guide extends ET_CUDSupportRest
     */ 
 	function __construct()
 	{
-		$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/{id}";
+		$this->path = "/guide/v1/messages/{id}";
 		$this->urlProps = array("id");
 		$this->urlPropsRequired = array();
 	}
@@ -25,16 +25,16 @@ class ET_Message_Guide extends ET_CUDSupportRest
     */    
 	function get()
 	{
-		$origEndpoint = $this->endpoint;
+		$origPath = $this->path;
 		$origProps = $this->urlProps;
 		if (count($this->props) == 0) {
-			$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/f:@all";
+			$this->path = "/guide/v1/messages/f:@all";
 		} elseif (array_key_exists('key',$this->props)){
-			$this->endpoint = "https://www.exacttargetapis.com/guide/v1/messages/key:{key}";
+			$this->path = "/guide/v1/messages/key:{key}";
 			$this->urlProps = array("key");
 		}
 		$response = parent::get();
-		$this->endpoint = $origEndpoint;
+		$this->path = $origPath;
 		$this->urlProps = $origProps;
 		
 		return $response;
@@ -46,9 +46,9 @@ class ET_Message_Guide extends ET_CUDSupportRest
     */
 	function convert()
 	{
-		$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/convert?access_token=" . $this->authStub->getAuthToken();
+		$completeURL = $this->authStub->baseUrl . "/guide/v1/messages/convert";
 
-		$response = new ET_PostRest($this->authStub, $completeURL, $this->props);
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props, $this->authStub->getAuthToken());
 		return $response;
 	}
 
@@ -84,11 +84,11 @@ class ET_Message_Guide extends ET_CUDSupportRest
 		$response = null;
 		
 		if (is_array($this->props) && array_key_exists("id", $this->props)) {
-			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render/{$this->props['id']}?access_token=" . $this->authStub->getAuthToken();
-			$response = new ET_GetRest($this->authStub, $completeURL, null);
+			$completeURL = $this->authStub->baseUrl . "/guide/v1/messages/render/{$this->props['id']}";
+			$response = new ET_GetRest($this->authStub, $completeURL, $this->authStub->getAuthToken());
 		} else {
-			$completeURL = "https://www.exacttargetapis.com/guide/v1/messages/render?access_token=" . $this->authStub->getAuthToken();
-			$response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
+			$completeURL = $this->authStub->baseUrl . "/guide/v1/messages/render";
+			$response = new ET_PostRest($this->authStub, $completeURL, $this->props, $this->authStub->getAuthToken());
 		}
 		return $response;
 	}

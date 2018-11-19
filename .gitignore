@@ -10,3 +10,8 @@ objsamples/sample-testing.php
 /objsamples/sample-asset-upload.php
 /tests/CampaignAssetTest.php
 /tests/ImportListTest.php
+.vscode
+phpunit-*.phar
+composer.phar
+.idea
+.cache

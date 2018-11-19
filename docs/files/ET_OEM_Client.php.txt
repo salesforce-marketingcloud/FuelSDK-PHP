@@ -18,8 +18,8 @@ class ET_OEM_Client extends ET_Client
 		unset($tenantInfo['key']);
 		$additionalQS = array();
 		$additionalQS["access_token"] = $this->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "https://www.exacttargetapis.com/provisioning/v1/tenants/{$key}?{$queryString}";
+		$queryString = http_build_query($additionalQS);
+		$completeURL = $this->baseUrl . "/provisioning/v1/tenants/{$key}?{$queryString}";
 		return new ET_PutRest($this, $completeURL, $tenantInfo);
 	}
 
@@ -30,8 +30,8 @@ class ET_OEM_Client extends ET_Client
 	{
 		$additionalQS = array();
 		$additionalQS["access_token"] = $this->getAuthToken();
-		$queryString = http_build_query($additionalQS);		
-		$completeURL = "https://www.exacttargetapis.com/provisioning/v1/tenants/?{$queryString}";
+		$queryString = http_build_query($additionalQS);
+		$completeURL = $this->baseUrl . "/provisioning/v1/tenants/?{$queryString}";
 		return new ET_GetRest($this, $completeURL, $queryString);
 	}
 }

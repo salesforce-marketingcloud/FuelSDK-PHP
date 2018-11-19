@@ -21,7 +21,7 @@ class ET_GetSupportRest extends ET_BaseObjectRest
 	public function get()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		if (!is_null($this->props)) {
@@ -43,12 +43,11 @@ class ET_GetSupportRest extends ET_BaseObjectRest
 		foreach ($this->urlProps as $value){
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
 		}		
-		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 //		echo $additionalQS["access_token"] . "\n";
 		// $queryString = http_build_query($additionalQS);		
 		// $completeURL = "{$completeURL}?{$queryString}";
 		// $response = new ET_GetRest($this->authStub, $completeURL, $queryString);						
-		$response = new ET_GetRest($this->authStub, $completeURL, $additionalQS["access_token"]);						
+		$response = new ET_GetRest($this->authStub, $completeURL, $this->authStub->getAuthToken());
 		
 		if (property_exists($response->results, 'page')){
 			$this->lastPageNumber = $response->results->page;

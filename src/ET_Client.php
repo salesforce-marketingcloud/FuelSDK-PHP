@@ -56,9 +56,17 @@ class ET_Client extends SoapClient
 	 */
 	public $proxyPassword;
 
+	/**
+	 * @var string APIs hostname
+	 */
+	public $baseUrl;
+
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc,$baseUrl, $baseAuthUrl;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl;
+
+	private $defaultBaseSoapUrl = 'https://webservice.exacttarget.com/Service.asmx';
+
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -99,6 +107,13 @@ class ET_Client extends SoapClient
 			$this->appsignature = $config['appsignature'];
 			$this->baseUrl = $config["baseUrl"];
 			$this->baseAuthUrl = $config["baseAuthUrl"];
+			if (array_key_exists('baseSoapUrl', $config)) {
+				if (!empty($config["baseSoapUrl"])) {
+					$this->baseSoapUrl = $config["baseSoapUrl"];
+				} else {
+					$this->baseSoapUrl = $this->defaultBaseSoapUrl;
+				}
+			}
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 
 			if(array_key_exists('proxyhost', $config)){$this->proxyHost = $config['proxyhost'];}
@@ -135,10 +150,16 @@ class ET_Client extends SoapClient
 			{
 				$this->baseAuthUrl = "https://auth.exacttargetapis.com";
 			}
+			if ($params && array_key_exists('baseSoapUrl', $params))
+			{
+				if (!empty($params["baseSoapUrl"])) {
+					$this->baseSoapUrl = $params['baseSoapUrl'];
+				} else {
+                    $this->baseSoapUrl = $this->defaultBaseSoapUrl;
+				}
+			}
 		}
 
-
-		
 		$this->debugSOAP = $debug;
 		
 		if (!property_exists($this,'clientId') || is_null($this->clientId) || !property_exists($this,'clientSecret') || is_null($this->clientSecret)){
@@ -161,24 +182,29 @@ class ET_Client extends SoapClient
 		}		
 		$this->refreshToken();
 
-		try {
-			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
-			$url = $this->baseUrl."/platform/v1/endpoints/soap";
-			
-			//$endpointResponse = ET_Util::restGet($url, $this);			
-			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
-			//echo "endpoint:  \n";
-			//print_r($endpointResponse);
-							
-			$endpointObject = json_decode($endpointResponse->body);			
-			if ($endpointObject && property_exists($endpointObject,"url")){
-				$this->endpoint = $endpointObject->url;			
-			} else {
-				throw new Exception('Unable to determine stack using /platform/v1/endpoints/:'.$endpointResponse->body);			
-			}
-			} catch (Exception $e) {
-			throw new Exception('Unable to determine stack using /platform/v1/endpoints/: '.$e->getMessage());
-		} 		
+		if ($this->baseSoapUrl) {
+            $this->endpoint = $this->baseSoapUrl;
+		} else {
+            $cache = new ET_CacheService($this->clientId, $this->clientSecret);
+            $cacheData = $cache->get();
+            if (!is_null($cacheData) && $cacheData->url) {
+                $this->endpoint = $cacheData->url;
+            } else {
+                try {
+                    $url = $this->baseUrl."/platform/v1/endpoints/soap";
+                    $endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));
+                    $endpointObject = json_decode($endpointResponse->body);
+                    if ($endpointObject && property_exists($endpointObject,"url")){
+                        $this->endpoint = $endpointObject->url;
+                    } else {
+                        $this->endpoint = $this->defaultBaseSoapUrl;
+                    }
+                } catch (Exception $e) {
+                    $this->endpoint = $this->defaultBaseSoapUrl;
+                }
+                $cache->write($this->endpoint);
+            }
+		}
 
         $soapOptions = array(
             'trace'=>1,
@@ -243,7 +269,7 @@ class ET_Client extends SoapClient
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
-					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);					
+					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);
 					if (property_exists($authObject,'refreshToken')){
 						$this->setRefreshToken($this->tenantKey, $authObject->refreshToken);
 					}
@@ -347,7 +373,7 @@ class ET_Client extends SoapClient
 		$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
 				
 		$content = $objWSSE->saveXML();
-		$content_length = strlen($content); 
+		$content_length = strlen($content);
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
 			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
@@ -403,7 +429,7 @@ class ET_Client extends SoapClient
 			$header = $soapDoc->createElementNS($soapNS, $soapPFX.':Header');
 			$envelope->insertBefore($header, $envelope->firstChild);
 		}
-		
+
 		$authnode = $soapDoc->createElementNS('http://exacttarget.com', 'oAuth');
 		$header->appendChild($authnode);
 		

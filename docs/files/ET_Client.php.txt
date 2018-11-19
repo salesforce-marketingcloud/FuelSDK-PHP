@@ -16,12 +16,6 @@ use \Exception;
 /**
  * Auto load method to load dependent classes
  */
-// spl_autoload_register( 
-// 	function($class_name) 
-// 	{
-// 		include_once 'src/'.$class_name.'.php';
-// 	}
-// );
 /**
 * Defines a Client interface class which manages the authentication process.
 * This is the main client class which performs authentication, obtains auth token, if expired refresh auth token.
@@ -62,9 +56,14 @@ class ET_Client extends SoapClient
 	 */
 	public $proxyPassword;
 
+	/**
+	 * @var string APIs hostname
+	 */
+	public $baseUrl;
+
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc,$baseUrl, $baseAuthUrl;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl;
 	/**
 	 * Initializes a new instance of the ET_Client class.
 	 *
@@ -94,7 +93,7 @@ class ET_Client extends SoapClient
 
 		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
-		if (file_exists(realpath(__DIR__ . "/config.php")))
+		if (file_exists(realpath("config.php")))
 			$config = include 'config.php';
 
 		if ($config)
@@ -171,7 +170,7 @@ class ET_Client extends SoapClient
 			//$url = $this->baseUrl."/platform/v1/endpoints/soap?access_token=".$this->getAuthToken($this->tenantKey);
 			$url = $this->baseUrl."/platform/v1/endpoints/soap";
 			
-			//$endpointResponse = ET_Util::restGet($url, $this);			
+			//$endpointResponse = ET_Util::restGet($url, $this);	
 			$endpointResponse = ET_Util::restGet($url, $this, $this->getAuthToken($this->tenantKey));		
 			//echo "endpoint:  \n";
 			//print_r($endpointResponse);
@@ -230,8 +229,8 @@ class ET_Client extends SoapClient
 			if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
 				
 				$url = $this->tenantKey == null 
-						? $this->baseAuthUrl."/v1/requestToken?legacy=1"
-						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken?legacy=1";
+						? $this->baseAuthUrl."/v1/requestToken"
+						: $this->baseUrl."/provisioning/v1/tenants/{$this->tenantKey}/requestToken";
 						
 				$jsonRequest = new stdClass(); 
 				$jsonRequest->clientId = $this->clientId;
@@ -249,7 +248,7 @@ class ET_Client extends SoapClient
 					$dv = new DateInterval('PT'.$authObject->expiresIn.'S');
 					$newexpTime = new DateTime();
 					$this->setAuthToken($this->tenantKey, $authObject->accessToken, $newexpTime->add($dv));
-					$this->setInternalAuthToken($this->tenantKey, $authObject->legacyToken);					
+					$this->setInternalAuthToken($this->tenantKey, $authObject->accessToken);
 					if (property_exists($authObject,'refreshToken')){
 						$this->setRefreshToken($this->tenantKey, $authObject->refreshToken);
 					}
@@ -763,4 +762,3 @@ class ET_Client extends SoapClient
 }
 
 ?>
-

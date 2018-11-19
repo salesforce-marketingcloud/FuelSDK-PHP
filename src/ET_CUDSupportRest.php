@@ -27,7 +27,8 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function post()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
+
 		$additionalQS = array();
 		
 		if (!is_null($this->props)) {
@@ -49,12 +50,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 			$completeURL = str_replace("{{$value}}","",$completeURL);								
 		}
 		
-		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 //		echo $additionalQS["access_token"] . "\n";
 		// $queryString = http_build_query($additionalQS);		
 		// $completeURL = "{$completeURL}?{$queryString}";
 		// $response = new ET_PostRest($this->authStub, $completeURL, $this->props);			
-		$response = new ET_PostRest($this->authStub, $completeURL, $this->props, $additionalQS["access_token"]);		
+		$response = new ET_PostRest($this->authStub, $completeURL, $this->props, $this->authStub->getAuthToken());
 		
 		return $response;
 	}
@@ -66,7 +66,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function patch()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		// All URL Props are required when doing Patch	
@@ -84,12 +84,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 				} 
 			}				
 		}
-		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 //		echo $additionalQS["access_token"] . "\n";
 		// $queryString = http_build_query($additionalQS);		
 		// $completeURL = "{$completeURL}?{$queryString}";
 		// $response = new ET_PatchRest($this->authStub, $completeURL, $this->props);	
-		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props, $additionalQS["access_token"]);				
+		$response = new ET_PatchRest($this->authStub, $completeURL, $this->props, $this->authStub->getAuthToken());
 		
 		return $response;
 	}
@@ -101,7 +100,7 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 	public function delete()
 	{
 		$this->authStub->refreshToken();
-		$completeURL = $this->endpoint;
+		$completeURL = $this->authStub->baseUrl . $this->path;
 		$additionalQS = array();
 		
 		// All URL Props are required when doing Delete	
@@ -118,12 +117,11 @@ class ET_CUDSupportRest extends ET_GetSupportRest
 				} 
 			}				
 		}
-		$additionalQS["access_token"] = $this->authStub->getAuthToken();
 //		echo $additionalQS["access_token"] . "\n";
 		// $queryString = http_build_query($additionalQS);		
 		// $completeURL = "{$completeURL}?{$queryString}";
 		// $response = new ET_DeleteRest($this->authStub, $completeURL);	
-		$response = new ET_DeleteRest($this->authStub, $completeURL, $additionalQS["access_token"]);				
+		$response = new ET_DeleteRest($this->authStub, $completeURL, $this->authStub->getAuthToken());
 		
 		return $response;
 	}
