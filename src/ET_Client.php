@@ -187,6 +187,7 @@ class ET_Client extends SoapClient
 		} else {
             $cache = new ET_CacheService($this->clientId, $this->clientSecret);
             $cacheData = $cache->get();
+            echo $cacheData;
             if (!is_null($cacheData) && $cacheData->url) {
                 $this->endpoint = $cacheData->url;
             } else {

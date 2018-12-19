@@ -2,6 +2,8 @@
 
 namespace FuelSdk;
 
+use FuelSdk\shmSmart;
+
 
 class ET_CacheService
 {
@@ -9,33 +11,55 @@ class ET_CacheService
     private $_identifier;
     private $_filePath = '../.cache';
     private $_cacheMinutes = 10;
+    private $shmCache;
 
     public function __construct($clientId, $clientSecret)
     {
         $this->_identifier = $clientId . "-" . $clientSecret;
+        $this->shmCache = new shmSmart();
     }
 
     public function get()
     {
-        $cache = $this->_getOrCreateFile();
-        $data = $cache->{$this->_identifier};
-        $now = time();
-        if (!$data || !$data->expires || $data->expires < $now) {
+        $cachedValue = $this->shmCache->get($this->_identifier);
+        if($cachedValue == false) {
             return null;
-        } else {
-            return $data;
         }
+        else {
+            return $cachedValue;
+        }
+
+//        $cache = $this->_getOrCreateFile();
+//        $data = $cache->{$this->_identifier};
+//        $now = time();
+//        if (!$data || !$data->expires || $data->expires < $now) {
+//            return null;
+//        } else {
+//            return $data;
+//        }
     }
 
     public function write($url)
     {
         $expires = time() + $this->_cacheMinutes * 60;
-        $cache = $this->_getOrCreateFile();
+        //$cache = $this->_getOrCreateFile();
+        $cache = null;
+
+        $cachedValue = $this->shmCache->get($this->_identifier);
+        if($cachedValue == false) {
+            $cache = new \stdClass();
+        }
+        else {
+            $cache = $cachedValue;
+        }
+
         $data = new \stdClass();
         $data->expires = $expires;
         $data->url = $url;
         $cache->{$this->_identifier} = $data;
-        $this->_writeFile($cache);
+        //$this->_writeFile($cache);
+
+        $this->shmCache->put($this->_identifier, $cache);
     }
 
     public function clear()
