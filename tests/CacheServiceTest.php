@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: drogojan
- * Date: 1/10/2019
- * Time: 4:00 PM
- */
-
 namespace FuelSdk {
 
     /**
@@ -66,6 +59,20 @@ namespace FuelSdk\Test {
             $this->assertEquals($this->currentTime + self::CACHE_TIME_IN_SECONDS, $cachedValue->expires);
         }
 
+        public function testGettingACachedValueInTheCacheWindowWillReturnTheCachedValueCorrectly()
+        {
+            // Arrange
+            $sut = new ET_CacheService(self::CLIENT_ID_1, self::CLIENT_SECRET_1);
+            $sut->write(self::SOAP_URL_1);
+            // Act
+            // simulate time passes, but we are still in the cache window
+            CacheServiceTest::$now += 60;
+            $cachedValue = $sut->get();
+            // Assert
+            $this->assertEquals(self::SOAP_URL_1, $cachedValue->url);
+            $this->assertEquals($this->currentTime + self::CACHE_TIME_IN_SECONDS, $cachedValue->expires);
+        }
+
         public function testANewInstanceWithTheSameClientIdAndSecretWillGetThePreviouslyCachedValue()
         {
             // Arrange
@@ -90,6 +97,7 @@ namespace FuelSdk\Test {
             $sut = new ET_CacheService(self::CLIENT_ID_1, self::CLIENT_SECRET_1);
             $sut->write(self::SOAP_URL_1);
             // Act
+            // simulate cache expires
             CacheServiceTest::$now += self::CACHE_TIME_IN_SECONDS + 1;
             $cachedValue = $sut->get();
             // Assert

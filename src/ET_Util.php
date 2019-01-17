@@ -32,7 +32,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -86,7 +86,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -141,7 +141,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -195,7 +195,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -242,7 +242,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
         
         // Set CustomRequest up for Delete	
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
