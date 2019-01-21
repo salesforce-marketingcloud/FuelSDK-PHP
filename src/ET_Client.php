@@ -215,7 +215,7 @@ class ET_Client extends SoapClient
 
 		$context = stream_context_create([
 			'ssl' => [
-				'verify_peer' => $this->sslVerifyPeer === false ? false : true
+				'verify_peer' => ET_Util::shouldVerifySslPeer($this->sslVerifyPeer)
 			]
 		]);
 
@@ -341,7 +341,7 @@ class ET_Client extends SoapClient
 	function GetLastModifiedDate($remotepath) 
 	{
 		$curl = curl_init($remotepath);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, $this->sslVerifyPeer === false ? false : true);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, ET_Util::shouldVerifySslPeer($this->sslVerifyPeer));
 		curl_setopt($curl, CURLOPT_NOBODY, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_FILETIME, true);
@@ -397,7 +397,7 @@ class ET_Client extends SoapClient
 		curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt ($ch, CURLOPT_POSTFIELDS, $content);
 		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->sslVerifyPeer === false ? false : true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ET_Util::shouldVerifySslPeer($this->sslVerifyPeer));
 		curl_setopt($ch, CURLOPT_USERAGENT, ET_Util::getSDKVersion());
 
 		if (!empty($this->proxyHost)) {

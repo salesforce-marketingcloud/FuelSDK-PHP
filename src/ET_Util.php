@@ -32,7 +32,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -86,7 +86,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -141,7 +141,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -195,7 +195,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -242,7 +242,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $authStub->sslVerifyPeer === false ? false : true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
         
         // Set CustomRequest up for Delete	
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -291,5 +291,14 @@ class ET_Util
         return "FuelSDK-PHP-v1.2.0";
     }
 
+    /**
+     * Returns false if the sslverifypeer config value is explicitly set to false, otherwise true.
+     * @param $configValue The config value for the sslverifypeer config key
+     * @return bool
+     */
+    public static function shouldVerifySslPeer($configValue)
+    {
+        return $configValue === false ? false : true;
+    }
 }
 ?>
