@@ -18,7 +18,7 @@ class ET_CacheService
     public function get()
     {
         $cache = $this->_getOrCreateFile();
-        $data = $cache->{$this->_identifier};
+        $data = property_exists($cache, $this->_identifier) ? $cache->{$this->_identifier} : null;
         $now = time();
         if (!$data || !$data->expires || $data->expires < $now) {
             return null;
