@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "279d7d9b366d26fb6554dc836af1bca9",
+    "content-hash": "f073351d43f9a1ac4ed60ae481dd9e4e",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -54,21 +54,21 @@
         },
         {
             "name": "robrichards/wse-php",
-            "version": "2.0.1",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/wse-php.git",
-                "reference": "5dde350ec77930f2ff6c1bb15c4d9e257b1d2496"
+                "reference": "f705f0242ab5f9ea69570955d2ebc64a902b12eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/wse-php/zipball/5dde350ec77930f2ff6c1bb15c4d9e257b1d2496",
-                "reference": "5dde350ec77930f2ff6c1bb15c4d9e257b1d2496",
+                "url": "https://api.github.com/repos/robrichards/wse-php/zipball/f705f0242ab5f9ea69570955d2ebc64a902b12eb",
+                "reference": "f705f0242ab5f9ea69570955d2ebc64a902b12eb",
                 "shasum": ""
             },
             "require": {
                 "php": ">= 5.3",
-                "robrichards/xmlseclibs": "^2.0"
+                "robrichards/xmlseclibs": ">=3.0.2"
             },
             "type": "library",
             "autoload": {
@@ -94,28 +94,25 @@
                 "soap",
                 "ws-addressing"
             ],
-            "time": "2017-03-09T16:42:34+00:00"
+            "time": "2019-01-03T15:37:08+00:00"
         },
         {
             "name": "robrichards/xmlseclibs",
-            "version": "2.1.0",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/robrichards/xmlseclibs.git",
-                "reference": "eadb8f66d9fb3507d165e3ff1fbbe1b7bf153209"
+                "reference": "406c68ac9124db033d079284b719958b829cb830"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/eadb8f66d9fb3507d165e3ff1fbbe1b7bf153209",
-                "reference": "eadb8f66d9fb3507d165e3ff1fbbe1b7bf153209",
+                "url": "https://api.github.com/repos/robrichards/xmlseclibs/zipball/406c68ac9124db033d079284b719958b829cb830",
+                "reference": "406c68ac9124db033d079284b719958b829cb830",
                 "shasum": ""
             },
             "require": {
-                "php": ">= 5.3"
-            },
-            "suggest": {
-                "ext-mcrypt": "MCrypt extension",
-                "ext-openssl": "OpenSSL extension"
+                "ext-openssl": "*",
+                "php": ">= 5.4"
             },
             "type": "library",
             "autoload": {
@@ -135,7 +132,7 @@
                 "xml",
                 "xmldsig"
             ],
-            "time": "2018-11-15T13:39:04+00:00"
+            "time": "2018-11-15T11:59:02+00:00"
         }
     ],
     "packages-dev": [
@@ -3858,20 +3855,20 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.36.0",
+            "version": "v1.37.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "730c9c4471b5152d23061feb02b03382264c8a15"
+                "reference": "66be9366c76cbf23e82e7171d47cbfa54a057a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/730c9c4471b5152d23061feb02b03382264c8a15",
-                "reference": "730c9c4471b5152d23061feb02b03382264c8a15",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/66be9366c76cbf23e82e7171d47cbfa54a057a62",
+                "reference": "66be9366c76cbf23e82e7171d47cbfa54a057a62",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
+                "php": ">=5.4.0",
                 "symfony/polyfill-ctype": "^1.8"
             },
             "require-dev": {
@@ -3882,7 +3879,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.36-dev"
+                    "dev-master": "1.37-dev"
                 }
             },
             "autoload": {
@@ -3920,7 +3917,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2018-12-16T10:34:11+00:00"
+            "time": "2019-01-14T14:59:29+00:00"
         },
         {
             "name": "zendframework/zend-cache",
