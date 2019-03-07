@@ -8,6 +8,10 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 ## Overview ##
 The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
+## New Features in Version 1.2.2 ##
+
+* Added support for in memory cache.
+
 ## New Features in Version 1.2.1 ##
 
 * Updated robrichards/wse-php dependency version to 2.0.3
