@@ -89,7 +89,7 @@ The following code is an example of a minimal composer.json file:
 <pre>
 {
     "require": {
-        "salesforce-mc/fuel-sdk-php": "1.2.1"
+        "salesforce-mc/fuel-sdk-php": "1.2.2"
     }
 }
 </pre>
