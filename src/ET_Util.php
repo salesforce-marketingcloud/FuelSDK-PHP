@@ -32,7 +32,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -86,7 +86,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -141,7 +141,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -195,7 +195,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT" ); 
             
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
 
         //proxy setting
 		if (!empty($authStub->proxyHost)) {
@@ -242,7 +242,7 @@ class ET_Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
         // Disable VerifyPeer for SSL
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, self::shouldVerifySslPeer($authStub->sslVerifyPeer));
         
         // Set CustomRequest up for Delete	
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -288,8 +288,17 @@ class ET_Util
     */
     public static function getSDKVersion()
     {
-        return "FuelSDK-PHP-v1.2.1";
+        return "FuelSDK-PHP-v1.2.2";
     }
 
+    /**
+     * Returns true if the sslverifypeer config value is explicitly set to true, otherwise false.
+     * @param $configValue The config value for the sslverifypeer config key
+     * @return bool
+     */
+    public static function shouldVerifySslPeer($configValue)
+    {
+        return $configValue === true ? true : false;
+    }
 }
 ?>

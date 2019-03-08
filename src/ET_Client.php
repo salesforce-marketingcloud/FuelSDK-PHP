@@ -55,6 +55,10 @@ class ET_Client extends SoapClient
 	 * @var string Proxy password.
 	 */
 	public $proxyPassword;
+	/**
+	 * @var boolean Require verification of peer name.
+	 */
+	public $sslVerifyPeer;
 
 	/**
 	 * @var string APIs hostname
@@ -88,6 +92,7 @@ class ET_Client extends SoapClient
 	 * <i><b>proxyport</b></i> - proxy server prot number</br>
 	 * <i><b>proxyusername</b></i> - proxy server user name</br>
 	 * <i><b>proxypassword</b></i> - proxy server password</br>
+	 * <i><b>sslverifypeer</b></i> - Require verification of peer name</br>
 	 */
 	function __construct($getWSDL = false, $debug = false, $params = null) 
 	{
@@ -120,6 +125,7 @@ class ET_Client extends SoapClient
 			if (array_key_exists('proxyport', $config)){$this->proxyPort = $config['proxyport'];}
 			if (array_key_exists('proxyusername', $config)){$this->proxyUserName = $config['proxyusername'];}
 			if (array_key_exists('proxypassword', $config)){$this->proxyPassword = $config['proxypassword'];}
+			if (array_key_exists('sslverifypeer', $config)){$this->sslVerifyPeer = $config['sslverifypeer'];}
 		} 
 		if ($params) 
 		{
@@ -133,7 +139,8 @@ class ET_Client extends SoapClient
 			if ($params && array_key_exists('proxyhost', $params)){$this->proxyHost = $params['proxyhost'];}
 			if ($params && array_key_exists('proxyport', $params)){$this->proxyPort = $params['proxyport'];}
 			if ($params && array_key_exists('proxyusername', $params)) {$this->proxyUserName = $params['proxyusername'];}
-			if ($params && array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}			
+			if ($params && array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}
+			if ($params && array_key_exists('sslverifypeer', $params)) {$this->sslVerifyPeer = $params['sslverifypeer'];}
 			if ($params && array_key_exists('baseUrl', $params))
 			{
 				$this->baseUrl = $params['baseUrl'];
@@ -206,10 +213,14 @@ class ET_Client extends SoapClient
             }
 		}
 
+		$context = stream_context_create([
+			'ssl' => [
+				'verify_peer' => ET_Util::shouldVerifySslPeer($this->sslVerifyPeer)
+			]
+		]);
+
         $soapOptions = array(
-            'trace'=>1,
-            'exceptions'=>0,
-            'connection_timeout'=>120,
+			'stream_context' => $context
         );
         if (!empty($this->proxyHost)) {
             $soapOptions['proxy_host'] = $this->proxyHost;
@@ -330,7 +341,7 @@ class ET_Client extends SoapClient
 	function GetLastModifiedDate($remotepath) 
 	{
 		$curl = curl_init($remotepath);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, ET_Util::shouldVerifySslPeer($this->sslVerifyPeer));
 		curl_setopt($curl, CURLOPT_NOBODY, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_FILETIME, true);
@@ -386,7 +397,7 @@ class ET_Client extends SoapClient
 		curl_setopt ($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt ($ch, CURLOPT_POSTFIELDS, $content);
 		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ET_Util::shouldVerifySslPeer($this->sslVerifyPeer));
 		curl_setopt($ch, CURLOPT_USERAGENT, ET_Util::getSDKVersion());
 
 		if (!empty($this->proxyHost)) {

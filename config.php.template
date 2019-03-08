@@ -11,5 +11,5 @@ return array(
     'proxyhost' => 'localhost',
     'proxyport' => '8080',
     'proxyusername' => '',
-    'proxypassword' => '',	
+    'proxypassword' => ''
 );
