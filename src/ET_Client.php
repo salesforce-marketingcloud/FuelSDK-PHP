@@ -67,7 +67,7 @@ class ET_Client extends SoapClient
 
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl, $useOAuth2Authentication;
 
 	private $defaultBaseSoapUrl = 'https://webservice.exacttarget.com/Service.asmx';
 
@@ -119,6 +119,7 @@ class ET_Client extends SoapClient
 					$this->baseSoapUrl = $this->defaultBaseSoapUrl;
 				}
 			}
+			$this->useOAuth2Authentication = $config['useOAuth2Authentication'];
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 
 			if(array_key_exists('proxyhost', $config)){$this->proxyHost = $config['proxyhost'];}
@@ -164,6 +165,10 @@ class ET_Client extends SoapClient
 				} else {
                     $this->baseSoapUrl = $this->defaultBaseSoapUrl;
 				}
+			}
+			if ($params && array_key_exists('useOAuth2Authentication', $params))
+			{
+                $this->useOAuth2Authentication = $params['useOAuth2Authentication'];
 			}
 		}
 
@@ -246,7 +251,10 @@ class ET_Client extends SoapClient
 	 */	
 	function refreshToken($forceRefresh = false) 
 	{
-		
+		if ($this->useOAuth2Authentication == 'true'){
+            $this->refreshTokenWithOAuth2($forceRefresh);
+            return;
+		}
 		if (property_exists($this, "sdl") && $this->sdl == 0){
 			parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0));	
 		}
@@ -292,6 +300,47 @@ class ET_Client extends SoapClient
 			throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.: '.$e->getMessage());
 		}
 	}
+
+    function refreshTokenWithOAuth2($forceRefresh = false)
+    {
+        if (property_exists($this, "sdl") && $this->sdl == 0){
+            parent::__construct($this->xmlLoc, array('trace'=>1, 'exceptions'=>0));
+        }
+        try {
+            $currentTime = new DateTime();
+            if (is_null($this->getAuthTokenExpiration($this->tenantKey))){
+                $timeDiff = 0;
+            } else {
+                $timeDiff = $currentTime->diff($this->getAuthTokenExpiration($this->tenantKey))->format('%i');
+                $timeDiff = $timeDiff  + (60 * $currentTime->diff($this->getAuthTokenExpiration($this->tenantKey))->format('%H'));
+            }
+            if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
+
+                $url = $this->baseAuthUrl."/v2/token";
+
+                $jsonRequest = new stdClass();
+                $jsonRequest->client_id = $this->clientId;
+                $jsonRequest->client_secret = $this->clientSecret;
+                $jsonRequest->grant_type = "client_credentials";
+
+                $authResponse = ET_Util::restPost($url, json_encode($jsonRequest), $this);
+                $authObject = json_decode($authResponse->body);
+
+                if ($authResponse && property_exists($authObject,"access_token")){
+                    $dv = new DateInterval('PT'.$authObject->expires_in.'S');
+                    $newexpTime = new DateTime();
+                    $this->setAuthToken($this->tenantKey, $authObject->access_token, $newexpTime->add($dv));
+                    $this->setInternalAuthToken($this->tenantKey, $authObject->access_token);
+                    $this->baseUrl = $authObject->rest_instance_url;
+                    $this->baseSoapUrl= $authObject->soap_instance_url."Service.asmx";
+                } else {
+                    throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse->body );
+                }
+            }
+        } catch (Exception $e) {
+            throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided.: '.$e->getMessage());
+        }
+    }
 	/**
 	 * Returns the  HTTP code return by the last SOAP/Rest call
 	 *
@@ -379,12 +428,19 @@ class ET_Client extends SoapClient
 	{
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
-		$objWSSE = new WSSESoap($doc);
-		$objWSSE->addUserToken("*", "*", FALSE);
-		$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
-				
-		$content = $objWSSE->saveXML();
-		$content_length = strlen($content);
+
+        $this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
+
+        if($this->useOAuth2Authentication == 'true'){
+            $content = $doc->saveXML();
+		}
+		else{
+            $objWSSE = new WSSESoap($doc);
+            $objWSSE->addUserToken("*", "*", FALSE);
+
+            $content = $objWSSE->saveXML();
+		}
+
 		if ($this->debugSOAP){
 			error_log ('FuelSDK SOAP Request: ');
 			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
@@ -432,7 +488,6 @@ class ET_Client extends SoapClient
 		$soapPFX = $envelope->prefix;
 		$SOAPXPath = new DOMXPath($doc);
 		$SOAPXPath->registerNamespace('wssoap', $soapNS);
-        $SOAPXPath->registerNamespace('wswsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
 
 		$headers = $SOAPXPath->query('//wssoap:Envelope/wssoap:Header');
 		$header = $headers->item(0);
@@ -441,11 +496,17 @@ class ET_Client extends SoapClient
 			$envelope->insertBefore($header, $envelope->firstChild);
 		}
 
-		$authnode = $soapDoc->createElementNS('http://exacttarget.com', 'oAuth');
+		if ($this->useOAuth2Authentication == 'true'){
+            $authnode = $soapDoc->createElementNS('http://exacttarget.com','fueloauth',$token);
+		}
+		else{
+            $SOAPXPath->registerNamespace('wswsse', 'http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd');
+
+            $authnode = $soapDoc->createElementNS('http://exacttarget.com', 'oAuth');
+            $oauthtoken = $soapDoc->createElementNS(null,'oAuthToken',$token);
+            $authnode->appendChild($oauthtoken);
+		}
 		$header->appendChild($authnode);
-		
-		$oauthtoken = $soapDoc->createElementNS(null,'oAuthToken',$token);
-		$authnode->appendChild($oauthtoken);
 	}
 
 	/** 
