@@ -67,7 +67,7 @@ class ET_Client extends SoapClient
 
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl, $useOAuth2Authentication;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl, $useOAuth2Authentication, $accountId, $scope;
 
 	private $defaultBaseSoapUrl = 'https://webservice.exacttarget.com/Service.asmx';
 
@@ -120,6 +120,9 @@ class ET_Client extends SoapClient
 				}
 			}
 			$this->useOAuth2Authentication = $config['useOAuth2Authentication'];
+            if (array_key_exists('accountId', $config)){$this->accountId = $config['accountId'];}
+            if (array_key_exists('scope', $config)){$this->scope = $config['scope'];}
+
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
 
 			if(array_key_exists('proxyhost', $config)){$this->proxyHost = $config['proxyhost'];}
@@ -170,6 +173,14 @@ class ET_Client extends SoapClient
 			{
                 $this->useOAuth2Authentication = $params['useOAuth2Authentication'];
 			}
+            if ($params && array_key_exists('accountId', $params))
+            {
+                $this->accountId = $params['accountId'];
+            }
+            if ($params && array_key_exists('scope', $params))
+            {
+                $this->scope = $params['scope'];
+            }
 		}
 
 		$this->debugSOAP = $debug;
@@ -322,6 +333,13 @@ class ET_Client extends SoapClient
                 $jsonRequest->client_id = $this->clientId;
                 $jsonRequest->client_secret = $this->clientSecret;
                 $jsonRequest->grant_type = "client_credentials";
+
+                if ($this->IsNullOrEmptyString($this->accountId) == false){
+                    $jsonRequest->account_id = $this->accountId;
+				}
+				if ($this->IsNullOrEmptyString($this->scope) == false){
+                    $jsonRequest->scope = $this->scope;
+				}
 
                 $authResponse = ET_Util::restPost($url, json_encode($jsonRequest), $this);
                 $authObject = json_decode($authResponse->body);
@@ -851,7 +869,15 @@ class ET_Client extends SoapClient
 		$sendResponse = $postC->post();
 		return $sendResponse;
 	}
-	
+
+    /**
+	* Function for basic field validation (present and neither empty nor only white space)
+	 *
+	 * @param string $str string to be validated
+	 */
+	function IsNullOrEmptyString($str){
+        return (!isset($str) || trim($str) === '');
+    }
 }
 
 ?>
