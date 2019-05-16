@@ -125,7 +125,7 @@ class ET_Client extends SoapClient
 			}
 			else
 			{
-				if($this->useOAuth2Authentication === false) {
+				if($this->IsNullOrEmptyString($this->useOAuth2Authentication) || $this->useOAuth2Authentication === false) {
 					throw new Exception("baseUrl is null: Must be provided in config file when instantiating ET_Client");
 				}
 			}
