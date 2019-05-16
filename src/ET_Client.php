@@ -119,7 +119,7 @@ class ET_Client extends SoapClient
 					$this->baseSoapUrl = $this->defaultBaseSoapUrl;
 				}
 			}
-			$this->useOAuth2Authentication = $config['useOAuth2Authentication'];
+			if(array_key_exists('useOAuth2Authentication', $config)){$this->useOAuth2Authentication = $config['useOAuth2Authentication'];}
             if (array_key_exists('accountId', $config)){$this->accountId = $config['accountId'];}
             if (array_key_exists('scope', $config)){$this->scope = $config['scope'];}
 
@@ -447,16 +447,16 @@ class ET_Client extends SoapClient
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 
-        $this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
-
         if($this->useOAuth2Authentication == 'true'){
-            $content = $doc->saveXML();
+            $this->addOAuth($doc, $this->getAuthToken($this->tenantKey));
+			$content = $doc->saveXML();
 		}
 		else{
             $objWSSE = new WSSESoap($doc);
             $objWSSE->addUserToken("*", "*", FALSE);
+			$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
 
-            $content = $objWSSE->saveXML();
+			$content = $objWSSE->saveXML();
 		}
 
 		if ($this->debugSOAP){
