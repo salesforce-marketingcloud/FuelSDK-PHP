@@ -8,6 +8,12 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 ## Overview ##
 The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
+## New Features in Version 1.3.0 ##
+
+* Added support for OAuth2 authentication - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-app-development.meta/mc-app-development/integration-considerations.htm)
+* To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file.
+* When OAuth2 is enabled, for context switching support, set `'accountId' => <account id>` and `'scope' => '<permissions list>'` in the config.php file.
+
 ## New Features in Version 1.2.2 ##
 
 * Added support for in memory cache.
@@ -89,7 +95,7 @@ The following code is an example of a minimal composer.json file:
 <pre>
 {
     "require": {
-        "salesforce-mc/fuel-sdk-php": "1.2.2"
+        "salesforce-mc/fuel-sdk-php": "1.3.0"
     }
 }
 </pre>

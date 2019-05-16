@@ -110,7 +110,6 @@ class ET_Client extends SoapClient
 			$this->clientId = $config['clientid'];
 			$this->clientSecret = $config['clientsecret'];
 			$this->appsignature = $config['appsignature'];
-			$this->baseUrl = $config["baseUrl"];
 			$this->baseAuthUrl = $config["baseAuthUrl"];
 			if (array_key_exists('baseSoapUrl', $config)) {
 				if (!empty($config["baseSoapUrl"])) {
@@ -120,6 +119,16 @@ class ET_Client extends SoapClient
 				}
 			}
 			if(array_key_exists('useOAuth2Authentication', $config)){$this->useOAuth2Authentication = $config['useOAuth2Authentication'];}
+			if(array_key_exists("baseUrl", $config))
+			{
+				$this->baseUrl = $config["baseUrl"];
+			}
+			else
+			{
+				if(!$this->useOAuth2Authentication) {
+					throw new Exception("baseUrl is null: Must be provided in config file when instantiating ET_Client");
+				}
+			}
             if (array_key_exists('accountId', $config)){$this->accountId = $config['accountId'];}
             if (array_key_exists('scope', $config)){$this->scope = $config['scope'];}
 
