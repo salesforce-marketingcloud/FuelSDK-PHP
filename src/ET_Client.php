@@ -125,7 +125,7 @@ class ET_Client extends SoapClient
 			}
 			else
 			{
-				if($this->IsNullOrEmptyString($this->useOAuth2Authentication) || $this->useOAuth2Authentication === false) {
+				if($this->isNullOrEmptyString($this->useOAuth2Authentication) || $this->useOAuth2Authentication === false) {
 					throw new Exception("baseUrl is null: Must be provided in config file when instantiating ET_Client");
 				}
 			}
@@ -142,19 +142,19 @@ class ET_Client extends SoapClient
 		} 
 		if ($params) 
 		{
-			if ($params && array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
+			if (array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
 			else {$this->wsdlLoc = "https://webservice.exacttarget.com/etframework.wsdl";}
-			if ($params && array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
-			if ($params && array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
-			if ($params && array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
-			if ($params && array_key_exists('xmlloc', $params)){$this->xmlLoc = $params['xmlloc'];}
+			if (array_key_exists('clientid', $params)){$this->clientId = $params['clientid'];}
+			if (array_key_exists('clientsecret', $params)){$this->clientSecret = $params['clientsecret'];}
+			if (array_key_exists('appsignature', $params)){$this->appsignature = $params['appsignature'];}
+			if (array_key_exists('xmlloc', $params)){$this->xmlLoc = $params['xmlloc'];}
 
-			if ($params && array_key_exists('proxyhost', $params)){$this->proxyHost = $params['proxyhost'];}
-			if ($params && array_key_exists('proxyport', $params)){$this->proxyPort = $params['proxyport'];}
-			if ($params && array_key_exists('proxyusername', $params)) {$this->proxyUserName = $params['proxyusername'];}
-			if ($params && array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}
-			if ($params && array_key_exists('sslverifypeer', $params)) {$this->sslVerifyPeer = $params['sslverifypeer'];}
-			if ($params && array_key_exists('baseUrl', $params))
+			if (array_key_exists('proxyhost', $params)){$this->proxyHost = $params['proxyhost'];}
+			if (array_key_exists('proxyport', $params)){$this->proxyPort = $params['proxyport'];}
+			if (array_key_exists('proxyusername', $params)) {$this->proxyUserName = $params['proxyusername'];}
+			if (array_key_exists('proxypassword', $params)) {$this->proxyPassword = $params['proxypassword'];}
+			if (array_key_exists('sslverifypeer', $params)) {$this->sslVerifyPeer = $params['sslverifypeer'];}
+			if (array_key_exists('baseUrl', $params))
 			{
 				$this->baseUrl = $params['baseUrl'];
 			}
@@ -162,7 +162,7 @@ class ET_Client extends SoapClient
 			{
 				$this->baseUrl = "https://www.exacttargetapis.com";
 			}
-			if ($params && array_key_exists('baseAuthUrl', $params))
+			if (array_key_exists('baseAuthUrl', $params))
 			{
 				$this->baseAuthUrl = $params['baseAuthUrl'];
 			}
@@ -170,7 +170,7 @@ class ET_Client extends SoapClient
 			{
 				$this->baseAuthUrl = "https://auth.exacttargetapis.com";
 			}
-			if ($params && array_key_exists('baseSoapUrl', $params))
+			if (array_key_exists('baseSoapUrl', $params))
 			{
 				if (!empty($params["baseSoapUrl"])) {
 					$this->baseSoapUrl = $params['baseSoapUrl'];
@@ -178,15 +178,15 @@ class ET_Client extends SoapClient
                     $this->baseSoapUrl = $this->defaultBaseSoapUrl;
 				}
 			}
-			if ($params && array_key_exists('useOAuth2Authentication', $params))
+			if (array_key_exists('useOAuth2Authentication', $params))
 			{
                 $this->useOAuth2Authentication = $params['useOAuth2Authentication'];
 			}
-            if ($params && array_key_exists('accountId', $params))
+            if (array_key_exists('accountId', $params))
             {
                 $this->accountId = $params['accountId'];
             }
-            if ($params && array_key_exists('scope', $params))
+            if (array_key_exists('scope', $params))
             {
                 $this->scope = $params['scope'];
             }
@@ -343,10 +343,10 @@ class ET_Client extends SoapClient
                 $jsonRequest->client_secret = $this->clientSecret;
                 $jsonRequest->grant_type = "client_credentials";
 
-                if ($this->IsNullOrEmptyString($this->accountId) == false){
+                if ($this->isNullOrEmptyString($this->accountId) == false){
                     $jsonRequest->account_id = $this->accountId;
 				}
-				if ($this->IsNullOrEmptyString($this->scope) == false){
+				if ($this->isNullOrEmptyString($this->scope) == false){
                     $jsonRequest->scope = $this->scope;
 				}
 
@@ -884,7 +884,7 @@ class ET_Client extends SoapClient
 	 *
 	 * @param string $str string to be validated
 	 */
-	function IsNullOrEmptyString($str){
+	function isNullOrEmptyString($str){
         return (!isset($str) || trim($str) === '');
     }
 }
