@@ -125,7 +125,7 @@ class ET_Client extends SoapClient
 			}
 			else
 			{
-				if(!$this->useOAuth2Authentication) {
+				if($this->useOAuth2Authentication === false) {
 					throw new Exception("baseUrl is null: Must be provided in config file when instantiating ET_Client");
 				}
 			}
@@ -271,7 +271,7 @@ class ET_Client extends SoapClient
 	 */	
 	function refreshToken($forceRefresh = false) 
 	{
-		if ($this->useOAuth2Authentication == 'true'){
+		if ($this->useOAuth2Authentication === true){
             $this->refreshTokenWithOAuth2($forceRefresh);
             return;
 		}
@@ -456,7 +456,7 @@ class ET_Client extends SoapClient
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 
-        if($this->useOAuth2Authentication == 'true'){
+        if($this->useOAuth2Authentication === true){
             $this->addOAuth($doc, $this->getAuthToken($this->tenantKey));
 			$content = $doc->saveXML();
 		}
@@ -523,7 +523,7 @@ class ET_Client extends SoapClient
 			$envelope->insertBefore($header, $envelope->firstChild);
 		}
 
-		if ($this->useOAuth2Authentication == 'true'){
+		if ($this->useOAuth2Authentication === true){
             $authnode = $soapDoc->createElementNS('http://exacttarget.com','fueloauth',$token);
 		}
 		else{
