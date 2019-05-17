@@ -11,65 +11,35 @@ The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel AP
 ## New Features in Version 1.3.0 ##
 
 * Added support for OAuth2 authentication - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-app-development.meta/mc-app-development/integration-considerations.htm)
-* To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file.
-* When OAuth2 is enabled, for context switching support, set `'accountId' => <account id>` and `'scope' => '<permissions list>'` in the config.php file.
+* To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file or pass it as Params argument to the ET_Client constructor.
+* Sample Config for OAuth2,
+<pre>
+<?php
+return array(
+    'appsignature' => 'none', 
+	'clientid' => '<CLIENT_ID>',
+	'clientsecret' => '<CLIENT_SECRET>',
+	'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+    'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
+    'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
+    'baseAuthUrl' => '<AUTH TENANT SPECIFIC ENDPOINT>',
+    'baseSoapUrl' => '<SOAP TENANT SPECIFIC ENDPOINT>',
+    'useOAuth2Authentication' => true,
+    'accountId' => <TARGET_ACCOUNT_ID>,
+    'scope' => '<PERMISSION_LIST>',
+    'proxyhost' => 'localhost',
+    'proxyport' => '8080',
+    'proxyusername' => '',
+    'proxypassword' => ''
+);
+</pre>
+* Example passing config as parameters to ET_Client constructor: 
+  > $myclient = new ET_Client(true, array("baseUrl" => "http://rest.endpoint.com", "baseAuthUrl" => "http://auth.endpoint.com", "baseSoapUrl" => "http://soap.endpoint.com",
+  "baseUrl" => "http://rest.endpoint.com", "useOAuth2Authentication" => "true", "accountId" => "<TARGET_ACCOUNT_ID>", "scope" => "<PERMISSION_LIST>"));
 
-## New Features in Version 1.2.2 ##
-
-* Added support for in memory cache.
-
-## New Features in Version 1.2.1 ##
-
-* Updated robrichards/wse-php dependency version to 2.0.3
-
-## New Features in Version 1.2.0 ##
+## Version 1.2.0 ##
 
 * Added support for your tenant’s endpoints - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-apis.meta/mc-apis/your-subdomain-tenant-specific-endpoints.htm)
-
-## New Features in Version 1.1.0 ##
-
-* **namespace :** namespace is introduced.
-
-* **newly supported objects:**
-    - Result Message
-    - Data Extract
-    - Triggered Send Summary
-
-* composer autoload issue fix
-
-
-<!--
-* **mcrypt :** mcrypt dependency removed.
-mcrypt extension dependency prevented client application from upgrading to PHP 7.x. This release supports any PHP version > 5.6.24 and PHP 7.x
-
-* **proxy :** added proxy server support.
-If your client application sits behind a proxy server,  you can use PHP SDK with following configuration settings in config.php file.
-    - proxyhost
-    - proxyport
-    - proxyusername
-    - proxypassword
-
-You can override these configuration setting using $params parameter passed to the constructor of ET_Client class.
-
-* **jwt :** jwt.php is removed from the project source tree and added as dependency.
-jwt.php removed and added as dependency in composer.json. If you are manually downloading the project, call **composer update** to get **jwt** downloaded.
-
-* **soap-wsse :** soap-wsse.php is removed from the project source tree and added as dependency in composer.json. If you are manually downloading the project, call **composer update** to get the **soap-wsse** downloaded.
-
-* **code refactor :** code refactored to individual class files. (under src/ directory)
-Project tree structure is now changed to: 
-    - src           : source files
-    - doc           : SDK API documentation
-    - tests         : unit test cases
-    - objsamples    : sample files
-
-* **unit test :** added unit test cases (happy path for now) using phpunit testing framework. (under tests/ directory)
-
-* **API docs :** added API documentation using phpdocumentor framework. (under docs/ directory)
-
-* **auto loader :** integrated auto loader (spl_autoload_register) for all source code under src/, tests/, objsamples/ directory.
--->
-
 
 ## Requirements ##
 PHP Version >=5.6.24
