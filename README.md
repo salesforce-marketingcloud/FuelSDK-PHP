@@ -14,9 +14,6 @@ The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel AP
 * To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file or pass it as Params argument to the ET_Client constructor.
 * Sample Config for OAuth2,
 <pre>
-
-<?php
-return array(
     'appsignature' => 'none', 
 	'clientid' => '<CLIENT_ID>',
 	'clientsecret' => '<CLIENT_SECRET>',
@@ -32,8 +29,6 @@ return array(
     'proxyport' => '8080',
     'proxyusername' => '',
     'proxypassword' => ''
-);
-
 </pre>
 * Example passing config as parameters to ET_Client constructor: 
 <pre>
