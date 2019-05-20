@@ -11,30 +11,41 @@ The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel AP
 ## New Features in Version 1.3.0 ##
 
 * Added support for OAuth2 authentication - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-app-development.meta/mc-app-development/integration-considerations.htm)
-* To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file or pass it as Params argument to the ET_Client constructor.
-* Sample Config for OAuth2,
-<pre>
+* To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file or pass it in the `params` argument to the ET_Client constructor.
+* Sample Config for OAuth2:
+```
     'appsignature' => 'none', 
-	'clientid' => '<CLIENT_ID>',
-	'clientsecret' => '<CLIENT_SECRET>',
-	'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+    'clientid' => '<CLIENT_ID>',
+    'clientsecret' => '<CLIENT_SECRET>',
+    'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
     'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
-    'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
     'baseAuthUrl' => '<AUTH TENANT SPECIFIC ENDPOINT>',
     'baseSoapUrl' => '<SOAP TENANT SPECIFIC ENDPOINT>',
+    'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
     'useOAuth2Authentication' => true,
     'accountId' => <TARGET_ACCOUNT_ID>,
-    'scope' => '<PERMISSION_LIST>',
-    'proxyhost' => 'localhost',
-    'proxyport' => '8080',
-    'proxyusername' => '',
-    'proxypassword' => ''
-</pre>
-* Example passing config as parameters to ET_Client constructor: 
-<pre>
-  $myclient = new ET_Client(true, array("baseUrl" => "http://rest.endpoint.com", "baseAuthUrl" => "http://auth.endpoint.com", "baseSoapUrl" => "http://soap.endpoint.com",
-  "baseUrl" => "http://rest.endpoint.com", "useOAuth2Authentication" => "true", "accountId" => "<TARGET_ACCOUNT_ID>", "scope" => "<PERMISSION_LIST>"));
-</pre>
+    'scope' => '<PERMISSION_LIST>'
+```
+* Example passing config as a parameter to ET_Client constructor: 
+```
+  $myclient = new ET_Client(
+    true,
+    true, 
+    array(
+        'appsignature' => 'none',
+        'clientid' => '<CLIENT_ID>',
+        'clientsecret' => '<CLIENT_SECRET>',
+        'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+        'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
+        'baseAuthUrl' => '<AUTH TENANT SPECIFIC ENDPOINT>',
+        'baseSoapUrl' => '<SOAP TENANT SPECIFIC ENDPOINT>',
+        'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
+        'useOAuth2Authentication' => true, 
+        'accountId' => '<TARGET_ACCOUNT_ID>', 
+        'scope' => '<PERMISSION_LIST>'
+    )
+  );
+```
 
 ## Version 1.2.0 ##
 
