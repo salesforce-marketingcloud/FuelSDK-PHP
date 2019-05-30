@@ -24,7 +24,6 @@ A code snippet that demonstrates the issue or a link to a code repository the de
 
 Note: Because the developers need to copy and paste the code snippet, including a code snippet as a media file (e.g. gif) is not sufficient.
 
-
 **Environment**
 - SDK Version [e.g. 1.3.0]
 - PHP version
