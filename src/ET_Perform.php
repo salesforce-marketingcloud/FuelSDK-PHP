@@ -28,7 +28,7 @@ class ET_Perform extends ET_Constructor
 		$perform['PerformRequestMsg'] = $performRequest;
 		$return = $authStub->__soapCall("Perform", $perform, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
-		print_r($return);
+		# print_r($return);
 		if ($this->status){
 			if (property_exists($return->Results, "Result")){
 				if (is_array($return->Results->Result)){
