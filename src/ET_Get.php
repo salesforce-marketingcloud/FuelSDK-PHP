@@ -52,9 +52,9 @@ class ET_Get extends ET_Constructor
 		}
 		
 		$retrieveRequest["ObjectType"] = $objType;
-		if ("Account" == $objType) {
+		//if ("Account" == $objType) {
 			$retrieveRequest["QueryAllAccounts"] = true;
-		}
+		//}
 		if ($filter){
 			if (array_key_exists("LogicalOperator",$filter )){				
 				$cfp = new stdClass();
