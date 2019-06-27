@@ -51,6 +51,7 @@ class ET_Get extends ET_Constructor
 			$retrieveRequest["Properties"] = $props;	
 		}
 		
+    
 		$retrieveRequest["ObjectType"] = $objType;
 		//if ("Account" == $objType) {
 			$retrieveRequest["QueryAllAccounts"] = true;
