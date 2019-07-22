@@ -18,7 +18,6 @@ class ET_DataExtension_Row extends ET_CUDWithUpsertSupport
 	* @var string 			Gets or sets the data extension customer key.
 	*/
 	public $CustomerKey;
-
 	/** 
 	* Initializes a new instance of the class.
 	*/
@@ -43,20 +42,25 @@ class ET_DataExtension_Row extends ET_CUDWithUpsertSupport
     /**
 	* Post this instance.
     * @return ET_Post     Object of type ET_Post which contains http status code, response, etc from the POST SOAP service
+    * @param 	array       $props 		Dictionary type array which may hold prepared stucture e.g. array('id' => '', 'key' => '')
     */	
-	public function post()
+	public function post($props=array())
 	{
 		$this->getCustomerKey();
 		$originalProps = $this->props;		
 		$overrideProps = array();
-		$fields = array();
+                if ($props) {
+                    $overrideProps = $props;
+                } else {
+                    $fields = array();
+
+                    foreach ($this->props as $key => $value){
+                            $fields[]  = array("Name" => $key, "Value" => $value);	
+                    }		
+                    $overrideProps['CustomerKey'] = $this->CustomerKey;
+                    $overrideProps['Properties'] = array("Property"=> $fields);
 		
-		foreach ($this->props as $key => $value){
-			$fields[]  = array("Name" => $key, "Value" => $value);	
-		}		
-		$overrideProps['CustomerKey'] = $this->CustomerKey;
-		$overrideProps['Properties'] = array("Property"=> $fields);
-		
+                }
 		$this->props = $overrideProps;		
 		$response = parent::post();		
 		$this->props = $originalProps;

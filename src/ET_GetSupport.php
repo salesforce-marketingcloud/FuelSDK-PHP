@@ -14,11 +14,15 @@ class ET_GetSupport extends ET_BaseObject
     */
 	public function get()
 	{
-		$lastBatch = false;
-		if (property_exists($this,'getSinceLastBatch' )){
-			$lastBatch = $this->getSinceLastBatch;
+                $retrieveRequest=array();
+		if (property_exists($this,'retrieveRequest' )){
+			$retrieveRequest = $this->retrieveRequest;
 		}
-		$response = new ET_Get($this->authStub, $this->obj, $this->props, $this->filter, $lastBatch);
+		if (property_exists($this,'getSinceLastBatch')){
+			$retrieveRequest["RetrieveAllSinceLastBatch"] = $this->getSinceLastBatch;
+		}
+                
+		$response = new ET_Get($this->authStub, $this->obj, $this->props, $this->filter, $retrieveRequest);
 		$this->lastRequestID = $response->request_id;		
 		return $response;
 	}
