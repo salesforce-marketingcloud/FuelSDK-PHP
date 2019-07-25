@@ -13,6 +13,7 @@ use \DOMDocument;
 use \DOMXPath;
 use \Exception;
 
+
 /**
  * Auto load method to load dependent classes
  */
@@ -67,7 +68,8 @@ class ET_Client extends SoapClient
 
 	private $wsdlLoc, $debugSOAP, $lastHTTPCode, $clientId, 
 			$clientSecret, $appsignature, $endpoint, 
-			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl, $useOAuth2Authentication, $accountId, $scope;
+			$tenantTokens, $tenantKey, $xmlLoc, $baseAuthUrl, $baseSoapUrl,
+			$useOAuth2Authentication, $accountId, $redirectURI, $applicationType, $authorizationCode, $scope;
 
 	private $defaultBaseSoapUrl = 'https://webservice.exacttarget.com/Service.asmx';
 
@@ -130,6 +132,11 @@ class ET_Client extends SoapClient
 				}
 			}
             if (array_key_exists('accountId', $config)){$this->accountId = $config['accountId'];}
+
+            if (array_key_exists('applicationType', $config)){$this->applicationType = $config['applicationType'];}
+			if (array_key_exists('redirectURI', $config)){$this->redirectURI = $config['redirectURI'];}
+			if (array_key_exists('authorizationCode', $config)){$this->authorizationCode = $config['authorizationCode'];}
+
             if (array_key_exists('scope', $config)){$this->scope = $config['scope'];}
 
 			if (array_key_exists('xmlloc', $config)){$this->xmlLoc = $config['xmlloc'];}
@@ -190,14 +197,43 @@ class ET_Client extends SoapClient
             {
                 $this->scope = $params['scope'];
             }
+			if (array_key_exists('applicationType', $params))
+			{
+				$this->applicationType = $params['applicationType'];
+			}
+			if (array_key_exists('redirectURI', $params))
+			{
+				$this->redirectURI = $params['redirectURI'];
+			}
+			if (array_key_exists('authorizationCode', $params))
+			{
+				$this->authorizationCode = $params['authorizationCode'];
+			}
 		}
 
 		$this->debugSOAP = $debug;
-		
-		if (!property_exists($this,'clientId') || is_null($this->clientId) || !property_exists($this,'clientSecret') || is_null($this->clientSecret)){
-			throw new Exception('clientid or clientsecret is null: Must be provided in config file or passed when instantiating ET_Client');
+
+		if (!property_exists($this,'applicationType') || is_null($this->applicationType) || empty($this->applicationType)){
+			$this->applicationType = 'server';
 		}
-		
+
+		if($this->applicationType == 'public' || $this->applicationType == 'web'){
+			if (!property_exists($this,'redirectURI') || is_null($this->redirectURI ) || !property_exists($this,'authorizationCode') || is_null($this->authorizationCode)){
+				throw new Exception('redirectURI or authorizationCode is null: Must be provided in config file or passed when instantiating ET_Client');
+			}
+		}
+
+		if($this->applicationType == 'public'){
+			if (!property_exists($this,'clientId') || is_null($this->clientId)){
+				throw new Exception('clientid is null: Must be provided in config file or passed when instantiating ET_Client');
+			}
+		}
+		else {
+			if (!property_exists($this, 'clientId') || is_null($this->clientId) || !property_exists($this, 'clientSecret') || is_null($this->clientSecret)) {
+				throw new Exception('clientid or clientsecret is null: Must be provided in config file or passed when instantiating ET_Client');
+			}
+		}
+
 		if ($getWSDL){$this->CreateWSDL($this->wsdlLoc);}
 		
 		if ($params && array_key_exists('jwt', $params)){
@@ -240,7 +276,10 @@ class ET_Client extends SoapClient
 
 		$context = stream_context_create([
 			'ssl' => [
-				'verify_peer' => ET_Util::shouldVerifySslPeer($this->sslVerifyPeer)
+				// set some SSL/TLS specific options
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
 			]
 		]);
 
@@ -321,6 +360,36 @@ class ET_Client extends SoapClient
 		}
 	}
 
+	function createPayloadForOauth2(){
+		$jsonRequest = new stdClass();
+
+		$jsonRequest->client_id = $this->clientId;
+		if($this->applicationType != 'public') {
+			$jsonRequest->client_secret = $this->clientSecret;
+		}
+
+		$refreshKey = $this->getRefreshToken(null);
+		if(!is_null($refreshKey) && !empty($refreshKey)){
+			$jsonRequest->grant_type = 'refresh_token';
+			$jsonRequest->refresh_token = $refreshKey;
+		} else if($this->applicationType == 'public' || $this->applicationType == 'web'){
+			$jsonRequest->grant_type = 'authorization_code';
+			$jsonRequest->code = $this.$this->authorizationCode;
+			$jsonRequest->redirect_uri = $this.$this->redirectURI;
+		} else {
+			$jsonRequest->grant_type = 'client_credentials';
+		}
+
+		if ($this->isNullOrEmptyString($this->accountId) == false){
+			$jsonRequest->account_id = $this->accountId;
+		}
+		if ($this->isNullOrEmptyString($this->scope) == false){
+			$jsonRequest->scope = $this->scope;
+		}
+
+		return $jsonRequest;
+	}
+
     function refreshTokenWithOAuth2($forceRefresh = false)
     {
         if (property_exists($this, "sdl") && $this->sdl == 0){
@@ -338,17 +407,7 @@ class ET_Client extends SoapClient
 
                 $url = $this->baseAuthUrl."/v2/token";
 
-                $jsonRequest = new stdClass();
-                $jsonRequest->client_id = $this->clientId;
-                $jsonRequest->client_secret = $this->clientSecret;
-                $jsonRequest->grant_type = "client_credentials";
-
-                if ($this->isNullOrEmptyString($this->accountId) == false){
-                    $jsonRequest->account_id = $this->accountId;
-				}
-				if ($this->isNullOrEmptyString($this->scope) == false){
-                    $jsonRequest->scope = $this->scope;
-				}
+                $jsonRequest = $this->createPayloadForOauth2();
 
                 $authResponse = ET_Util::restPost($url, json_encode($jsonRequest), $this);
                 $authObject = json_decode($authResponse->body);
@@ -360,6 +419,9 @@ class ET_Client extends SoapClient
                     $this->setInternalAuthToken($this->tenantKey, $authObject->access_token);
                     $this->baseUrl = $authObject->rest_instance_url;
                     $this->baseSoapUrl= $authObject->soap_instance_url."Service.asmx";
+					if (property_exists($authObject,'refresh_token')){
+						$this->setRefreshToken($this->tenantKey, $authObject->refresh_token);
+					}
                 } else {
                     throw new Exception('Unable to validate App Keys(ClientID/ClientSecret) provided, requestToken response:'.$authResponse->body );
                 }
@@ -629,7 +691,7 @@ class ET_Client extends SoapClient
 	 * @param string $tenantKey
 	 * @return string Refresh token for the tenant
 	 */
-	function getRefreshToken($tenantKey) 
+	function getRefreshToken($tenantKey)
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
 		if ($this->tenantTokens[$tenantKey] == null) {
