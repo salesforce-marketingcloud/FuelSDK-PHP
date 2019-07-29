@@ -374,8 +374,8 @@ class ET_Client extends SoapClient
 			$jsonRequest->refresh_token = $refreshKey;
 		} else if($this->applicationType == 'public' || $this->applicationType == 'web'){
 			$jsonRequest->grant_type = 'authorization_code';
-			$jsonRequest->code = $this.$this->authorizationCode;
-			$jsonRequest->redirect_uri = $this.$this->redirectURI;
+			$jsonRequest->code = $this->authorizationCode;
+			$jsonRequest->redirect_uri = $this->redirectURI;
 		} else {
 			$jsonRequest->grant_type = 'client_credentials';
 		}
