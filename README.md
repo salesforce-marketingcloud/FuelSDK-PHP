@@ -8,7 +8,52 @@ Salesforce Marketing Cloud Fuel SDK for PHP
 ## Overview ##
 The Fuel SDK for PHP provides easy access to Salesforce Marketic Cloud's Fuel API Family services, including a collection of REST and SOAP API. These APIs provide access to Salesforce Marketing Cloud (previously called ExactTarget) functionality via common collection types such as array/hash. 
 
-## New Features in Version 1.3.0 ##
+## New Features in Version 1.4.0 ##
+
+In Addition to the OAuth2 feature added as part of Version 1.3.0, We have now added the support to authenticate Public/Web Apps using OAuth2.
+
+* Sample Config for OAuth2:
+```
+    'appsignature' => 'none', 
+    'clientid' => '<CLIENT_ID>',
+    'clientsecret' => '<CLIENT_SECRET>',
+    'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+    'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
+    'baseAuthUrl' => '<AUTH TENANT SPECIFIC ENDPOINT>',
+    'baseSoapUrl' => '<SOAP TENANT SPECIFIC ENDPOINT>',
+    'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
+    'useOAuth2Authentication' => true,
+    'applicationType' => 'public|web'
+    'redirectURI' => 'REDIRECT_URL_FOR_YOUR_APP'
+    'authorizationCode' => 'AUTHORIZATION_CODE_RECEIVED_FROM_AUTHORIZE_UI_CALL'
+    'accountId' => <TARGET_ACCOUNT_ID>,
+    'scope' => '<PERMISSION_LIST>'
+```
+* Example passing config as a parameter to ET_Client constructor: 
+```
+  $myclient = new ET_Client(
+    true,
+    true, 
+    array(
+           'appsignature' => 'none', 
+           'clientid' => '<CLIENT_ID>',
+           'clientsecret' => '<CLIENT_SECRET>',
+           'defaultwsdl' => 'https://webservice.exacttarget.com/etframework.wsdl',
+           'xmlloc' => '/some/path/to/cache/ExactTargetWSDL.xml',
+           'baseAuthUrl' => '<AUTH TENANT SPECIFIC ENDPOINT>',
+           'baseSoapUrl' => '<SOAP TENANT SPECIFIC ENDPOINT>',
+           'baseUrl' => '<REST TENANT SPECIFIC ENDPOINT>',
+           'useOAuth2Authentication' => true,
+           'applicationType' => 'public|web'
+           'redirectURI' => 'REDIRECT_URL_FOR_YOUR_APP'
+           'authorizationCode' => 'AUTHORIZATION_CODE_RECEIVED_FROM_AUTHORIZE_UI_CALL'
+           'accountId' => <TARGET_ACCOUNT_ID>,
+           'scope' => '<PERMISSION_LIST>'
+    )
+  );
+```
+
+## Version 1.3.0 ##
 
 * Added support for OAuth2 authentication - [More Details](https://developer.salesforce.com/docs/atlas.en-us.mc-app-development.meta/mc-app-development/integration-considerations.htm)
 * To enable OAuth2 authentication, set `'useOAuth2Authentication' => true` in the config.php file or pass it in the `params` argument to the ET_Client constructor.
