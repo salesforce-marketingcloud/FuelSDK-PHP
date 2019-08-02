@@ -15,6 +15,10 @@ final class OAuth2Test extends TestCase
 
     public function testIfAuthTokenAndRefreshTokenDifferIfRefreshTokenIsEnforced()
     {
+        $reflection = new \ReflectionClass(get_class($this->client));
+        $clientid = $reflection->getProperty("clientId");
+        $clientid->setAccessible(true);
+        echo $clientid->getValue($clientid);
         $token = $this->client->getAuthToken();
         $refreshToken = $this->client->getRefreshToken(null);
         $this->client->refreshTokenWithOAuth2(true);
