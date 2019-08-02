@@ -18,7 +18,6 @@ final class OAuth2Test extends TestCase
         $reflection = new \ReflectionClass(get_class($this->client));
         $clientid = $reflection->getProperty("clientId");
         $clientid->setAccessible(true);
-        echo $clientid->getValue($clientid);
         $token = $this->client->getAuthToken();
         $refreshToken = $this->client->getRefreshToken(null);
         $this->client->refreshTokenWithOAuth2(true);
@@ -26,8 +25,7 @@ final class OAuth2Test extends TestCase
         $newtoken = $this->client->getAuthToken();
         $newrefreshToken = $this->client->getRefreshToken(null);
 
-        $this->assertNotEquals($token, $newtoken);
-        $this->assertNotEquals($refreshToken, $newrefreshToken);
+        $this->assertTrue($refreshToken != $newrefreshToken && $token != $newtoken);
     }
 }
 ?>
