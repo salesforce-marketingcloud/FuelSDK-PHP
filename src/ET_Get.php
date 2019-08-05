@@ -87,7 +87,6 @@ class ET_Get extends ET_Constructor
 
         }elseif( $filterCount == 3 ){
 
-
           $left = new stdClass();
           $left->LeftOperand = new SoapVar($filter["LeftOperand"]["LeftOperand"], SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
           $left->RightOperand = new SoapVar($filter["LeftOperand"]["RightOperand"], SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
