@@ -61,23 +61,9 @@ class ET_Get extends ET_Constructor
 
       if (array_key_exists("LogicalOperator",$filter )){
 
-        function array_depth(array $array) {
-            $max_depth = 1;
 
-            foreach ($array as $value) {
-                if (is_array($value)) {
-                    $depth = array_depth($value) + 1;
 
-                    if ($depth > $max_depth) {
-                        $max_depth = $depth;
-                    }
-                }
-            }
-
-            return $max_depth;
-        }
-
-        $filterCount = array_depth($filter);
+        $filterCount = self::array_depth($filter);
         if( $filterCount == 2 ){
           $cfp = new stdClass();
           $cfp->LeftOperand = new SoapVar($filter["LeftOperand"], SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
@@ -151,5 +137,22 @@ class ET_Get extends ET_Constructor
       $this->request_id = $return->RequestID;
     } 
   }
+
+
+  static function array_depth(array $array) {
+      $max_depth = 1;
+
+      foreach ($array as $value) {
+          if (is_array($value)) {
+              $depth = self::array_depth($value) + 1;
+
+              if ($depth > $max_depth) {
+                  $max_depth = $depth;
+              }
+          }
+      }
+
+      return $max_depth;
+  }  
 }
 ?>
