@@ -95,15 +95,16 @@ class ET_Client extends SoapClient
 	 * <i><b>proxyusername</b></i> - proxy server user name</br>
 	 * <i><b>proxypassword</b></i> - proxy server password</br>
 	 * <i><b>sslverifypeer</b></i> - Require verification of peer name</br>
+	 * @param boolean $readConfigFromFile Default true, read the config.php file if it exists
 	 */
-	function __construct($getWSDL = false, $debug = false, $params = null) 
+	function __construct($getWSDL = false, $debug = false, $params = null, $readConfigFromFile = true) 
 	{
 		$tenantTokens = array();
 		$config = false;
 
 		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
-		if (file_exists(realpath("config.php")))
+		if ($readConfigFromFile && file_exists(realpath("config.php")))
 			$config = include 'config.php';
 
 		if ($config)
