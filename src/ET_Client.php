@@ -642,7 +642,7 @@ class ET_Client extends SoapClient
 	function getAuthTokenExpiration($tenantKey)
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
 		return isset($this->tenantTokens[$tenantKey]['authTokenExpiration'])
