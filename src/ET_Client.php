@@ -108,7 +108,7 @@ class ET_Client extends SoapClient
 		if ($readConfig) {
 			$configPath = $configPath ? $configPath : realpath("config.php");
 			if (file_exists($configPath)) {
-				$config = include 'config.php';
+				$config = include $configPath;
 			}
 		}
 
