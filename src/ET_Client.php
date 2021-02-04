@@ -95,19 +95,24 @@ class ET_Client extends SoapClient
 	 * <i><b>proxyusername</b></i> - proxy server user name</br>
 	 * <i><b>proxypassword</b></i> - proxy server password</br>
 	 * <i><b>sslverifypeer</b></i> - Require verification of peer name</br>
+	 * @param boolean $readConfig Default true, read the config.php file if it exists.
+	 * @param string|null $configPath Read the config.php file from specific path.
 	 */
-	function __construct($getWSDL = false, $debug = false, $params = null) 
+	function __construct($getWSDL = false, $debug = false, $params = null, $readConfig = true, $configPath = null)
 	{
 		$tenantTokens = array();
 		$config = false;
 
 		$this->xmlLoc = 'ExactTargetWSDL.xml';
 
-		if (file_exists(realpath("config.php")))
-			$config = include 'config.php';
+		if ($readConfig) {
+			$configPath = $configPath ? $configPath : realpath("config.php");
+			if (file_exists($configPath)) {
+				$config = include 'config.php';
+			}
+		}
 
-		if ($config)
-		{
+		if ($config) {
 			$this->wsdlLoc = $config['defaultwsdl'];
 			$this->clientId = $config['clientid'];
 			$this->clientSecret = $config['clientsecret'];
@@ -155,7 +160,8 @@ class ET_Client extends SoapClient
 			if (array_key_exists('proxyusername', $config)){$this->proxyUserName = $config['proxyusername'];}
 			if (array_key_exists('proxypassword', $config)){$this->proxyPassword = $config['proxypassword'];}
 			if (array_key_exists('sslverifypeer', $config)){$this->sslVerifyPeer = $config['sslverifypeer'];}
-		} 
+		}
+
 		if ($params) 
 		{
 			if (array_key_exists('defaultwsdl', $params)){$this->wsdlLoc = $params['defaultwsdl'];}
@@ -308,6 +314,7 @@ class ET_Client extends SoapClient
 
 		parent::__setLocation($this->endpoint);
 	}
+
 	/**
 	 * Gets the refresh token using the authentication URL.
 	 *
@@ -611,7 +618,7 @@ class ET_Client extends SoapClient
 	public function getAuthToken($tenantKey = null) 
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}		
 		return isset($this->tenantTokens[$tenantKey]['authToken']) 
@@ -627,7 +634,7 @@ class ET_Client extends SoapClient
 	*/
 	function setAuthToken($tenantKey, $authToken, $authTokenExpiration) 
 	{
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
 		$this->tenantTokens[$tenantKey]['authToken'] = $authToken;
@@ -642,7 +649,7 @@ class ET_Client extends SoapClient
 	function getAuthTokenExpiration($tenantKey) 
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
 		return isset($this->tenantTokens[$tenantKey]['authTokenExpiration'])
@@ -658,7 +665,7 @@ class ET_Client extends SoapClient
 	function getInternalAuthToken($tenantKey) 
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
 		return isset($this->tenantTokens[$tenantKey]['internalAuthToken'])
@@ -672,7 +679,7 @@ class ET_Client extends SoapClient
 	* @param string $internalAuthToken
 	*/
 	function setInternalAuthToken($tenantKey, $internalAuthToken) {
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}	
 		$this->tenantTokens[$tenantKey]['internalAuthToken'] = $internalAuthToken;
@@ -685,7 +692,7 @@ class ET_Client extends SoapClient
 	*/
 	function setRefreshToken($tenantKey, $refreshToken) 
 	{
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}	
 		$this->tenantTokens[$tenantKey]['refreshToken'] = $refreshToken;
@@ -700,7 +707,7 @@ class ET_Client extends SoapClient
 	public function getRefreshToken($tenantKey)
 	{
 		$tenantKey = $tenantKey == null ? $this->tenantKey : $tenantKey;	
-		if ($this->tenantTokens[$tenantKey] == null) {
+		if (!isset($this->tenantTokens[$tenantKey]) || $this->tenantTokens[$tenantKey] == null) {
 			$this->tenantTokens[$tenantKey] = array();
 		}
 		return isset($this->tenantTokens[$tenantKey]['refreshToken']) 
