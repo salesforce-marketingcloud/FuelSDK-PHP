@@ -3,7 +3,7 @@
 namespace FuelSdk;
 
 use \RobRichards\WsePhp\WSSESoap;
-use \Firebase\JWT;
+use \Firebase\JWT\JWT;
 
 use \Datetime;
 use \SoapClient;
