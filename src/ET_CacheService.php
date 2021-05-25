@@ -16,7 +16,10 @@ class ET_CacheService
     public function get()
     {
         $now = time();
-        $data = ET_CacheService::$cachedSoapUrls[$this->_identifier];
+        $data = (isset(ET_CacheService::$cachedSoapUrls[$this->_identifier]) ?
+            ET_CacheService::$cachedSoapUrls[$this->_identifier] :
+            null
+        );
         if (!$data || !$data->expires || $data->expires < $now) {
             // remove expired data from the array
             unset(ET_CacheService::$cachedSoapUrls[$this->_identifier]);
