@@ -411,7 +411,7 @@ class ET_Client extends SoapClient
             }
             if (is_null($this->getAuthToken($this->tenantKey)) || ($timeDiff < 5) || $forceRefresh  ){
 
-                $url = $this->baseAuthUrl."/v1/requestToken?legacy=1";
+                $url = $this->baseAuthUrl."/v2/token";
 
                 $jsonRequest = $this->createPayloadForOauth2();
 
