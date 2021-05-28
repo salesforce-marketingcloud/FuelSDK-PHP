@@ -531,11 +531,10 @@ class ET_Client extends SoapClient
 		$doc = new DOMDocument();
 		$doc->loadXML($request);
 
-        if($this->useOAuth2Authentication === true){
+        if($this->useOAuth2Authentication === true) {
             $this->addOAuth($doc, $this->getAuthToken($this->tenantKey));
 			$content = $doc->saveXML();
-		}
-		else{
+		} else {
             $objWSSE = new WSSESoap($doc);
             $objWSSE->addUserToken("*", "*", FALSE);
 			$this->addOAuth($doc, $this->getInternalAuthToken($this->tenantKey));
@@ -543,9 +542,16 @@ class ET_Client extends SoapClient
 			$content = $objWSSE->saveXML();
 		}
 
-		if ($this->debugSOAP){
+		if ($this->debugSOAP) {
 			error_log ('FuelSDK SOAP Request: ');
-			error_log (str_replace($this->getInternalAuthToken($this->tenantKey),"REMOVED",$content));
+			error_log (str_replace($this->getInternalAuthToken($this->tenantKey), "REMOVED", $content));
+		}
+
+		if ('Retrieve' === $saction && false !== strpos($content, '<ns1:ObjectType>EmailSendDefinition</ns1:ObjectType>')) {
+			$content = str_replace('<ns1:Properties>DeliveryProfile.CusomterKey</ns1:Properties>', '', $content);
+			$content = str_replace('<ns1:Properties>DeliveryProfile.HeaderContentArea.ID</ns1:Properties>', '', $content);
+			$content = str_replace('<ns1:Properties>DeliveryProfile.FooterContentArea.ID</ns1:Properties>', '', $content);
+			$content = str_replace('<ns1:Properties>SendWindowCloses</ns1:Properties>', '', $content);
 		}
 		
 		$headers = array("Content-Type: text/xml","SOAPAction: ".$saction, "User-Agent: ".ET_Util::getSDKVersion());
