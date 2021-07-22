@@ -47,7 +47,7 @@ In Addition to the OAuth2 feature added as part of Version 1.3.0, We have now ad
            'applicationType' => 'public|web',
            'redirectURI' => '<REDIRECT_URL_FOR_YOUR_APP>',
            'authorizationCode' => '<AUTHORIZATION_CODE_RECEIVED_FROM_AUTHORIZE_UI_CALL>',
-           'accountId' => '<TARGET_ACCOUNT_ID>',
+           'accountId' => <TARGET_ACCOUNT_ID>,
            'scope' => '<PERMISSION_LIST>'
     )
   );
