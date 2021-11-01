@@ -3,6 +3,7 @@
 //     include_once 'src/'.$class_name.'.php';
 // });
 namespace FuelSdk;
+use \stdClass;
 
 /**
  *	An asset is an instance of any kind of content in the CMS.
@@ -47,7 +48,7 @@ class ET_Asset extends ET_CUDSupportRest
 		$outputJSON = curl_exec($ch);
 		//curl_close ($ch);
 		
-		$responseObject = new stdClass(); 
+		$responseObject = new stdClass();
 		$responseObject->body = $outputJSON;
 		$responseObject->httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close ($ch);	
