@@ -16,14 +16,13 @@ class ET_Get extends ET_Constructor
 	* @param    string      $objType 	Object name, e.g. "ImportDefinition", "DataExtension", etc
 	* @param 	array       $props 		Dictionary type array which may hold e.g. array('id' => '', 'key' => '')
 	* @param 	array    	$filter 	Dictionary type array which may hold e.g. array("Property"=>"", "SimpleOperator"=>"","Value"=>"")
-	* @param 	bool		$getSinceLastBatch 	Gets or sets a boolean value indicating whether to get since last batch. true if get since last batch; otherwise, false.
+	* @param 	array    	$retrieveRequest 	Dictionary type array which may hold e.g. array("ClientIDs"=>array("ID"=>123))
 	*/	
-	function __construct($authStub, $objType, $props, $filter, $getSinceLastBatch = false)
+	function __construct($authStub, $objType, $props, $filter, $retrieveRequest=array())
 	{
 		$authStub->refreshToken();
 		$rrm = array();
 		$request = array();
-		$retrieveRequest = array();
 		
 		// If Props is not sent then Info will be used to find all retrievable properties
 		if (is_null($props)){	
@@ -67,14 +66,9 @@ class ET_Get extends ET_Constructor
 				$retrieveRequest["Filter"] = new SoapVar($filter, SOAP_ENC_OBJECT, 'SimpleFilterPart', "http://exacttarget.com/wsdl/partnerAPI");
 			}
 		}
-		if ($getSinceLastBatch) {
-			$retrieveRequest["RetrieveAllSinceLastBatch"] = true;
-		}
-		
 		
 		$request["RetrieveRequest"] = $retrieveRequest;
 		$rrm["RetrieveRequestMsg"] = $request;
-		
 		$return = $authStub->__soapCall("Retrieve", $rrm, null, null , $out_header);
 		parent::__construct($return, $authStub->__getLastResponseHTTPCode());
 		
