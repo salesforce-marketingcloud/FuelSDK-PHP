@@ -218,10 +218,10 @@ The ET_Client class accepts multiple parameters
 **Parameters** - Allows for passing authentication information for use with SSO with a JWT or for passing ClientID/ClientSecret if you would prefer to not use the config file option. 
 
 Example passing JWT: 
-> $myclient = new ET_Client(true, array("jwt"=>"JWT Values goes here"));
+> $myclient = new ET_Client(true, true, array("jwt"=>"JWT Values goes here"));
 
 Example passing ClientID/ClientSecret: 
-> $myclient = new ET_Client(true, array("clientid" => "3bjbc3mg4nbk64z5kzczf89n", "clientsecret"=>"ssnGAPvZg6kmm775KPj2Q4Cs"));
+> $myclient = new ET_Client(true, true, array("clientid" => "3bjbc3mg4nbk64z5kzczf89n", "clientsecret"=>"ssnGAPvZg6kmm775KPj2Q4Cs"));
 
 Example passing base urls for REST, Authentication and SOAP: 
 > $myclient = new ET_Client(true, array("baseUrl" => "http://rest.endpoint.com", "baseAuthUrl" => "http://auth.endpoint.com", "baseSoapUrl" => "http://soap.endpoint.com"));
