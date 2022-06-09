@@ -1,5 +1,5 @@
 {
-    "name": "salesforce-mc/fuel-sdk-php",
+    "name": "rizhk/fuel-sdk-php",
     "description": "Salesforce Marketing Cloud Fuel SDK for PHP",
     "license": "MIT",
     "type": "library",
