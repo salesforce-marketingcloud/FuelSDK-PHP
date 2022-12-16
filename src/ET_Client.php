@@ -386,10 +386,10 @@ class ET_Client extends SoapClient
             $payload->grant_type = 'client_credentials';
 		}
 
-		if (!empty(trim($this->accountId))){
+		if ($this->accountId && !empty(trim($this->accountId))){
             $payload->account_id = $this->accountId;
 		}
-		if (!empty(trim($this->scope))){
+		if ($this->scope && !empty(trim($this->scope))){
             $payload->scope = $this->scope;
 		}
 
