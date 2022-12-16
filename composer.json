@@ -1,7 +1,6 @@
 {
-    "name": "salesforce-mc/fuel-sdk-php",
+    "name": "rizhk/fuel-sdk-php",
     "description": "Salesforce Marketing Cloud Fuel SDK for PHP",
-    "homepage": "https://developer.salesforce.com/docs/atlas.en-us.mc-sdks.meta/mc-sdks/index-sdk.htm",
     "license": "MIT",
     "type": "library",
     "minimum-stability": "stable",
